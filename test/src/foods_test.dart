@@ -2,46 +2,54 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:usda_db/src/foods.dart';
 
-import 'setup.dart';
-import 'test_objects.dart';
+import '../setup/startup.dart';
+import '../setup/mock_file_strings.dart';
 
 void main() async {
-  when(() => mockFileLoaderService.loadData('fake'))
-      .thenAnswer((_) async => testDB);
-  await foodsListMockLoader.init('fake');
-  group('Foods class tests', () {
+  setUpAll(() {
+    mockFileLoaderService = MockFileLoaderService();
+    foodsListWithMockLoader = Foods(mockFileLoaderService);
+  });
+  setUp(() async {
+    when(() => mockFileLoaderService.loadData('fake'))
+        .thenAnswer((_) async => testDB);
+  });
+  tearDown(() => tear_down());
+  group('Foods class tests - ', () {
     group('Tests singleton pattern', () {
       test('Singleton pattern - instance is the same', () {
         final loader2 = Foods(mockFileLoaderService);
 
-        expect(loader2, same(foodsListMockLoader));
+        expect(loader2, same(foodsListWithMockLoader));
       });
 
       test('Singleton pattern - instance is not null', () {
-        final instance = Foods(mockFileLoaderService);
+        // final instance = Foods(mockFileLoaderService);
 
-        expect(instance, isNotNull);
+        expect(foodsListWithMockLoader, isNotNull);
       });
     });
     group('init() -', () {
       test('Loads file correctly', () async {
-        expect(foodsListMockLoader.foodsList, isNotEmpty);
-        expect(foodsListMockLoader.foodsList?.length, 5);
-        expect(foodsListMockLoader.foodsList?.entries.first.value.id,
-            foodsListMockLoader.foodsList?.entries.first.key);
+        await foodsListWithMockLoader.init('fake');
+        expect(foodsListWithMockLoader.foodsList, isNotEmpty);
+        expect(foodsListWithMockLoader.foodsList?.length, 5);
+        expect(foodsListWithMockLoader.foodsList?.entries.first.value.id,
+            foodsListWithMockLoader.foodsList?.entries.first.key);
+        expect(foodsListWithMockLoader.foodsList?.entries.first.value.calories,
+            307);
         expect(
-            foodsListMockLoader.foodsList?.entries.first.value.calories, 307);
-        expect(
-            foodsListMockLoader
+            foodsListWithMockLoader
                 .foodsList?.entries.first.value.descriptionLength,
             81);
-        expect(foodsListMockLoader.foodsList?['167514']!.totSugars, 0);
-        expect(foodsListMockLoader.foodsList?['167514']!.protein, 6.1);
+        expect(foodsListWithMockLoader.foodsList?['167514']!.totSugars, 0);
+        expect(foodsListWithMockLoader.foodsList?['167514']!.protein, 6.1);
       });
     });
     group('getFood() -', () {
       test('returns correct food', () async {
-        final testFood = await foodsListMockLoader.getFood('167513');
+        await foodsListWithMockLoader.init('fake');
+        final testFood = await foodsListWithMockLoader.getFood('167513');
 
         expect(testFood?.id, '167513');
         expect(testFood?.description,
@@ -57,7 +65,8 @@ void main() async {
       });
 
       test('returns correct food with missing nutrients', () async {
-        final testFood = await foodsListMockLoader.getFood('167514');
+        await foodsListWithMockLoader.init('fake');
+        final testFood = await foodsListWithMockLoader.getFood('167514');
 
         expect(testFood?.id, '167514');
         expect(testFood?.description,
@@ -72,7 +81,7 @@ void main() async {
         expect(testFood?.totSugars, 0);
       });
       test('returns null on bad index', () async {
-        final noFood = await foodsListMockLoader.getFood('bad index');
+        final noFood = await foodsListWithMockLoader.getFood('bad index');
 
         expect(noFood, isNull);
       });

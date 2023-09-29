@@ -27,11 +27,6 @@ class Foods {
     _foodsList = dbMap;
   }
 
-  /// De-initializes the [WordIndex] class.
-  void remove() {
-    _foodsList = null;
-  }
-
   Future<FoodModel?> getFood(String index) async => _foodsList?[index];
 
   /// Opens the rootBundle file.

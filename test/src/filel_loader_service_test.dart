@@ -1,12 +1,22 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:usda_db/src/file_loader_service.dart';
-import 'setup.dart';
+import '../setup/startup.dart';
 
 void main() {
+  setUpAll(() {
+    mockFileLoaderService = MockFileLoaderService();
+    fileLoaderService = FileLoaderService();
+  });
+  // setUp(() async {
+  //   // when(() => mockFileLoaderService.loadData('fake'))
+  //   //     .thenAnswer((_) async => testDB);
+  //   await foodsListWithMockLoader.init('fake');
+  // });
+  tearDown(() => tear_down());
   group('FileLoaderService class tests', () {
     group('loadFile - ', () {
-      test('loads file correctly', () async {
+      test('loads real file correctly', () async {
         final res = await fileLoaderService.loadData('lib/assets/text.txt');
         expect(res, 'Here is a text file?');
       });

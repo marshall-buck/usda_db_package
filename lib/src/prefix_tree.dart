@@ -1,35 +1,33 @@
 import 'dart:convert';
 
-import 'package:database/src/prefix_node.dart';
-import 'package:flutter/services.dart';
+import 'package:usda_db/src/file_loader_service.dart';
+import 'package:usda_db/src/prefix_node.dart';
 
 /// Class to load and search the Prefix Tree.
 
 class PrefixTree {
-  static PTNode? _root;
+  FileLoaderService fileLoader;
 
-  PrefixTree(PTNode? node);
+  PTNode? _root;
 
-  static PTNode? get root => _root;
+  static final PrefixTree _singleton = PrefixTree._internal();
+
+  PrefixTree._internal() : fileLoader = FileLoaderService();
+  factory PrefixTree(FileLoaderService fileLoader) {
+    _singleton.fileLoader = fileLoader;
+    return _singleton;
+  }
+
+  PTNode? get root => _root;
 
   /// Initializes the instance
   ///
   /// Parameters:
   /// - [path] The path of the rootBundle file.
   ///
-  /// Returns the [_instance].
-  static Future<void> init(String path) async {
-    if (_root != null) {
-      throw Exception('Instance is already initialized');
-    }
-
-    PTNode node = await _loadData(path);
-    _root = node;
-  }
-
-  /// De-initializes the [PrefixTree] class.
-  static void remove() {
-    _root = null;
+  Future<void> init(String path) async {
+    _root = await _loadData(path);
+    // _root = node;
   }
 
   /// Opens and converts the rootBundle file.
@@ -38,8 +36,8 @@ class PrefixTree {
   /// - [path] The path of the rootBundle file.
   ///
   /// Returns the root [PTNode].
-  static Future<PTNode> _loadData(String path) async {
-    final String response = await rootBundle.loadString(path, cache: false);
+  Future<PTNode> _loadData(String path) async {
+    final String response = await fileLoader.loadData(path);
     Map<String, dynamic> jsonMap = await json.decode(response);
 
     return PTNode.fromJson(jsonMap['root']);
@@ -52,7 +50,7 @@ class PrefixTree {
   ///
   /// Returns a list of strings that start with the prefix.
   /// If no matches are found, an empty list is returned.
-  static List<String?> searchByPrefix(String prefix) {
+  List<String?> searchByPrefix(String prefix) {
     List<String> result = [];
     if (prefix.isEmpty) return result;
     PTNode? node = _findNode(prefix);
@@ -77,7 +75,7 @@ class PrefixTree {
   /// - [prefix]  The prefix to match.
   /// - [result]  The list to collect the matched words.
 
-  static void _collectWords(PTNode? node, String prefix, List<String> result) {
+  void _collectWords(PTNode? node, String prefix, List<String> result) {
     if (node == null) {
       return;
     }
@@ -101,7 +99,7 @@ class PrefixTree {
   ///
   /// Returns the node that corresponds to the prefix, or null if not found.
 
-  static PTNode? _findNode(String prefix) {
+  PTNode? _findNode(String prefix) {
     PTNode? node = _root;
     int pos = 0;
 
