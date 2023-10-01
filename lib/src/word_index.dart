@@ -17,16 +17,19 @@ class WordIndex {
   /// Populates [_indexes]
   ///
   /// Parameters:
-  /// - [path] The path of the rootBundle file.
+  /// - [path] The path of the  file.
   Future<void> init(path) async {
     Map<String, List<String>> dbMap = await _loadData(path);
     _indexes = dbMap;
   }
 
-  /// Opens the rootBundle file.
+  /// Disposes indexes.
+  void dispose() => _indexes = null;
+
+  /// Opens the  file.
   ///
   /// Parameters:
-  /// - [path] The path of the rootBundle file.
+  /// - [path] The path of the  file.
   ///
   /// Returns a [Map] of the file, or {}, on error.
   Future<Map<String, List<String>>> _loadData(String path) async {

@@ -1,37 +1,89 @@
-// import 'package:database/src/food_model.dart';
-// import 'package:database/src/foods.dart';
-// import 'package:database/src/prefix_tree.dart';
-// import 'package:database/src/word_index.dart';
+import 'package:usda_db/src/file_loader_service.dart';
+import 'package:usda_db/src/file_paths.dart';
+import 'package:usda_db/src/food_model.dart';
+import 'package:usda_db/src/foods.dart';
+import 'package:usda_db/src/prefix_tree.dart';
+import 'package:usda_db/src/word_index.dart';
 
-// class DB {
-//   static DB? _instance;
+class DB {
+  // FileLoaderService fileLoader;
+  // static final DB _singleton = DB._internal();
 
-//   static Future<DB?> init() async {
-//     return _instance;
-//   }
+  // DB._internal() : fileLoader = FileLoaderService();
+  // factory DB(FileLoaderService fileLoader) {
+  //   _singleton.fileLoader = fileLoader;
+  //   return _singleton;
+  // }
 
-//   void remove() {
-//     _instance = null;
-//   }
+  FileLoaderService fileLoader;
+  static final DB _singleton = DB._internal();
 
-//   /// Gets one food  from database
-//   Future<FoodModel?> getFood(String index) async => Foods.getFood(index);
+  DB._internal({FileLoaderService? fileLoader})
+      : fileLoader = fileLoader ??
+            FileLoaderService(); // Use the provided fileLoader or the default
 
-//   /// Gets all words for a search term
-//   Future<List<String?>> getWordsFromTerm(String term) async =>
-//       PrefixTree.searchByPrefix(term);
+  factory DB({FileLoaderService? fileLoader}) {
+    _singleton.fileLoader = fileLoader ??
+        FileLoaderService(); // Use the provided fileLoader or the default
+    return _singleton;
+  }
+  static PrefixTree? _prefixTree;
+  static WordIndex? _wordIndex;
+  static Foods? _foods;
 
-//   static Future<List<dynamic>> _loadData() async {
-//     return await Future.wait([_initTree(), _initWordIndex(), _initFoods()],
-//         eagerError: true);
-//   }
+  Future<void> init() async {
+    _prefixTree = PrefixTree(fileLoader);
+    _wordIndex = WordIndex(fileLoader);
+    _foods = Foods(fileLoader);
+    try {
+      await Future.wait([
+        _initTree(),
+        _initWordIndex(),
+        _initFoods(),
+      ], eagerError: true);
+    } catch (e, st) {
+      throw DBException(e.toString(), st);
+    }
+  }
 
-//   static Future<void> _initTree() async =>
-//       await PrefixTree.init('lib/assets/prefix_tree.json');
+  void dispose() {
+    if (_prefixTree != null) {
+      _prefixTree!.dispose();
+      _prefixTree = null;
+    }
+    if (_foods != null) {
+      _foods!.dispose();
+      _foods = null;
+    }
+    if (_wordIndex != null) {
+      _wordIndex!.dispose();
+      _wordIndex = null;
+    }
+  }
 
-//   static Future<void> _initWordIndex() async =>
-//       await WordIndex.init('lib/assets/db_word_index.json');
+  /// Gets one food from database and returns the FoodModel.
+  Future<FoodModel?> getFood(String index) async {
+    if (_foods != null) {
+      return _foods?.getFood(index);
+    }
+    return Future.error('The FoodsDB has not been initialized!');
+  }
 
-//   static Future<void> _initFoods() async =>
-//       await Foods.init('lib/assets/db_food.json');
-// }
+  Future<void> _initTree() async => await _prefixTree!.init(pathToTree);
+
+  Future<void> _initWordIndex() async =>
+      await _wordIndex!.init(pathToWordIndex);
+
+  Future<void> _initFoods() async => await _foods!.init(pathToFoods);
+}
+
+class DBException implements Exception {
+  String errorMessage;
+  StackTrace stackTrace;
+  DBException(this.errorMessage, this.stackTrace);
+
+  @override
+  String toString() {
+    return 'DBException: $errorMessage\n$stackTrace';
+  }
+}

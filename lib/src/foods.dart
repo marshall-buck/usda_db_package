@@ -19,20 +19,22 @@ class Foods {
   /// Initializes the instance
   ///
   /// Parameters:
-  /// - [path] The path of the rootBundle file.
-  ///
-  /// Returns the [_instance].
-  Future init(String path) async {
+  /// - [path] The path of the  file.
+
+  Future<void> init(String path) async {
     Map<String, FoodModel> dbMap = await _loadData(path);
     _foodsList = dbMap;
   }
 
+  /// Dispose foodsList
+  void dispose() => _foodsList = null;
+
   Future<FoodModel?> getFood(String index) async => _foodsList?[index];
 
-  /// Opens the rootBundle file.
+  /// Opens the  file.
   ///
   /// Parameters:
-  /// - [path] The path of the rootBundle file.
+  /// - [path] The path of the  file.
   ///
   /// Returns a [Map] of the file, or {}, on error.
   Future<Map<String, FoodModel>> _loadData(String path) async {

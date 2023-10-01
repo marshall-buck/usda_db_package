@@ -23,17 +23,19 @@ class PrefixTree {
   /// Initializes the instance
   ///
   /// Parameters:
-  /// - [path] The path of the rootBundle file.
+  /// - [path] The path of the  file.
   ///
   Future<void> init(String path) async {
     _root = await _loadData(path);
-    // _root = node;
   }
 
-  /// Opens and converts the rootBundle file.
+  /// Dispose Tree
+  void dispose() => _root = null;
+
+  /// Opens and converts the  file.
   ///
   /// Parameters:
-  /// - [path] The path of the rootBundle file.
+  /// - [path] The path of the  file.
   ///
   /// Returns the root [PTNode].
   Future<PTNode> _loadData(String path) async {

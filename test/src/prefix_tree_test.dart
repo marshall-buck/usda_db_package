@@ -22,12 +22,6 @@ void main() async {
 
         expect(loader2, same(prefixTreeWithMockLoader));
       });
-
-      test('Singleton pattern - instance is not null', () {
-        // final instance = Foods(mockFileLoaderService);
-
-        expect(prefixTreeWithMockLoader, isNotNull);
-      });
     });
     group('init() - ', () {
       test('When called it loads PrefixTree instance correctly', () async {
@@ -80,6 +74,13 @@ void main() async {
             prefixTreeWithMockLoader
                 .root!.right!.middle!.middle!.middle!.right!.middle!.isEnd,
             true);
+      });
+    });
+    group('dispose() - ', () {
+      test('root nulls out', () {
+        prefixTreeWithMockLoader.dispose();
+
+        expect(prefixTreeWithMockLoader.root, isNull);
       });
     });
 

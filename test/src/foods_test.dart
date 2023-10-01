@@ -22,12 +22,6 @@ void main() async {
 
         expect(loader2, same(foodsListWithMockLoader));
       });
-
-      test('Singleton pattern - instance is not null', () {
-        // final instance = Foods(mockFileLoaderService);
-
-        expect(foodsListWithMockLoader, isNotNull);
-      });
     });
     group('init() -', () {
       test('Loads file correctly', () async {
@@ -44,6 +38,14 @@ void main() async {
             81);
         expect(foodsListWithMockLoader.foodsList?['167514']!.totSugars, 0);
         expect(foodsListWithMockLoader.foodsList?['167514']!.protein, 6.1);
+      });
+    });
+    group('dispose() -', () {
+      test('disposes list correctly', () async {
+        await foodsListWithMockLoader.init('fake');
+        expect(foodsListWithMockLoader.foodsList, isNotNull);
+        foodsListWithMockLoader.dispose();
+        expect(foodsListWithMockLoader.foodsList, isNull);
       });
     });
     group('getFood() -', () {

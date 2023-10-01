@@ -25,16 +25,18 @@ void main() async {
 
         expect(loader2, same(wordIndexWithMockLoader));
       });
-
-      test('Singleton pattern - instance is not null', () {
-        expect(wordIndexWithMockLoader, isNotNull);
-      });
     });
     group('init() -', () {
       test('Loads file correctly', () async {
         await wordIndexWithMockLoader.init('fake');
         expect(wordIndexWithMockLoader.indexes, isNotEmpty);
         expect(wordIndexWithMockLoader.indexes?.length, 7);
+      });
+    });
+    group('dispose() -', () {
+      test('Disposes index correctly', () {
+        wordIndexWithMockLoader.dispose();
+        expect(wordIndexWithMockLoader.indexes, isNull);
       });
     });
     group('getIndexes() -', () {
