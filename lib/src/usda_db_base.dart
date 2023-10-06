@@ -74,27 +74,65 @@ class DB {
     throw DBException('The FoodsDB has not been initialized!');
   }
 
-  List getDescriptions(String term) {
-    final words = _findAllWords(term);
-    final indexes = _findAllIndexes(words);
-    final foods = _findAllFoods(indexes);
-    final descriptions = _getDescriptions(foods);
+  /// Use to return a list of food descriptions from search term.
+  ///
+  ///Returns (description, length, id).
+  Future<List<(String, num, String)?>> getDescriptions(String term) async {
+    final List<String?> words = await _findAllWords(term);
+    final Set<String?> indexes = await _findAllIndexes(words);
+    final List<FoodModel?> foods = await _findAllFoods(indexes);
+    final List<(String, num, String)?> descriptions =
+        await _createDescriptions(foods);
     return descriptions;
   }
 
-  _findAllWords(String term) {}
+  /// Finds all words for a search term.
+  Future<List<String?>> _findAllWords(String term) async {
+    dev.log('_findAllWords', name: 'DB');
+    if (_prefixTree != null) {
+      return _prefixTree!.searchByPrefix(term);
+    }
+    throw DBException('The FoodsDB has not been initialized!');
+  }
 
-  Future<Set<String>> _findAllIndexes(List<String> words) async {
+  /// Finds all indexes for a list of words.
+  Future<Set<String?>> _findAllIndexes(List<String?> words) async {
+    dev.log('_findAllIndexes', name: 'DB');
     if (_wordIndex != null) {
       return await _wordIndex!.getIndexes(words);
     }
     throw DBException('The FoodsDB has not been initialized!');
   }
 
-  Future<List<(String, num, String)>> _findAllFoods(indexes) async {
-    final List<(String, num, String)> out = [];
+  /// Finds all foods from a list of indexes
+  Future<List<FoodModel?>> _findAllFoods(Set<String?> indexes) async {
+    dev.log('_findAllFoods', name: 'DB');
+    final List<FoodModel?> out = [];
     for (final index in indexes) {
-      final food = getFood(index);
+      final food = getFood(index ?? '');
+      if (food != null) {
+        out.add(food);
+      }
+    }
+    return out;
+  }
+  // /// Finds all foods from a list of indexes
+  // Future<List<(String, num, String)>> _findAllFoods(indexes) async {
+  //   final List<(String, num, String)> out = [];
+  //   for (final index in indexes) {
+  //     final food = getFood(index);
+  //     if (food != null) {
+  //       out.add(_createDescription(food));
+  //     }
+  //   }
+  //   return out;
+  // }
+
+  Future<List<(String, num, String)?>> _createDescriptions(
+      List<FoodModel?> foods) async {
+    dev.log('_createDescriptions', name: 'DB');
+    final List<(String, num, String)> out = [];
+    for (final food in foods) {
       if (food != null) {
         out.add(_createDescription(food));
       }
@@ -102,10 +140,10 @@ class DB {
     return out;
   }
 
-  _getDescriptions(foods) {}
-
-  (String, num, String) _createDescription(FoodModel food) =>
-      (food.description, food.descriptionLength, food.id);
+  (String, num, String) _createDescription(FoodModel food) {
+    dev.log('_createDescription', name: 'DB');
+    return (food.description, food.descriptionLength, food.id);
+  }
 }
 
 class DBException implements Exception {

@@ -56,7 +56,7 @@ class PrefixTree {
   /// Returns a list of strings that start with the prefix.
   /// If no matches are found, an empty list is returned.
   List<String?> searchByPrefix(String prefix) {
-    List<String> result = [];
+    List<String?> result = [];
     if (prefix.isEmpty) return result;
     PTNode? node = _findNode(prefix);
 
@@ -80,7 +80,7 @@ class PrefixTree {
   /// - [prefix]  The prefix to match.
   /// - [result]  The list to collect the matched words.
 
-  void _collectWords(PTNode? node, String prefix, List<String> result) {
+  void _collectWords(PTNode? node, String prefix, List<String?> result) {
     if (node == null) {
       return;
     }

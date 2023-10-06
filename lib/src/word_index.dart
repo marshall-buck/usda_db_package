@@ -50,14 +50,17 @@ class WordIndex {
   ///
   /// Returns [output].
   ///
-  Future<Set<String>> getIndexes(List<String> words) async {
+  Future<Set<String?>> getIndexes(List<String?> words) async {
     final Set<String> output = {};
-    for (final word in words) {
-      final indexes = _getIndexesForWord(word);
-      if (indexes.isNotEmpty) {
-        output.addAll(indexes);
+    if (words.isNotEmpty) {
+      for (final word in words) {
+        final indexes = _getIndexesForWord(word as String);
+        if (indexes.isNotEmpty) {
+          output.addAll(indexes);
+        }
       }
     }
+
     return output;
   }
 

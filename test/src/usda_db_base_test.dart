@@ -8,7 +8,8 @@ import 'package:usda_db/src/prefix_tree.dart';
 import 'package:usda_db/src/usda_db_base.dart';
 import 'package:usda_db/src/word_index.dart';
 
-import '../setup/mock_file_strings.dart';
+import '../setup/mock_db_file_strings.dart';
+// import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
 void main() {
@@ -22,11 +23,19 @@ void main() {
   });
   setUp(() async {
     when(() => mockFileLoaderService.loadData(pathToFoods))
-        .thenAnswer((_) async => testDB);
+        .thenAnswer((_) async => mocDB);
+
     when(() => mockFileLoaderService.loadData(pathToTree))
-        .thenAnswer((_) async => testTree);
+        .thenAnswer((_) async => mocTree);
+
     when(() => mockFileLoaderService.loadData(pathToWordIndex))
-        .thenAnswer((_) async => testIndex);
+        .thenAnswer((_) async => mocWordIndex);
+    // when(() => mockFileLoaderService.loadData(pathToFoods))
+    //     .thenAnswer((_) async => testDB);
+    // when(() => mockFileLoaderService.loadData(pathToTree))
+    //     .thenAnswer((_) async => testTree);
+    // when(() => mockFileLoaderService.loadData(pathToWordIndex))
+    //     .thenAnswer((_) async => testIndex);
   });
   tearDown(() {
     dbWithMockFileLoader.dispose();
