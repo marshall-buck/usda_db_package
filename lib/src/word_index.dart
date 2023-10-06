@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:usda_db/src/file_loader_service.dart';
+import 'dart:developer' as dev;
 
 class WordIndex {
   FileLoaderService fileLoader;
@@ -21,6 +22,9 @@ class WordIndex {
   Future<void> init(path) async {
     Map<String, List<String>> dbMap = await _loadData(path);
     _indexes = dbMap;
+    dev.log('init()',
+        name:
+            'WordIndex -  ${_indexes != null ? "success" : "indexes is null"}');
   }
 
   /// Disposes indexes.

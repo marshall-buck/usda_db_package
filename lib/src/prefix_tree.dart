@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 
 import 'package:usda_db/src/file_loader_service.dart';
 import 'package:usda_db/src/prefix_node.dart';
@@ -27,6 +28,8 @@ class PrefixTree {
   ///
   Future<void> init(String path) async {
     _root = await _loadData(path);
+    dev.log('init()',
+        name: 'PrefixTree -  ${_root != null ? "success" : "_root is null"}');
   }
 
   /// Dispose Tree

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:usda_db/src/file_loader_service.dart';
 import 'package:usda_db/src/food_model.dart';
+import 'dart:developer' as dev;
 
 class Foods {
   FileLoaderService fileLoader;
@@ -24,12 +25,16 @@ class Foods {
   Future<void> init(String path) async {
     Map<String, FoodModel> dbMap = await _loadData(path);
     _foodsList = dbMap;
+
+    dev.log('init()',
+        name:
+            'Foods -  ${_foodsList != null ? "success" : "foodList is null"}');
   }
 
   /// Dispose foodsList
   void dispose() => _foodsList = null;
 
-  Future<FoodModel?> getFood(String index) async => _foodsList?[index];
+  FoodModel? getFood(String index) => _foodsList?[index];
 
   /// Opens the  file.
   ///

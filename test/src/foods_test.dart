@@ -51,7 +51,7 @@ void main() async {
     group('getFood() -', () {
       test('returns correct food', () async {
         await foodsListWithMockLoader.init('fake');
-        final testFood = await foodsListWithMockLoader.getFood('167513');
+        final testFood = foodsListWithMockLoader.getFood('167513');
 
         expect(testFood?.id, '167513');
         expect(testFood?.description,
@@ -68,7 +68,7 @@ void main() async {
 
       test('returns correct food with missing nutrients', () async {
         await foodsListWithMockLoader.init('fake');
-        final testFood = await foodsListWithMockLoader.getFood('167514');
+        final testFood = foodsListWithMockLoader.getFood('167514');
 
         expect(testFood?.id, '167514');
         expect(testFood?.description,
@@ -83,7 +83,7 @@ void main() async {
         expect(testFood?.totSugars, 0);
       });
       test('returns null on bad index', () async {
-        final noFood = await foodsListWithMockLoader.getFood('bad index');
+        final noFood = foodsListWithMockLoader.getFood('bad index');
 
         expect(noFood, isNull);
       });

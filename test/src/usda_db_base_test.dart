@@ -82,7 +82,7 @@ void main() {
     group('getFood() - ', () {
       test('returns correct food', () async {
         await dbWithMockFileLoader.init();
-        final testFood = await dbWithMockFileLoader.getFood('167513');
+        final testFood = dbWithMockFileLoader.getFood('167513');
 
         expect(testFood?.id, '167513');
         expect(testFood?.description,
@@ -97,8 +97,8 @@ void main() {
         expect(testFood?.totSugars, 21.3);
       });
 
-      test('returns null on bad index', () async {
-        final noFood = await foodsListWithMockLoader.getFood('bad index');
+      test('returns null on bad index', () {
+        final noFood = foodsListWithMockLoader.getFood('bad index');
 
         expect(noFood, isNull);
       });
