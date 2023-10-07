@@ -2,7 +2,7 @@
 
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:usda_db/src/word_index.dart';
+import 'package:usda_db_package/src/word_index.dart';
 
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';

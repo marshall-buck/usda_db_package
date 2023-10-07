@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:usda_db/src/prefix_node.dart';
+import 'package:usda_db_package/src/prefix_node.dart';
 
 void main() {
   group('PTNode class tests', () {

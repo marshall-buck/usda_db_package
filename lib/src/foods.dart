@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:usda_db/src/file_loader_service.dart';
-import 'package:usda_db/src/food_model.dart';
 import 'dart:developer' as dev;
+
+import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/usda_db.dart';
 
 class Foods {
   FileLoaderService fileLoader;

@@ -1,20 +1,16 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:mocktail/mocktail.dart';
-import 'package:usda_db/src/file_loader_service.dart';
-import 'package:usda_db/src/foods.dart';
-import 'package:usda_db/src/prefix_tree.dart';
-import 'package:usda_db/src/word_index.dart';
-import 'package:usda_db/usda_db.dart';
+import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/foods.dart';
+import 'package:usda_db_package/src/prefix_tree.dart';
+import 'package:usda_db_package/src/usda_db_base.dart';
+import 'package:usda_db_package/src/word_index.dart';
 
 // Create a mock for FileLoaderService
 class MockFileLoaderService extends Mock implements FileLoaderService {}
 
-class MockFoodsList extends Mock implements Foods {
-  // @override
-  // FileLoaderService fileLoader;
-  // MockFoodsList(this.fileLoader);
-}
+class MockFoodsList extends Mock implements Foods {}
 
 class MockPrefixTree extends Mock implements PrefixTree {}
 
@@ -32,12 +28,6 @@ late final Foods foodsListWithMockLoader;
 late final WordIndex wordIndexWithMockLoader;
 late final PrefixTree prefixTreeWithMockLoader;
 late final DB dbWithMockFileLoader;
-
-// void setUp() {
-//   mockFileLoaderService = MockFileLoaderService();
-//   fileLoaderService = FileLoaderService();
-//   foodsListWithMockLoader = Foods(mockFileLoaderService);
-// }
 
 tear_down() {
   reset(mockFileLoaderService);

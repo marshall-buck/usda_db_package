@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:usda_db/src/food_model.dart';
+import 'package:usda_db_package/src/food_model.dart';
 
 void main() {
   group('Food Model class tests', () {

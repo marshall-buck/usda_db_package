@@ -1,10 +1,11 @@
-import 'package:usda_db/src/file_loader_service.dart';
-import 'package:usda_db/src/file_paths.dart';
-import 'package:usda_db/src/food_model.dart';
-import 'package:usda_db/src/foods.dart';
-import 'package:usda_db/src/prefix_tree.dart';
-import 'package:usda_db/src/word_index.dart';
 import 'dart:developer' as dev;
+
+import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/file_paths.dart';
+import 'package:usda_db_package/src/foods.dart';
+import 'package:usda_db_package/src/prefix_tree.dart';
+import 'package:usda_db_package/src/word_index.dart';
+import 'package:usda_db_package/usda_db.dart';
 
 class DB {
   FileLoaderService fileLoader;
@@ -65,7 +66,6 @@ class DB {
 
   Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
-  ///PUBLIC FUNCTIONS
   /// Gets one food from database and returns the FoodModel.
   FoodModel? getFood(String index) {
     if (_foods != null) {
@@ -140,9 +140,4 @@ class DBException implements Exception {
   String errorMessage;
   StackTrace? stackTrace;
   DBException(this.errorMessage, [this.stackTrace]);
-
-  // @override
-  // String toString() {
-  //   return 'DBException: $errorMessage\n$stackTrace';
-  // }
 }

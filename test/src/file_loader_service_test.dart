@@ -1,6 +1,7 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:usda_db/src/file_loader_service.dart';
+import 'package:usda_db_package/src/file_loader_service.dart';
+
 import '../setup/startup.dart';
 
 void main() {

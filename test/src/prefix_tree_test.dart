@@ -1,6 +1,6 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:usda_db/src/prefix_tree.dart';
+import 'package:usda_db_package/src/prefix_tree.dart';
 
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';

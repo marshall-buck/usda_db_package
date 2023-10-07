@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 
-import 'package:usda_db/src/file_loader_service.dart';
-import 'package:usda_db/src/prefix_node.dart';
+import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/prefix_node.dart';
 
 /// Class to load and search the Prefix Tree.
 

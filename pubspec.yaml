@@ -1,4 +1,4 @@
-name: usda_db
+name: usda_db_package
 description: A package to json-ize dth usda db.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
@@ -10,7 +10,6 @@ environment:
 dependencies:
   freezed: ^2.4.1
   freezed_annotation: ^2.4.1
-  # get_it: ^7.6.4
   json_annotation: ^4.8.1
 
 dev_dependencies:

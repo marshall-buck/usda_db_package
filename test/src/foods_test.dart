@@ -1,6 +1,6 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:usda_db/src/foods.dart';
+import 'package:usda_db_package/src/foods.dart';
 
 import '../setup/startup.dart';
 import '../setup/mock_file_strings.dart';

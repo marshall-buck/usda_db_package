@@ -1,12 +1,12 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:usda_db/src/file_paths.dart';
-import 'package:usda_db/src/foods.dart';
-import 'package:usda_db/src/prefix_tree.dart';
+import 'package:usda_db_package/src/file_paths.dart';
+import 'package:usda_db_package/src/foods.dart';
+import 'package:usda_db_package/src/prefix_tree.dart';
 
-import 'package:usda_db/src/usda_db_base.dart';
-import 'package:usda_db/src/word_index.dart';
+import 'package:usda_db_package/src/usda_db_base.dart';
+import 'package:usda_db_package/src/word_index.dart';
 
 import '../setup/mock_db_file_strings.dart';
 

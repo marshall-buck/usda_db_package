@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:usda_db/src/file_loader_service.dart';
 import 'dart:developer' as dev;
+
+import 'package:usda_db_package/src/file_loader_service.dart';
 
 class WordIndex {
   FileLoaderService fileLoader;
