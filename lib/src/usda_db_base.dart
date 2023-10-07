@@ -71,7 +71,7 @@ class DB {
     if (_foods != null) {
       return _foods?.getFood(index);
     }
-    throw DBException('The FoodsDB has not been initialized!');
+    throw DBException('The DB has not been initialized! properly');
   }
 
   /// Use to return a list of food descriptions from search term.
@@ -92,7 +92,7 @@ class DB {
     if (_prefixTree != null) {
       return _prefixTree!.searchByPrefix(term);
     }
-    throw DBException('The FoodsDB has not been initialized!');
+    throw DBException('The DB has not been initialized! properly');
   }
 
   /// Finds all indexes for a list of words.
@@ -101,7 +101,7 @@ class DB {
     if (_wordIndex != null) {
       return await _wordIndex!.getIndexes(words);
     }
-    throw DBException('The FoodsDB has not been initialized!');
+    throw DBException('The DB has not been initialized! properly');
   }
 
   /// Finds all foods from a list of indexes
@@ -116,17 +116,6 @@ class DB {
     }
     return out;
   }
-  // /// Finds all foods from a list of indexes
-  // Future<List<(String, num, String)>> _findAllFoods(indexes) async {
-  //   final List<(String, num, String)> out = [];
-  //   for (final index in indexes) {
-  //     final food = getFood(index);
-  //     if (food != null) {
-  //       out.add(_createDescription(food));
-  //     }
-  //   }
-  //   return out;
-  // }
 
   Future<List<(String, num, String)?>> _createDescriptions(
       List<FoodModel?> foods) async {
@@ -140,6 +129,7 @@ class DB {
     return out;
   }
 
+  /// Helper function to create a Record for the food description
   (String, num, String) _createDescription(FoodModel food) {
     dev.log('_createDescription', name: 'DB');
     return (food.description, food.descriptionLength, food.id);
@@ -151,8 +141,8 @@ class DBException implements Exception {
   StackTrace? stackTrace;
   DBException(this.errorMessage, [this.stackTrace]);
 
-  @override
-  String toString() {
-    return 'DBException: $errorMessage\n$stackTrace';
-  }
+  // @override
+  // String toString() {
+  //   return 'DBException: $errorMessage\n$stackTrace';
+  // }
 }

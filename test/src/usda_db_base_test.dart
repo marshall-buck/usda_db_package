@@ -9,7 +9,7 @@ import 'package:usda_db/src/usda_db_base.dart';
 import 'package:usda_db/src/word_index.dart';
 
 import '../setup/mock_db_file_strings.dart';
-// import '../setup/mock_file_strings.dart';
+
 import '../setup/startup.dart';
 
 void main() {
@@ -30,12 +30,6 @@ void main() {
 
     when(() => mockFileLoaderService.loadData(pathToWordIndex))
         .thenAnswer((_) async => mocWordIndex);
-    // when(() => mockFileLoaderService.loadData(pathToFoods))
-    //     .thenAnswer((_) async => testDB);
-    // when(() => mockFileLoaderService.loadData(pathToTree))
-    //     .thenAnswer((_) async => testTree);
-    // when(() => mockFileLoaderService.loadData(pathToWordIndex))
-    //     .thenAnswer((_) async => testIndex);
   });
   tearDown(() {
     dbWithMockFileLoader.dispose();
@@ -110,6 +104,47 @@ void main() {
         final noFood = foodsListWithMockLoader.getFood('bad index');
 
         expect(noFood, isNull);
+      });
+    });
+    group('getDescriptions() - ', () {
+      test('returns empty list with no matches', () async {
+        await dbWithMockFileLoader.init();
+        final res = await dbWithMockFileLoader.getDescriptions('');
+        expect(res, isEmpty);
+      });
+      test('returns expected matches', () async {
+        await dbWithMockFileLoader.init();
+        final expectedResult = [
+          (
+            'Pillsbury, Cinnamon Rolls with Icing, refrigerated dough',
+            56,
+            "167513"
+          ),
+          (
+            'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough',
+            81,
+            "167512"
+          )
+        ];
+        final res = await dbWithMockFileLoader.getDescriptions('pill');
+        expect(res.length, 2);
+        expect(res, expectedResult);
+
+        final res2 = await dbWithMockFileLoader.getDescriptions('bak');
+        expect(res2.length, 2);
+
+        final res3 = await dbWithMockFileLoader.getDescriptions('waffle');
+        expect(res3.length, 2);
+      });
+      test('throws if DB not initiated', () {
+        // expect(() async => await dbWithMockFileLoader.getDescriptions('term'),
+        //     throwsA(isA<DBException>()));
+        final expectedMessage = 'The DB has not been initialized! properly';
+
+        expect(
+            () async => await dbWithMockFileLoader.getDescriptions('term'),
+            throwsA(predicate(
+                (e) => e is DBException && e.errorMessage == expectedMessage)));
       });
     });
   });
