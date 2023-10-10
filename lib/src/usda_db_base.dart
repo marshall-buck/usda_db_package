@@ -38,7 +38,7 @@ class DB {
       dev.log('init() completed ', name: 'DB');
     } catch (e, st) {
       dev.log('init() error', name: 'DB', error: e, stackTrace: st);
-      throw DBException(e.toString(), st);
+      throw DBException(e, st);
     }
   }
 
@@ -138,7 +138,7 @@ class DB {
 }
 
 class DBException implements Exception {
-  String errorMessage;
+  Object errorMessage;
   StackTrace? stackTrace;
   DBException(this.errorMessage, [this.stackTrace]);
 }
