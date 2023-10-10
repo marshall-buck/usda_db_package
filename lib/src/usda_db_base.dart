@@ -24,6 +24,7 @@ class DB {
   static WordIndex? _wordIndex;
   static Foods? _foods;
 
+  /// Must be run to populate the database.
   Future<void> init() async {
     try {
       _prefixTree = PrefixTree(fileLoader);
