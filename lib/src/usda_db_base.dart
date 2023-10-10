@@ -37,8 +37,8 @@ class DB {
       ], eagerError: true);
       dev.log('init() completed ', name: 'DB');
     } catch (e, st) {
-      dev.log('init() error', name: 'DB', error: e, stackTrace: st);
-      throw DBException(e, st);
+      dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
+      throw DBException(e.toString(), st);
     }
   }
 
@@ -138,7 +138,13 @@ class DB {
 }
 
 class DBException implements Exception {
-  Object errorMessage;
-  StackTrace? stackTrace;
+  final String errorMessage;
+  final StackTrace? stackTrace;
+
   DBException(this.errorMessage, [this.stackTrace]);
+
+  @override
+  String toString() {
+    return 'DBException: $errorMessage\nStack Trace: $stackTrace';
+  }
 }
