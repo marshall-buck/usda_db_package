@@ -7,6 +7,10 @@ import 'package:usda_db_package/src/prefix_tree.dart';
 import 'package:usda_db_package/src/usda_db_base.dart';
 import 'package:usda_db_package/src/word_index.dart';
 
+import 'package:path/path.dart' as p;
+
+final pathToTestFile = p.join('lib', 'assets', 'text.txt');
+
 // Create a mock for FileLoaderService
 class MockFileLoaderService extends Mock implements FileLoaderService {}
 

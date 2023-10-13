@@ -18,7 +18,7 @@ void main() {
   group('FileLoaderService class tests', () {
     group('loadFile - ', () {
       test('loads real file correctly', () async {
-        final res = await fileLoaderService.loadData('lib/assets/text.txt');
+        final res = await fileLoaderService.loadData(pathToTestFile);
         expect(res, 'Here is a text file?');
       });
       test('mocks file correctly', () async {
