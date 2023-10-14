@@ -1,4 +1,4 @@
-import 'package:usda_db_package/usda_db.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 void main() async {
   final db = DB();

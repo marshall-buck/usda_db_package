@@ -4,7 +4,7 @@ import 'dart:math';
 import 'dart:developer' as dev;
 
 import 'package:usda_db_package/src/file_loader_service.dart';
-import 'package:usda_db_package/usda_db.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 class Foods {
   FileLoaderService fileLoader;

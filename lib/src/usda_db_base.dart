@@ -5,7 +5,7 @@ import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
 import 'package:usda_db_package/src/prefix_tree.dart';
 import 'package:usda_db_package/src/word_index.dart';
-import 'package:usda_db_package/usda_db.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 class DB {
   FileLoaderService fileLoader;
