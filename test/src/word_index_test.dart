@@ -1,7 +1,7 @@
 //import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/word_index.dart';
 
 import '../setup/mock_file_strings.dart';

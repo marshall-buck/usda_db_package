@@ -9,7 +9,7 @@ import 'package:usda_db_package/src/word_index.dart';
 
 import 'package:path/path.dart' as p;
 
-final pathToTestFile = p.join('lib', 'assets', 'text.txt');
+final pathToTestFile = p.join('assets', 'text.txt');
 
 // Create a mock for FileLoaderService
 class MockFileLoaderService extends Mock implements FileLoaderService {}

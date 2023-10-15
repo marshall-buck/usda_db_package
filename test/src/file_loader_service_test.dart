@@ -1,10 +1,12 @@
+import 'package:flutter/widgets.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/file_loader_service.dart';
 
 import '../setup/startup.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setUpAll(() {
     mockFileLoaderService = MockFileLoaderService();
     fileLoaderService = FileLoaderService();

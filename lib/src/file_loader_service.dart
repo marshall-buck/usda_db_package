@@ -1,4 +1,5 @@
-import 'dart:io';
+// import 'dart:io';
+import 'package:flutter/services.dart';
 
 class FileLoaderService {
   static final FileLoaderService _singleton = FileLoaderService._internal();
@@ -10,8 +11,10 @@ class FileLoaderService {
   FileLoaderService._internal();
 
   Future<String> loadData(String path) async {
-    final file = File(path);
+    // final file = File(path);
 
-    return await file.readAsString();
+    return await rootBundle.loadString(path);
+
+    // return await file.readAsString();
   }
 }
