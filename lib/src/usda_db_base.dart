@@ -135,6 +135,15 @@ class DB {
     dev.log('_createDescription', name: 'DB');
     return (food.description, food.descriptionLength, food.id);
   }
+
+  @override
+  String toString() {
+    return '''
+            PrefixTree:  ${_prefixTree?.root?.key} should be "l"
+            WordIndex: ${_wordIndex?.indexes?.length}  should be a number
+            FoodsDb: ${_foods?.foodsList?.length} should also be a number
+''';
+  }
 }
 
 class DBException implements Exception {
