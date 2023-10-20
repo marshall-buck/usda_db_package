@@ -139,9 +139,9 @@ class DB {
   @override
   String toString() {
     return '''
-            PrefixTree:  ${_prefixTree?.root?.key} should be "l"
-            WordIndex: ${_wordIndex?.indexes?.length}  should be a number
-            FoodsDb: ${_foods?.foodsList?.length} should also be a number
+            PrefixTree: ${_prefixTree?.root?.key} should be "l"
+            WordIndex: ${_wordIndex?.indexes?.length} should be a number
+            FoodsDb: ${_foods?.foodsList?.length} should be a number
 ''';
   }
 }

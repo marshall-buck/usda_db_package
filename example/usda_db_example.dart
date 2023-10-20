@@ -6,5 +6,5 @@ void main() async {
   await db.init();
   //
   final des = await db.getDescriptions('apple');
-  print(des.length);
+  print(des);
 }
