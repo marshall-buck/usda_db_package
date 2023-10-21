@@ -112,7 +112,7 @@ void main() {
         final res = await dbWithMockFileLoader.getDescriptions('');
         expect(res, isEmpty);
       });
-      test('returns expected matches', () async {
+      test('returns expected sorted matches', () async {
         await dbWithMockFileLoader.init();
         final expectedResult = [
           (
@@ -127,11 +127,20 @@ void main() {
           )
         ];
         final res = await dbWithMockFileLoader.getDescriptions('pill');
-        expect(res.length, 2);
+
         expect(res, expectedResult);
 
+        final expectedResult2 = [
+          ("George Weston Bakeries, Thomas English Muffins", 46, "167515"),
+          (
+            "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
+            64,
+            "167514"
+          )
+        ];
+
         final res2 = await dbWithMockFileLoader.getDescriptions('bak');
-        expect(res2.length, 2);
+        expect(res2, expectedResult2);
 
         final res3 = await dbWithMockFileLoader.getDescriptions('waffle');
         expect(res3.length, 2);

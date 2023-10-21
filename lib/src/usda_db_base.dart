@@ -127,6 +127,7 @@ class DB {
         out.add(_createDescription(food));
       }
     }
+    out.sort((a, b) => a.$2.compareTo(b.$2));
     return out;
   }
 
