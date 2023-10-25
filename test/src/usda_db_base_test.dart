@@ -109,7 +109,8 @@ void main() {
     group('getDescriptions() - ', () {
       test('returns empty list with no matches', () async {
         await dbWithMockFileLoader.init();
-        final res = await dbWithMockFileLoader.getDescriptions('');
+        final res =
+            await dbWithMockFileLoader.getDescriptions('bad description');
         expect(res, isEmpty);
       });
       test('returns expected sorted matches', () async {
