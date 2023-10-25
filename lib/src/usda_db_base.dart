@@ -4,10 +4,9 @@ import 'package:usda_db_package/src/file_loader_service.dart';
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
 import 'package:usda_db_package/src/prefix_tree.dart';
+
 import 'package:usda_db_package/src/word_index.dart';
 import 'package:usda_db_package/usda_db_package.dart';
-
-typedef SearchResultRecord = (String, num, String);
 
 class DB {
   FileLoaderService fileLoader;
@@ -143,17 +142,5 @@ class DB {
             WordIndex: ${_wordIndex?.indexes?.length} should be a number
             FoodsDb: ${_foods?.foodsList?.length} should be a number
 ''';
-  }
-}
-
-class DBException implements Exception {
-  final String errorMessage;
-  final StackTrace? stackTrace;
-
-  DBException(this.errorMessage, [this.stackTrace]);
-
-  @override
-  String toString() {
-    return 'DBException: $errorMessage\nStack Trace: $stackTrace';
   }
 }

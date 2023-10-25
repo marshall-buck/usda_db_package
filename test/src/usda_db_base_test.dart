@@ -1,5 +1,6 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:usda_db_package/src/exceptions.dart';
 
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';

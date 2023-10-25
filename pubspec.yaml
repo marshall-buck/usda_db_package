@@ -1,5 +1,5 @@
 name: usda_db_package
-description: A package to json-ize dth usda db.
+description: A package to json-ize the usda db.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 
