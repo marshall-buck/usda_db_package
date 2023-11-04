@@ -3,6 +3,7 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/file_loader_service.dart';
 import 'package:usda_db_package/src/foods.dart';
+import 'package:usda_db_package/src/hash_table.dart';
 import 'package:usda_db_package/src/prefix_tree.dart';
 import 'package:usda_db_package/src/usda_db_base.dart';
 import 'package:usda_db_package/src/word_index.dart';
@@ -32,6 +33,7 @@ late final Foods foodsListWithMockLoader;
 late final WordIndex wordIndexWithMockLoader;
 late final PrefixTree prefixTreeWithMockLoader;
 late final DB dbWithMockFileLoader;
+late final SubStringHash hashTableWithMockLoader;
 
 tear_down() {
   reset(mockFileLoaderService);
