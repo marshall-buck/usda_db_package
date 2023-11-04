@@ -51,7 +51,6 @@ class SubStringHash {
     _substrings = substrings;
   }
 
-  /// Converts a Map<String, dynamic> to Map<int, List<String>>.
   Future<Map<int, List<String>>> _parseIndexHash(
       Map<String, dynamic> jsonMap) async {
     Map<int, List<String>> convertedMap = jsonMap.map((key, value) {
@@ -69,5 +68,7 @@ class SubStringHash {
     return convertedMap;
   }
 
-  // List<String>? getIndexes(int hash) => hashTable?[hash];
+  int? getHashLookup(String term) => _substrings?[term];
+
+  List<String>? getIndexes(int hash) => _indexHash?[hash];
 }

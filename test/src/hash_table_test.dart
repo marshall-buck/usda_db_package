@@ -21,6 +21,17 @@ void main() {
       expect(hashTableWithMockLoader.indexHash?.length, 8);
       expect(hashTableWithMockLoader.substrings, isNotEmpty);
       expect(hashTableWithMockLoader.substrings?.length, 18);
+
+      final indexHashKeysAreInt =
+          // ignore: unnecessary_type_check
+          hashTableWithMockLoader.indexHash?.keys.every((k) => k is int);
+
+      expect(indexHashKeysAreInt, isTrue);
+      final substringValsAreInt =
+          // ignore: unnecessary_type_check
+          hashTableWithMockLoader.substrings?.values.every((v) => v is int);
+
+      expect(substringValsAreInt, isTrue);
     });
   });
 }
