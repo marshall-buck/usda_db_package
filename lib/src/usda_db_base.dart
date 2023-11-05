@@ -3,9 +3,10 @@ import 'dart:developer' as dev;
 import 'package:usda_db_package/src/file_loader_service.dart';
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
-import 'package:usda_db_package/src/prefix_tree.dart';
+// import 'package:usda_db_package/src/prefix_tree.dart';
+import 'package:usda_db_package/src/substring_hash.dart';
 
-import 'package:usda_db_package/src/word_index.dart';
+// import 'package:usda_db_package/src/word_index.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
 class DB {
@@ -21,25 +22,26 @@ class DB {
         FileLoaderService(); // Use the provided fileLoader or the default
     return _singleton;
   }
-  static PrefixTree? _prefixTree;
-  static WordIndex? _wordIndex;
+  // static PrefixTree? _prefixTree;
+  static SubStringHash? _substringHash;
+  // static WordIndex? _wordIndex;
   static Foods? _foods;
 
   /// Initialization Methods.
-  Future<void> _initTree() async => await _prefixTree!.init(pathToTree);
-  Future<void> _initWordIndex() async =>
-      await _wordIndex!.init(pathToWordIndex);
+  // Future<void> _initTree() async => await _prefixTree!.init(pathToTree);
+  Future<void> _initSubstringHash() async =>
+      await _substringHash!.init(pathToWordIndex);
   Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
   /// Must be run to populate the database.
   Future<void> init() async {
     try {
-      _prefixTree = PrefixTree(fileLoader);
-      _wordIndex = WordIndex(fileLoader);
+      // _prefixTree = PrefixTree(fileLoader);
+      _substringHash = SubStringHash(fileLoader);
       _foods = Foods(fileLoader);
       await Future.wait([
-        _initTree(),
-        _initWordIndex(),
+        // _initTree(),
+        _initSubstringHash(),
         _initFoods(),
       ], eagerError: true);
       dev.log('init() completed ', name: 'DB');
@@ -51,17 +53,17 @@ class DB {
 
   /// Call this method before disposing Consumer.
   void dispose() {
-    if (_prefixTree != null) {
-      _prefixTree!.dispose();
-      _prefixTree = null;
-    }
+    // if (_prefixTree != null) {
+    //   _prefixTree!.dispose();
+    //   _prefixTree = null;
+    // }
     if (_foods != null) {
       _foods!.dispose();
       _foods = null;
     }
-    if (_wordIndex != null) {
-      _wordIndex!.dispose();
-      _wordIndex = null;
+    if (_substringHash != null) {
+      _substringHash!.dispose();
+      _substringHash = null;
     }
 
     dev.log('dispose completed', name: 'DB');
@@ -78,9 +80,11 @@ class DB {
   /// Use to return a list of food descriptions from search term.
   /// Return List may be empty
   Future<List<SearchResultRecord>> getDescriptions(String term) async {
-    final List<String?> words = await _findAllWords(term);
-    if (words.isEmpty) return [];
-    final Set<String?> indexes = await _findAllIndexes(words);
+    if (_substringHash == null || _foods == null) {
+      throw DBException('The DB has not been initialized! properly');
+    }
+
+    final List<String?> indexes = await _findAllIndexes(term);
     final List<FoodModel?> foods = await _findAllFoods(indexes);
     final List<SearchResultRecord> descriptions =
         await _createSearchResultRecords(foods);
@@ -88,25 +92,25 @@ class DB {
   }
 
   /// Finds all words for a search term.
-  Future<List<String?>> _findAllWords(String term) async {
-    dev.log('_findAllWords', name: 'DB');
-    if (_prefixTree == null) {
-      throw DBException('The DB has not been initialized! properly');
-    }
-    return _prefixTree!.searchByPrefix(term);
-  }
+  // Future<List<String?>> _findAllWords(String term) async {
+  //   dev.log('_findAllWords', name: 'DB');
+  //   if (_prefixTree == null) {
+  //     throw DBException('The DB has not been initialized! properly');
+  //   }
+  //   return _prefixTree!.searchByPrefix(term);
+  // }
 
-  /// Finds all indexes for a list of words.
-  Future<Set<String?>> _findAllIndexes(List<String?> words) async {
+  /// Return all indexes for a list of words.
+  Future<List<String>> _findAllIndexes(String term) async {
     dev.log('_findAllIndexes', name: 'DB');
-    if (_wordIndex == null) {
-      throw DBException('The DB has not been initialized! properly');
-    }
-    return await _wordIndex!.getIndexes(words);
+    final int hash = await _substringHash!.getHashLookup(term);
+    if (hash == -1) return [];
+
+    return await _substringHash!.getIndexes(hash);
   }
 
   /// Finds all foods from a list of indexes
-  Future<List<FoodModel?>> _findAllFoods(Set<String?> indexes) async {
+  Future<List<FoodModel?>> _findAllFoods(List<String?> indexes) async {
     dev.log('_findAllFoods', name: 'DB');
     final List<FoodModel?> out = [];
     for (final index in indexes) {
@@ -136,11 +140,6 @@ class DB {
   }
 
   @override
-  String toString() {
-    return '''
-            PrefixTree: ${_prefixTree?.root?.key} should be "l"
-            WordIndex: ${_wordIndex?.indexes?.length} should be a number
-            FoodsDb: ${_foods?.foodsList?.length} should be a number
-''';
-  }
+  String toString() =>
+      'FoodsDb: ${_foods?.foodsList?.length} should be a number';
 }
