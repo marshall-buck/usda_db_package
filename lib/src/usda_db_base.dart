@@ -22,25 +22,23 @@ class DB {
         FileLoaderService(); // Use the provided fileLoader or the default
     return _singleton;
   }
-  // static PrefixTree? _prefixTree;
+
   static SubStringHash? _substringHash;
-  // static WordIndex? _wordIndex;
+
   static Foods? _foods;
 
   /// Initialization Methods.
-  // Future<void> _initTree() async => await _prefixTree!.init(pathToTree);
+
   Future<void> _initSubstringHash() async =>
-      await _substringHash!.init(pathToWordIndex);
+      await _substringHash!.init(pathToSubstringHash);
   Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
   /// Must be run to populate the database.
   Future<void> init() async {
     try {
-      // _prefixTree = PrefixTree(fileLoader);
       _substringHash = SubStringHash(fileLoader);
       _foods = Foods(fileLoader);
       await Future.wait([
-        // _initTree(),
         _initSubstringHash(),
         _initFoods(),
       ], eagerError: true);
@@ -53,10 +51,6 @@ class DB {
 
   /// Call this method before disposing Consumer.
   void dispose() {
-    // if (_prefixTree != null) {
-    //   _prefixTree!.dispose();
-    //   _prefixTree = null;
-    // }
     if (_foods != null) {
       _foods!.dispose();
       _foods = null;
@@ -90,15 +84,6 @@ class DB {
         await _createSearchResultRecords(foods);
     return descriptions;
   }
-
-  /// Finds all words for a search term.
-  // Future<List<String?>> _findAllWords(String term) async {
-  //   dev.log('_findAllWords', name: 'DB');
-  //   if (_prefixTree == null) {
-  //     throw DBException('The DB has not been initialized! properly');
-  //   }
-  //   return _prefixTree!.searchByPrefix(term);
-  // }
 
   /// Return all indexes for a list of words.
   Future<List<String>> _findAllIndexes(String term) async {

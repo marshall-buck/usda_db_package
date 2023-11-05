@@ -4,10 +4,8 @@ import 'package:usda_db_package/src/exceptions.dart';
 
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
-import 'package:usda_db_package/src/prefix_tree.dart';
 
 import 'package:usda_db_package/src/usda_db_base.dart';
-import 'package:usda_db_package/src/word_index.dart';
 
 import '../setup/mock_db_file_strings.dart';
 
@@ -18,8 +16,7 @@ void main() {
     mockFileLoaderService = MockFileLoaderService();
     dbWithMockFileLoader = DB(fileLoader: mockFileLoaderService);
     foodsListWithMockLoader = Foods(mockFileLoaderService);
-    prefixTreeWithMockLoader = PrefixTree(mockFileLoaderService);
-    wordIndexWithMockLoader = WordIndex(mockFileLoaderService);
+
     mockFoods = MockFoodsList();
   });
   setUp(() async {
@@ -74,12 +71,9 @@ void main() {
         await dbWithMockFileLoader.init();
         verify(() => mockFileLoaderService.loadData(any())).called(3);
         expect(foodsListWithMockLoader.foodsList, isNotNull);
-        expect(prefixTreeWithMockLoader.root, isNotNull);
-        expect(wordIndexWithMockLoader.indexes, isNotNull);
+
         dbWithMockFileLoader.dispose();
         expect(foodsListWithMockLoader.foodsList, isNull);
-        expect(prefixTreeWithMockLoader.root, isNull);
-        expect(wordIndexWithMockLoader.indexes, isNull);
       });
     });
 
