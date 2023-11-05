@@ -12,7 +12,7 @@ void main() {
   });
   setUp(() async {
     when(() => mockFileLoaderService.loadData('fake'))
-        .thenAnswer((_) async => testHashTable);
+        .thenAnswer((_) async => mocHashTable);
   });
   group('init() -', () {
     test('Loads file correctly', () async {

@@ -7,10 +7,10 @@ import 'package:usda_db_package/src/foods.dart';
 
 import 'package:usda_db_package/src/usda_db_base.dart';
 
-import '../setup/mock_db_file_strings.dart';
-
+import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
+//TODO: Test for Hash Tables
 void main() {
   setUpAll(() {
     mockFileLoaderService = MockFileLoaderService();
@@ -22,12 +22,6 @@ void main() {
   setUp(() async {
     when(() => mockFileLoaderService.loadData(pathToFoods))
         .thenAnswer((_) async => mocDB);
-
-    when(() => mockFileLoaderService.loadData(pathToTree))
-        .thenAnswer((_) async => mocTree);
-
-    when(() => mockFileLoaderService.loadData(pathToWordIndex))
-        .thenAnswer((_) async => mocWordIndex);
   });
   tearDown(() {
     dbWithMockFileLoader.dispose();

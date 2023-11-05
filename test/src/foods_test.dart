@@ -12,7 +12,7 @@ void main() async {
   });
   setUp(() async {
     when(() => mockFileLoaderService.loadData('fake'))
-        .thenAnswer((_) async => testDB);
+        .thenAnswer((_) async => mocDB);
   });
   tearDown(() => tear_down());
   group('Foods class tests - ', () {
@@ -27,7 +27,7 @@ void main() async {
       test('Loads file correctly', () async {
         await foodsListWithMockLoader.init('fake');
         expect(foodsListWithMockLoader.foodsList, isNotEmpty);
-        expect(foodsListWithMockLoader.foodsList?.length, 5);
+        expect(foodsListWithMockLoader.foodsList?.length, 6);
         expect(foodsListWithMockLoader.foodsList?.entries.first.value.id,
             foodsListWithMockLoader.foodsList?.entries.first.key);
         expect(foodsListWithMockLoader.foodsList?.entries.first.value.calories,

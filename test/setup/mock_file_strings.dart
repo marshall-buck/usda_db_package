@@ -1,196 +1,6 @@
 // cSpell: disable
-const testTree = '''
-{
-    "root": {
-        "key": "a",
-        "isEnd": false,
-        "left": null,
-        "middle": {
-            "key": "l",
-            "isEnd": false,
-            "left": null,
-            "middle": {
-                "key": "i",
-                "isEnd": true,
-                "left": null,
-                "middle": {
-                    "key": "c",
-                    "isEnd": false,
-                    "left": null,
-                    "middle": {
-                        "key": "e",
-                        "isEnd": true,
-                        "left": null,
-                        "middle": null,
-                        "right": null
-                    },
-                    "right": null
-                },
-                "right": null
-            },
-            "right": {
-                "key": "n",
-                "isEnd": false,
-                "left": null,
-                "middle": {
-                    "key": "n",
-                    "isEnd": false,
-                    "left": null,
-                    "middle": {
-                        "key": "a",
-                        "isEnd": true,
-                        "left": null,
-                        "middle": null,
-                        "right": null
-                    },
-                    "right": null
-                },
-                "right": null
-            }
-        },
-        "right": {
-            "key": "e",
-            "isEnd": false,
-            "left": null,
-            "middle": {
-                "key": "l",
-                "isEnd": false,
-                "left": null,
-                "middle": {
-                    "key": "i",
-                    "isEnd": false,
-                    "left": null,
-                    "middle": {
-                        "key": "a",
-                        "isEnd": false,
-                        "left": null,
-                        "middle": {
-                            "key": "s",
-                            "isEnd": true,
-                            "left": null,
-                            "middle": null,
-                            "right": null
-                        },
-                        "right": {
-                            "key": "z",
-                            "isEnd": false,
-                            "left": null,
-                            "middle": {
-                                "key": "a",
-                                "isEnd": true,
-                                "left": null,
-                                "middle": null,
-                                "right": null
-                            },
-                            "right": null
-                        }
-                    },
-                    "right": null
-                },
-                "right": null
-            },
-            "right": null
-        }
-    }
-}
-''';
-const testIndex = '''
-{
-    "abalone": [
-        "174212",
-        "174213"
-    ],
-    "abbott": [
-        "167727",
-        "168971",
-        "170988",
-        "171382",
-        "171383",
-        "171384",
-        "171395",
-        "171396",
-        "171397",
-        "171399",
-        "172307",
-        "172310",
-        "172312",
-        "172313",
-        "172318",
-        "172323",
-        "172324",
-        "172325",
-        "172326",
-        "173167",
-        "173541",
-        "173542",
-        "173543",
-        "173546",
-        "173550",
-        "173558",
-        "173559",
-        "173560",
-        "173561",
-        "174813",
-        "174823"
-    ],
-    "abiyuch": [
-        "167782"
-    ],
-    "acai": [
-        "173175",
-        "174170"
-    ],
-    "acerola": [
-        "171686",
-        "171687"
-    ],
-    "acid": [
-        "167771",
-        "167772",
-        "167775",
-        "167784",
-        "167800",
-        "168185",
-        "168186",
-        "168187",
-        "168188",
-        "168197",
-        "168198",
-        "168207",
-        "169117",
-        "169691",
-        "169940",
-        "169947",
-        "170862",
-        "170885",
-        "170944",
-        "170945",
-        "170946",
-        "170983",
-        "171262",
-        "171264",
-        "171281",
-        "171339",
-        "171377",
-        "171695",
-        "171704",
-        "171870",
-        "171918",
-        "172950",
-        "173041",
-        "173042",
-        "173933",
-        "173934",
-        "173935",
-        "174301"
-    ],
-    "fake": [
-        "174212"
-    ]
-}
-''';
 
-const testDB = '''
+const mocDB = '''
 {
     "167512": {
         "description": "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",
@@ -241,10 +51,21 @@ const testDB = '''
         "Total Sugars": 4.3,
         "Total Fat": 9.22,
         "Total Carbs": 41.0
+    },
+    "167517": {
+        "description": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
+        "descriptionLength": 50,
+        "Saturated Fat": 2.28,
+        "Total Fat": 9.49,
+        "Total Carbs": 48.4,
+        "Calories": 309,
+        "Total Sugars": 4.41,
+        "Protein": 7.42,
+        "Dietary Fiber": 2.6
     }
 }
 ''';
-const testHashTable = '''
+const mocHashTable = '''
 {
    "substrings": {
         "aab": 0,
