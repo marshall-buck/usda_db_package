@@ -34,4 +34,48 @@ void main() {
       expect(substringValsAreInt, isTrue);
     });
   });
+  group('getHashLookup() -', () {
+    test('Returns correct number', () async {
+      await substringHashWithMockLoader.init('fake');
+      final aab = await substringHashWithMockLoader.getHashLookup('aab');
+      expect(aab, 0);
+      final abapple =
+          await substringHashWithMockLoader.getHashLookup('abapple');
+      expect(abapple, 6);
+    });
+    test('Returns -1 on no term', () async {
+      await substringHashWithMockLoader.init('fake');
+      final noTerm = await substringHashWithMockLoader.getHashLookup('noTerm');
+      expect(noTerm, -1);
+    });
+  });
+  group('getIndexes() -', () {
+    test('Returns correct List', () async {
+      await substringHashWithMockLoader.init('fake');
+      final aab = await substringHashWithMockLoader.getIndexes(0);
+      expect(aab, ["170381", "170382"]);
+      final aba = await substringHashWithMockLoader.getIndexes(2);
+      expect(aba, [
+        "168196",
+        "168454",
+        "168455",
+        "169093",
+        "169232",
+        "169233",
+        "169353",
+        "169400",
+        "170528",
+        "171428",
+        "171721",
+        "174212",
+        "174213",
+        "174528"
+      ]);
+    });
+    test('Returns [] on no hash', () async {
+      await substringHashWithMockLoader.init('fake');
+      final noTerm = await substringHashWithMockLoader.getIndexes(22);
+      expect(noTerm, []);
+    });
+  });
 }
