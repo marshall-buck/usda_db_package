@@ -11,6 +11,7 @@ import 'package:usda_db_package/usda_db_package.dart';
 
 class DB {
   FileLoaderService fileLoader;
+
   static final DB _singleton = DB._internal();
 
   DB._internal({FileLoaderService? fileLoader})
@@ -51,14 +52,10 @@ class DB {
 
   /// Call this method before disposing Consumer.
   void dispose() {
-    if (_foods != null) {
-      _foods!.dispose();
-      _foods = null;
-    }
-    if (_substringHash != null) {
-      _substringHash!.dispose();
-      _substringHash = null;
-    }
+    _foods?.dispose();
+    _substringHash?.dispose();
+    _foods = null;
+    _substringHash = null;
 
     dev.log('dispose completed', name: 'DB');
   }

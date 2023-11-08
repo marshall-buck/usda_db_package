@@ -12,7 +12,9 @@ class Foods {
   Map<String, FoodModel>? get foodsList => _foodsList;
 
   static final Foods _singleton = Foods._internal();
+
   Foods._internal() : fileLoader = FileLoaderService();
+
   factory Foods(FileLoaderService fileLoader) {
     _singleton.fileLoader = fileLoader;
     return _singleton;

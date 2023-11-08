@@ -20,7 +20,7 @@ class MockFoodsList extends Mock implements Foods {}
 class MockSubStringHash extends Mock implements SubStringHash {}
 
 // Instantiate a mock object
-late final FileLoaderService mockFileLoaderService;
+late final MockFileLoaderService mockFileLoaderService;
 late final Foods mockFoods;
 
 late final SubStringHash substringHashWithMockLoader;
@@ -30,7 +30,6 @@ late final FileLoaderService fileLoaderService;
 late final Foods foodsListWithMockLoader;
 
 late final DB dbWithMockFileLoader;
-// late final SubStringHash hashTableWithMockLoader;
 
 tear_down() {
   reset(mockFileLoaderService);

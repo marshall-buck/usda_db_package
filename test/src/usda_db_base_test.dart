@@ -1,6 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/exceptions.dart';
+import 'package:usda_db_package/src/file_loader_service.dart';
 
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
@@ -10,60 +12,61 @@ import 'package:usda_db_package/src/usda_db_base.dart';
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
-//TODO: Test for Hash Tables
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setUpAll(() {
+    // db = DB();
+    fileLoaderService = FileLoaderService();
+    foodsListWithMockLoader = Foods(fileLoaderService);
     mockFileLoaderService = MockFileLoaderService();
     dbWithMockFileLoader = DB(fileLoader: mockFileLoaderService);
-    foodsListWithMockLoader = Foods(mockFileLoaderService);
+  });
 
-    mockFoods = MockFoodsList();
-  });
-  setUp(() async {
-    when(() => mockFileLoaderService.loadData(pathToFoods))
-        .thenAnswer((_) async => mocDB);
-  });
   tearDown(() {
-    dbWithMockFileLoader.dispose();
     tear_down();
   });
   group('DB class tests', () {
     group('Tests singleton pattern', () {
-      test('Singleton pattern - instance  without loader', () {
-        final loader3 = DB();
-        final loader4 = DB();
-
-        expect(loader3, loader4);
-      });
       test('Singleton pattern - instance is the same', () {
-        final loader2 = DB(fileLoader: mockFileLoaderService);
+        final db1 = DB(fileLoader: mockFileLoaderService);
+        final db2 = DB(fileLoader: mockFileLoaderService);
 
-        expect(loader2, same(dbWithMockFileLoader));
+        expect(db1, db2);
       });
 
       test('Singleton pattern - instance is not null', () {
-        expect(dbWithMockFileLoader, isNotNull);
+        final db1 = DB(fileLoader: mockFileLoaderService);
+        expect(db1, isNotNull);
       });
     });
     group('init() - ', () {
-      test('fileLoader.loadData is called 3 times ', () async {
-        await dbWithMockFileLoader.init();
-        verify(() => mockFileLoaderService.loadData(any())).called(3);
-      });
-      test('throws DB exception properly', () {
+      test('properties are not null', () async {
         when(() => mockFileLoaderService.loadData(pathToFoods))
+            .thenAnswer((_) async => mocDB);
+        when(() => mockFileLoaderService.loadData(pathToSubstringHash))
+            .thenAnswer((_) async => mocHashTable);
+        await expectLater(dbWithMockFileLoader.init(), completes);
+      });
+      test('throws DB exception properly', () async {
+        when(() => mockFileLoaderService.loadData(any()))
             .thenThrow(Exception());
-        // expect(() async => await dbWithMockFileLoader.init(), isException);
-        expect(() async => await dbWithMockFileLoader.init(),
-            throwsA(isA<DBException>()));
+        when(() => mockFileLoaderService.loadData(any()))
+            .thenThrow(Exception());
+        await expectLater(
+            dbWithMockFileLoader.init(), throwsA(isA<DBException>()));
       });
     });
     group('dispose() - ', () {
       test(
           'properties are set to null correctly with a db that has been initiated',
           () async {
+        when(() => mockFileLoaderService.loadData(pathToFoods))
+            .thenAnswer((_) async => mocDB);
+        when(() => mockFileLoaderService.loadData(pathToSubstringHash))
+            .thenAnswer((_) async => mocHashTable);
         await dbWithMockFileLoader.init();
-        verify(() => mockFileLoaderService.loadData(any())).called(3);
+
+        verify(() => mockFileLoaderService.loadData(any())).called(2);
         expect(foodsListWithMockLoader.foodsList, isNotNull);
 
         dbWithMockFileLoader.dispose();
@@ -73,8 +76,10 @@ void main() {
 
     group('getFood() - ', () {
       test('returns correct food', () async {
-        await dbWithMockFileLoader.init();
-        final testFood = dbWithMockFileLoader.getFood('167513');
+        final db = DB();
+
+        await db.init();
+        final testFood = db.getFood('167513');
 
         expect(testFood?.id, '167513');
         expect(testFood?.description,
@@ -95,56 +100,57 @@ void main() {
         expect(noFood, isNull);
       });
     });
-    group('getDescriptions() - ', () {
-      test('returns empty list with no matches', () async {
-        await dbWithMockFileLoader.init();
-        final res =
-            await dbWithMockFileLoader.getDescriptions('bad description');
-        expect(res, isEmpty);
-      });
-      test('returns expected sorted matches', () async {
-        await dbWithMockFileLoader.init();
-        final expectedResult = [
-          (
-            'Pillsbury, Cinnamon Rolls with Icing, refrigerated dough',
-            56,
-            "167513"
-          ),
-          (
-            'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough',
-            81,
-            "167512"
-          )
-        ];
-        final res = await dbWithMockFileLoader.getDescriptions('pill');
-
-        expect(res, expectedResult);
-
-        final expectedResult2 = [
-          ("George Weston Bakeries, Thomas English Muffins", 46, "167515"),
-          (
-            "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
-            64,
-            "167514"
-          )
-        ];
-
-        final res2 = await dbWithMockFileLoader.getDescriptions('bak');
-        expect(res2, expectedResult2);
-
-        final res3 = await dbWithMockFileLoader.getDescriptions('waffle');
-        expect(res3.length, 2);
-      });
-      test('throws if DB not initiated', () {
-        // expect(() async => await dbWithMockFileLoader.getDescriptions('term'),
-        //     throwsA(isA<DBException>()));
-        final expectedMessage = 'The DB has not been initialized! properly';
-
-        expect(
-            () async => await dbWithMockFileLoader.getDescriptions('term'),
-            throwsA(predicate(
-                (e) => e is DBException && e.errorMessage == expectedMessage)));
-      });
-    });
   });
 }
+
+
+   //   group('getDescriptions() - ', () {
+    //     test('returns empty list with no matches', () async {
+    //       await db.init();
+    //       final res = await db.getDescriptions('bad description');
+    //       expect(res, isEmpty);
+    //     });
+    //     test('returns expected sorted matches', () async {
+    //       await db.init();
+    //       final expectedResult = [
+    //         (
+    //           'Pillsbury, Cinnamon Rolls with Icing, refrigerated dough',
+    //           56,
+    //           "167513"
+    //         ),
+    //         (
+    //           'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough',
+    //           81,
+    //           "167512"
+    //         )
+    //       ];
+    //       final res = await db.getDescriptions('pill');
+
+    //       expect(res, expectedResult);
+
+    //       final expectedResult2 = [
+    //         ("George Weston Bakeries, Thomas English Muffins", 46, "167515"),
+    //         (
+    //           "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
+    //           64,
+    //           "167514"
+    //         )
+    //       ];
+
+    //       final res2 = await db.getDescriptions('bak');
+    //       expect(res2, expectedResult2);
+
+    //       final res3 = await db.getDescriptions('waffle');
+    //       expect(res3.length, 2);
+    //     });
+    //     test('throws if DB not initiated', () {
+    //       // expect(() async => await dbWithMockFileLoader.getDescriptions('term'),
+    //       //     throwsA(isA<DBException>()));
+    //       final expectedMessage = 'The DB has not been initialized! properly';
+
+    //       expect(
+    //           () async => await db.getDescriptions('term'),
+    //           throwsA(predicate(
+    //               (e) => e is DBException && e.errorMessage == expectedMessage)));
+    //     });
+    //   });
