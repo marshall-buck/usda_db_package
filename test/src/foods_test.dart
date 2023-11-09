@@ -1,14 +1,12 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usda_db_package/src/foods.dart';
 
 import '../setup/startup.dart';
 import '../setup/mock_file_strings.dart';
 
 void main() async {
   setUpAll(() {
-    mockFileLoaderService = MockFileLoaderService();
-    foodsListWithMockLoader = Foods(mockFileLoaderService);
+    set_up_all();
   });
   setUp(() async {
     when(() => mockFileLoaderService.loadData('fake'))
@@ -16,13 +14,6 @@ void main() async {
   });
   tearDown(() => tear_down());
   group('Foods class tests - ', () {
-    group('Tests singleton pattern', () {
-      test('Singleton pattern - instance is the same', () {
-        final loader2 = Foods(mockFileLoaderService);
-
-        expect(loader2, same(foodsListWithMockLoader));
-      });
-    });
     group('init() -', () {
       test('Loads file correctly', () async {
         await foodsListWithMockLoader.init('fake');

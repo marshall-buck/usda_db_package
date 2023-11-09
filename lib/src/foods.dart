@@ -11,14 +11,7 @@ class Foods {
   Map<String, FoodModel>? _foodsList;
   Map<String, FoodModel>? get foodsList => _foodsList;
 
-  static final Foods _singleton = Foods._internal();
-
-  Foods._internal() : fileLoader = FileLoaderService();
-
-  factory Foods(FileLoaderService fileLoader) {
-    _singleton.fileLoader = fileLoader;
-    return _singleton;
-  }
+  Foods(this.fileLoader);
 
   /// Initializes the instance
   ///
