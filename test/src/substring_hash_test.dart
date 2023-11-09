@@ -1,19 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:usda_db_package/src/substring_hash.dart';
 
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
 void main() {
   setUpAll(() {
-    mockFileLoaderService = MockFileLoaderService();
-    substringHashWithMockLoader = SubStringHash(mockFileLoaderService);
+    set_up_all();
   });
   setUp(() async {
     when(() => mockFileLoaderService.loadData('fake'))
         .thenAnswer((_) async => mocHashTable);
   });
+  tearDown(() => tear_down());
   group('init() -', () {
     test('Loads file correctly', () async {
       await substringHashWithMockLoader.init('fake');
@@ -32,6 +31,16 @@ void main() {
           substringHashWithMockLoader.substrings?.values.every((v) => v is int);
 
       expect(substringValsAreInt, isTrue);
+    });
+  });
+  group('dispose() -', () {
+    test('disposes list correctly', () async {
+      await substringHashWithMockLoader.init('fake');
+      expect(substringHashWithMockLoader.indexHash, isNotNull);
+      expect(substringHashWithMockLoader.substrings, isNotNull);
+      substringHashWithMockLoader.dispose();
+      expect(substringHashWithMockLoader.indexHash, isNull);
+      expect(substringHashWithMockLoader.substrings, isNull);
     });
   });
   group('getHashLookup() -', () {

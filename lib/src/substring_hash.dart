@@ -8,15 +8,11 @@ class SubStringHash {
 
   Map<String, int>? _substrings;
   Map<String, int>? get substrings => _substrings;
+
   Map<int, List<String>>? _indexHash;
   Map<int, List<String>>? get indexHash => _indexHash;
 
-  static final SubStringHash _singleton = SubStringHash._internal();
-  SubStringHash._internal() : fileLoader = FileLoaderService();
-  factory SubStringHash(FileLoaderService fileLoader) {
-    _singleton.fileLoader = fileLoader;
-    return _singleton;
-  }
+  SubStringHash(this.fileLoader);
 
   /// Populates [_hashTable]
   ///
