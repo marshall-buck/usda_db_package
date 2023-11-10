@@ -3,10 +3,9 @@ import 'dart:developer' as dev;
 import 'package:usda_db_package/src/file_loader_service.dart';
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
-// import 'package:usda_db_package/src/prefix_tree.dart';
+
 import 'package:usda_db_package/src/substring_hash.dart';
 
-// import 'package:usda_db_package/src/word_index.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
 class DB {
@@ -17,7 +16,7 @@ class DB {
   DB({FileLoaderService? fileLoader})
       : fileLoader = fileLoader ?? FileLoaderService();
 
-  /// Initialization Methods.
+  // Initialization Methods.
 
   /// Must be run to populate the database.
   Future<void> init() async {

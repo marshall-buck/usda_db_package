@@ -6,6 +6,7 @@ import 'dart:developer' as dev;
 import 'package:usda_db_package/src/file_loader_service.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
+/// Class to handle the main foods database.
 class Foods {
   FileLoaderService fileLoader;
   Map<String, FoodModel>? _foodsList;

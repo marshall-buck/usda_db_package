@@ -17,9 +17,9 @@ void main() {
     test('Loads file correctly', () async {
       await substringHashWithMockLoader.init('fake');
       expect(substringHashWithMockLoader.indexHash, isNotEmpty);
-      expect(substringHashWithMockLoader.indexHash?.length, 8);
+      expect(substringHashWithMockLoader.indexHash?.length, 10);
       expect(substringHashWithMockLoader.substrings, isNotEmpty);
-      expect(substringHashWithMockLoader.substrings?.length, 18);
+      expect(substringHashWithMockLoader.substrings?.length, 20);
 
       final indexHashKeysAreInt =
           // ignore: unnecessary_type_check

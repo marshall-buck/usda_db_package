@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:usda_db_package/src/file_loader_service.dart';
 import 'dart:developer' as dev;
 
+/// Class to handle substring hash db.
 class SubStringHash {
   FileLoaderService fileLoader;
 
@@ -47,6 +48,7 @@ class SubStringHash {
     _substrings = substrings;
   }
 
+  /// Parses the indexHash part of the json string to the [_indexHash] property
   Future<Map<int, List<String>>> _parseIndexHash(
       Map<String, dynamic> jsonMap) async {
     Map<int, List<String>> convertedMap = jsonMap.map((key, value) {
@@ -56,6 +58,7 @@ class SubStringHash {
     return convertedMap;
   }
 
+  /// Parses the indexHash part of the json string to the [_substrings] property
   Future<Map<String, int>> _parseSubstrings(
       Map<String, dynamic> jsonMap) async {
     Map<String, int> convertedMap = jsonMap.map((key, value) {

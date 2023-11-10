@@ -1,4 +1,3 @@
-// import 'dart:io';
 import 'package:flutter/services.dart';
 
 /// Class to load the rootBundle file.  It only has one method,

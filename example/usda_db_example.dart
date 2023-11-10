@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'package:usda_db_package/usda_db_package.dart';
 
+final db = DB();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final db = DB();
+
   await db.init();
   runApp(const AutocompleteExampleApp());
 }
@@ -14,7 +16,6 @@ void main() async {
 class AutocompleteBasicUserExample extends StatelessWidget {
   AutocompleteBasicUserExample({super.key});
   static late final List<SearchResultRecord> results;
-  static final db = DB();
 
   static String _displayStringForOption(SearchResultRecord option) => option.$1;
 
@@ -32,12 +33,14 @@ class AutocompleteBasicUserExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Autocomplete<SearchResultRecord>(
-      displayStringForOption: _displayStringForOption,
-      optionsBuilder: _optionsBuilder,
-      onSelected: (SearchResultRecord selection) {
-        debugPrint('You just selected ${_displayStringForOption(selection)}');
-      },
+    return Scaffold(
+      body: Autocomplete<SearchResultRecord>(
+        displayStringForOption: _displayStringForOption,
+        optionsBuilder: _optionsBuilder,
+        onSelected: (SearchResultRecord selection) {
+          debugPrint('You just selected ${_displayStringForOption(selection)}');
+        },
+      ),
     );
   }
 }
