@@ -85,8 +85,9 @@ const mocHashTable = '''
         "abappl": 6,
         "abapple": 6,
         "abapples": 6,
-        "abar": 7
-
+        "abar": 7,
+        "ill": 8,
+        "ake": 9
         },
 
          "indexHash": {
@@ -131,6 +132,14 @@ const mocHashTable = '''
         ],
         "7": [
             "169400"
+        ],
+        "8": [
+          "167512",
+          "167513"
+        ],
+        "9": [
+          "167514",
+          "167515"
         ]
 
       }

@@ -33,4 +33,15 @@ late final DB dbWithMockFileLoader;
 
 tear_down() {
   reset(mockFileLoaderService);
+  foodsListWithMockLoader.dispose();
+  substringHashWithMockLoader.dispose();
+  dbWithMockFileLoader.dispose();
+}
+
+set_up_all() {
+  mockFileLoaderService = MockFileLoaderService();
+  fileLoaderService = FileLoaderService();
+  foodsListWithMockLoader = Foods(mockFileLoaderService);
+  substringHashWithMockLoader = SubStringHash(mockFileLoaderService);
+  dbWithMockFileLoader = DB(fileLoader: mockFileLoaderService);
 }

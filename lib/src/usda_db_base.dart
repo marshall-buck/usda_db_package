@@ -11,28 +11,13 @@ import 'package:usda_db_package/usda_db_package.dart';
 
 class DB {
   FileLoaderService fileLoader;
+  SubStringHash? _substringHash;
+  Foods? _foods;
 
-  static final DB _singleton = DB._internal();
-
-  DB._internal({FileLoaderService? fileLoader})
-      : fileLoader = fileLoader ??
-            FileLoaderService(); // Use the provided fileLoader or the default
-
-  factory DB({FileLoaderService? fileLoader}) {
-    _singleton.fileLoader = fileLoader ??
-        FileLoaderService(); // Use the provided fileLoader or the default
-    return _singleton;
-  }
-
-  static SubStringHash? _substringHash;
-
-  static Foods? _foods;
+  DB({FileLoaderService? fileLoader})
+      : fileLoader = fileLoader ?? FileLoaderService();
 
   /// Initialization Methods.
-
-  Future<void> _initSubstringHash() async =>
-      await _substringHash!.init(pathToSubstringHash);
-  Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
   /// Must be run to populate the database.
   Future<void> init() async {
@@ -49,6 +34,10 @@ class DB {
       throw DBException(e.toString(), st);
     }
   }
+
+  Future<void> _initSubstringHash() async =>
+      await _substringHash!.init(pathToSubstringHash);
+  Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
   /// Call this method before disposing Consumer.
   void dispose() {
