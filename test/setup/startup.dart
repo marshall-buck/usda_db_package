@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 // import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/file_loader_service.dart';
@@ -12,25 +10,19 @@ import 'package:path/path.dart' as p;
 
 final pathToTestFile = p.join('assets', 'text.txt');
 
-// Create a mock for FileLoaderService
 class MockFileLoaderService extends Mock implements FileLoaderService {}
 
-class MockFoodsList extends Mock implements Foods {}
+// class MockFoodsList extends Mock implements Foods {}
 
-class MockSubStringHash extends Mock implements SubStringHash {}
+// class MockSubStringHash extends Mock implements SubStringHash {}
 
-// Instantiate a mock object
-late final MockFileLoaderService mockFileLoaderService;
-late final Foods mockFoods;
-
+late final FileLoaderService mockFileLoaderService;
 late final SubStringHash substringHashWithMockLoader;
-
-// // Instantiate the actual instance
 late final FileLoaderService fileLoaderService;
 late final Foods foodsListWithMockLoader;
-
 late final DB dbWithMockFileLoader;
 
+// ignore_for_file: non_constant_identifier_names
 tear_down() {
   reset(mockFileLoaderService);
   foodsListWithMockLoader.dispose();

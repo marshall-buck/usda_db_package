@@ -130,8 +130,6 @@ void main() {
       expect(res2, expectedResult2);
     });
     test('throws if DB not initiated', () {
-      // expect(() async => await dbWithMockFileLoader.getDescriptions('term'),
-      //     throwsA(isA<DBException>()));
       final expectedMessage = 'The DB has not been initialized! properly';
 
       expect(
