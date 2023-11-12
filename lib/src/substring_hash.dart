@@ -67,7 +67,7 @@ class SubStringHash {
     return convertedMap;
   }
 
-  Future<int> getHashLookup(String term) async => _substrings?[term] ?? -1;
+  int getHashLookup(String term) => _substrings?[term] ?? -1;
 
-  Future<List<String>> getIndexes(int hash) async => _indexHash?[hash] ?? [];
+  List<String> getIndexes(int hash) => _indexHash?[hash] ?? [];
 }

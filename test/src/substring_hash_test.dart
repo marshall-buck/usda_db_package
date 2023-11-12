@@ -46,24 +46,23 @@ void main() {
   group('getHashLookup() -', () {
     test('Returns correct number', () async {
       await substringHashWithMockLoader.init('fake');
-      final aab = await substringHashWithMockLoader.getHashLookup('aab');
+      final aab = substringHashWithMockLoader.getHashLookup('aab');
       expect(aab, 0);
-      final abapple =
-          await substringHashWithMockLoader.getHashLookup('abapple');
+      final abapple = substringHashWithMockLoader.getHashLookup('abapple');
       expect(abapple, 6);
     });
     test('Returns -1 on no term', () async {
       await substringHashWithMockLoader.init('fake');
-      final noTerm = await substringHashWithMockLoader.getHashLookup('noTerm');
+      final noTerm = substringHashWithMockLoader.getHashLookup('noTerm');
       expect(noTerm, -1);
     });
   });
   group('getIndexes() -', () {
     test('Returns correct List', () async {
       await substringHashWithMockLoader.init('fake');
-      final aab = await substringHashWithMockLoader.getIndexes(0);
+      final aab = substringHashWithMockLoader.getIndexes(0);
       expect(aab, ["170381", "170382"]);
-      final aba = await substringHashWithMockLoader.getIndexes(2);
+      final aba = substringHashWithMockLoader.getIndexes(2);
       expect(aba, [
         "168196",
         "168454",
@@ -83,7 +82,7 @@ void main() {
     });
     test('Returns [] on no hash', () async {
       await substringHashWithMockLoader.init('fake');
-      final noTerm = await substringHashWithMockLoader.getIndexes(22);
+      final noTerm = substringHashWithMockLoader.getIndexes(22);
       expect(noTerm, []);
     });
   });
