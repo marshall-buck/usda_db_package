@@ -87,7 +87,8 @@ const mocHashTable = '''
         "abapples": 6,
         "abar": 7,
         "ill": 8,
-        "ake": 9
+        "ake": 9,
+        "dough": 8
         },
 
          "indexHash": {

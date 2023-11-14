@@ -3,6 +3,7 @@ import 'dart:developer' as dev;
 import 'package:usda_db_package/src/file_loader_service.dart';
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
+import 'package:usda_db_package/src/string_helpers.dart';
 
 import 'package:usda_db_package/src/substring_hash.dart';
 
@@ -55,28 +56,81 @@ class DB {
     }
     return _foods!.getFood(index);
   }
+// TODO: Change to look for multiple terms
+// - sanitize sentence int list of strings
+// - for each word in list get set of indexes
+// - find intersections of all sets.
 
+// sanitize sentence into a list of searchable words
   /// Use to return a list of food descriptions from search term.
   /// Return List may be empty
-  Future<List<SearchResultRecord>> getDescriptions(String term) async {
+  Future<List<SearchResultRecord>> getDescriptions(String sentence) async {
     if (_substringHash == null || _foods == null) {
       throw DBException('The DB has not been initialized! properly');
     }
-
-    final List<String?> indexes = await _findAllIndexes(term);
+    final listOfWords = cleanSentence(sentence).toList(growable: false);
+    if (listOfWords.isEmpty) return [];
+    final hashes = _findAllHashes(listOfWords);
+    if (listOfWords.isEmpty) return [];
+    final indexes = _findAllIndexes(hashes);
+    if (indexes.isEmpty) return [];
     final List<FoodModel?> foods = await _findAllFoods(indexes);
+    if (foods.isEmpty) return [];
     final List<SearchResultRecord> descriptions =
         await _createSearchResultRecords(foods);
     return descriptions;
   }
+  // Future<List<SearchResultRecord>> getDescriptions(String term) async {
+  //   if (_substringHash == null || _foods == null) {
+  //     throw DBException('The DB has not been initialized! properly');
+  //   }
 
-  /// Return all indexes for a list of words.
-  Future<List<String>> _findAllIndexes(String term) async {
+  //   final List<String?> indexes = await _findAllIndexes(term);
+  //   final List<FoodModel?> foods = await _findAllFoods(indexes);
+  //   final List<SearchResultRecord> descriptions =
+  //       await _createSearchResultRecords(foods);
+  //   return descriptions;
+  // }
+
+  List<String> _intersectAll(List<Set<String>> sets) {
+    // If there are no sets, return an empty list
+    if (sets.isEmpty) return [];
+
+    // Start with the first set as the initial intersection
+    Set<String> intersection = sets.first;
+
+    // Iterate over the rest of the sets and update the intersection
+    for (var set in sets.skip(1)) {
+      intersection = intersection.intersection(set);
+    }
+
+    // Return the intersection as a list
+    return intersection.toList();
+  }
+
+  /// Return all indexes for a list of hashes.
+  List<String> _findAllIndexes(List<int> hashes) {
     dev.log('_findAllIndexes', name: 'DB');
-    final int hash = await _substringHash!.getHashLookup(term);
-    if (hash == -1) return [];
+    List<Set<String>> indexes = [];
+    for (final hash in hashes) {
+      final index = _substringHash!.getIndexes(hash).toSet();
+      if (index.isNotEmpty) {
+        indexes.add(index);
+      }
+    }
 
-    return await _substringHash!.getIndexes(hash);
+    return _intersectAll(indexes);
+  }
+
+  List<int> _findAllHashes(List<String> words) {
+    Set<int> hashes = {};
+    for (final word in words) {
+      final hash = _substringHash!.getHashLookup(word);
+      if (hash != -1) {
+        hashes.add(hash);
+      }
+    }
+    return hashes.toList();
   }
 
   /// Finds all foods from a list of indexes

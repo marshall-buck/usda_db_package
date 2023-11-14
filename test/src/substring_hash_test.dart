@@ -19,7 +19,7 @@ void main() {
       expect(substringHashWithMockLoader.indexHash, isNotEmpty);
       expect(substringHashWithMockLoader.indexHash?.length, 10);
       expect(substringHashWithMockLoader.substrings, isNotEmpty);
-      expect(substringHashWithMockLoader.substrings?.length, 20);
+      expect(substringHashWithMockLoader.substrings?.length, 21);
 
       final indexHashKeysAreInt =
           // ignore: unnecessary_type_check

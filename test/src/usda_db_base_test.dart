@@ -2,11 +2,20 @@ import 'package:flutter/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/exceptions.dart';
+import 'package:usda_db_package/src/file_loader_service.dart';
 
 import 'package:usda_db_package/src/file_paths.dart';
+import 'package:usda_db_package/src/usda_db_base.dart';
 
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
+
+class FileLoaderServiceSpy extends Mock implements FileLoaderService {
+  final FileLoaderService _real = FileLoaderService();
+
+  @override
+  loadData(String path) => _real.loadData(path);
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,7 +104,7 @@ void main() {
       final res = await dbWithMockFileLoader.getDescriptions('bad description');
       expect(res, isEmpty);
     });
-    test('returns expected sorted matches', () async {
+    test('returns expected sorted matches with one word', () async {
       when(() => mockFileLoaderService.loadData(pathToFoods))
           .thenAnswer((_) async => mocDB);
       when(() => mockFileLoaderService.loadData(pathToSubstringHash))
@@ -128,6 +137,43 @@ void main() {
 
       final res2 = await dbWithMockFileLoader.getDescriptions('ake');
       expect(res2, expectedResult2);
+    });
+    test('returns expected sorted matches with multiple sentence', () async {
+      // when(() => mockFileLoaderService.loadData(pathToFoods))
+      //     .thenAnswer((_) async => mocDB);
+      // when(() => mockFileLoaderService.loadData(pathToSubstringHash))
+      //     .thenAnswer((_) async => mocHashTable);
+      // await dbWithMockFileLoader.init();
+      final db = DB();
+      await db.init();
+      // final expectedResult = [
+      //   (
+      //     'Pillsbury, Cinnamon Rolls with Icing, refrigerated dough',
+      //     56,
+      //     "167513"
+      //   ),
+      //   (
+      //     'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough',
+      //     81,
+      //     "167512"
+      //   )
+      // ];
+      // final res = await dbWithMockFileLoader.getDescriptions('pill dough');
+
+      // expect(res, expectedResult);
+      print(await db.getDescriptions('raw apple'));
+
+      // final expectedResult2 = [
+      //   ("George Weston Bakeries, Thomas English Muffins", 46, "167515"),
+      //   (
+      //     "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
+      //     64,
+      //     "167514"
+      //   )
+      // ];
+
+      // final res2 = await dbWithMockFileLoader.getDescriptions('ake');
+      // expect(res2, expectedResult2);
     });
     test('throws if DB not initiated', () {
       final expectedMessage = 'The DB has not been initialized! properly';
