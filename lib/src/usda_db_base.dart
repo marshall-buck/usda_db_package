@@ -1,6 +1,6 @@
 import 'dart:developer' as dev;
 
-import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/file_service.dart';
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/foods.dart';
 import 'package:usda_db_package/src/string_helpers.dart';
@@ -10,12 +10,11 @@ import 'package:usda_db_package/src/substring_hash.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
 class DB {
-  FileLoaderService fileLoader;
+  FileService fileLoader;
   SubStringHash? _substringHash;
   Foods? _foods;
 
-  DB({FileLoaderService? fileLoader})
-      : fileLoader = fileLoader ?? FileLoaderService();
+  DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
 
   // Initialization Methods.
 

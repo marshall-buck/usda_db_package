@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/exceptions.dart';
-import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/file_service.dart';
 
 import 'package:usda_db_package/src/file_paths.dart';
 import 'package:usda_db_package/src/usda_db_base.dart';
@@ -10,8 +10,8 @@ import 'package:usda_db_package/src/usda_db_base.dart';
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
-class FileLoaderServiceSpy extends Mock implements FileLoaderService {
-  final FileLoaderService _real = FileLoaderService();
+class FileLoaderServiceSpy extends Mock implements FileService {
+  final FileService _real = FileService();
 
   @override
   loadData(String path) => _real.loadData(path);

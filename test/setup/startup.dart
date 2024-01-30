@@ -1,6 +1,6 @@
 // import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/file_service.dart';
 import 'package:usda_db_package/src/foods.dart';
 
 import 'package:usda_db_package/src/substring_hash.dart';
@@ -10,15 +10,15 @@ import 'package:path/path.dart' as p;
 
 final pathToTestFile = p.join('assets', 'text.txt');
 
-class MockFileLoaderService extends Mock implements FileLoaderService {}
+class MockFileLoaderService extends Mock implements FileService {}
 
 // class MockFoodsList extends Mock implements Foods {}
 
 // class MockSubStringHash extends Mock implements SubStringHash {}
 
-late final FileLoaderService mockFileLoaderService;
+late final FileService mockFileLoaderService;
 late final SubStringHash substringHashWithMockLoader;
-late final FileLoaderService fileLoaderService;
+late final FileService fileLoaderService;
 late final Foods foodsListWithMockLoader;
 late final DB dbWithMockFileLoader;
 
@@ -32,7 +32,7 @@ tear_down() {
 
 set_up_all() {
   mockFileLoaderService = MockFileLoaderService();
-  fileLoaderService = FileLoaderService();
+  fileLoaderService = FileService();
   foodsListWithMockLoader = Foods(mockFileLoaderService);
   substringHashWithMockLoader = SubStringHash(mockFileLoaderService);
   dbWithMockFileLoader = DB(fileLoader: mockFileLoaderService);

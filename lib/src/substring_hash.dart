@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:usda_db_package/src/file_loader_service.dart';
+import 'package:usda_db_package/src/file_service.dart';
 import 'dart:developer' as dev;
 
 /// Class to handle substring hash db.
 class SubStringHash {
-  FileLoaderService fileLoader;
+  FileService fileLoader;
 
   Map<String, int>? _substrings;
   Map<String, int>? get substrings => _substrings;
