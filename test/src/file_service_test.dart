@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:usda_db_package/src/file_service.dart';
 
 void main() {
@@ -7,9 +10,8 @@ void main() {
     final fileService = FileService();
 
     test('loadData returns file contents as string', () async {
-      final String fileName = 'test.json';
-
-      final String contents = await fileService.loadData(fileName: fileName);
+      final String contents = await fileService.loadData(
+          fileName: FileService.fileNameSubstringHash);
       expect(contents, isA<String>());
       expect(contents, isNotEmpty);
     });
@@ -19,7 +21,7 @@ void main() {
 
       expect(
         () async => await fileService.loadData(fileName: fileName),
-        throwsA(isA<Error>()),
+        throwsA(isA<FileSystemException>()),
       );
     });
   });

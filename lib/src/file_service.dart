@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart' show rootBundle;
+import 'dart:developer' as dev;
 
 class FileService {
   static const String _dataPath = 'packages/usda_db_package/lib/data';
-  static const String _fileNameManifest = 'file_manifest.txt';
+  static const String fileNameManifest = 'file_manifest.txt';
   static const String fileNameFoods = 'db_food.json';
   static const String fileNameSubstringHash = 'autocomplete_hash.json';
 
@@ -15,10 +18,12 @@ class FileService {
 
     try {
       contents = await rootBundle.loadString(assetPath);
-    } catch (e) {
+    } catch (e, st) {
       // If there's an error loading the asset, print the error and the attempted path
-      print('Error loading file at $assetPath: $e');
-      rethrow;
+      // print('Error loading file at $assetPath: $e');
+      dev.log('Error loading file at $assetPath',
+          name: 'FileService', error: e.toString(), stackTrace: st);
+      throw FileSystemException(e.toString());
     }
 
     return contents;
@@ -27,12 +32,13 @@ class FileService {
   Future<String> _getFileHash() async {
     try {
       final String manifest =
-          await rootBundle.loadString('$_dataPath/$_fileNameManifest');
+          await rootBundle.loadString('$_dataPath/$fileNameManifest');
       return manifest;
-    } catch (e) {
+    } catch (e, st) {
       // If there's an error loading the asset, print the error and the attempted path
-      print('Error loading manifest at $_dataPath/$_fileNameManifest: $e');
-      rethrow;
+      dev.log('Error loading file at $_dataPath/$fileNameManifest',
+          name: 'FileService', error: e.toString(), stackTrace: st);
+      throw FileSystemException(e.toString());
     }
   }
 }
