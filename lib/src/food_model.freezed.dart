@@ -14,24 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-FoodModel _$FoodModelFromJson(Map<String, dynamic> json) {
-  return _FoodModel.fromJson(json);
-}
-
 /// @nodoc
 mixin _$FoodModel {
-  String get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
-  num get descriptionLength => throw _privateConstructorUsedError;
-  num? get protein => throw _privateConstructorUsedError;
-  num? get dietaryFiber => throw _privateConstructorUsedError;
-  num? get satFat => throw _privateConstructorUsedError;
-  num? get totCarb => throw _privateConstructorUsedError;
-  num? get calories => throw _privateConstructorUsedError;
-  num? get totFat => throw _privateConstructorUsedError;
-  num? get totSugars => throw _privateConstructorUsedError;
+  List<Nutrient> get nutrients => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $FoodModelCopyWith<FoodModel> get copyWith =>
       throw _privateConstructorUsedError;
@@ -42,17 +30,7 @@ abstract class $FoodModelCopyWith<$Res> {
   factory $FoodModelCopyWith(FoodModel value, $Res Function(FoodModel) then) =
       _$FoodModelCopyWithImpl<$Res, FoodModel>;
   @useResult
-  $Res call(
-      {String id,
-      String description,
-      num descriptionLength,
-      num? protein,
-      num? dietaryFiber,
-      num? satFat,
-      num? totCarb,
-      num? calories,
-      num? totFat,
-      num? totSugars});
+  $Res call({int id, String description, List<Nutrient> nutrients});
 }
 
 /// @nodoc
@@ -70,56 +48,21 @@ class _$FoodModelCopyWithImpl<$Res, $Val extends FoodModel>
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? descriptionLength = null,
-    Object? protein = freezed,
-    Object? dietaryFiber = freezed,
-    Object? satFat = freezed,
-    Object? totCarb = freezed,
-    Object? calories = freezed,
-    Object? totFat = freezed,
-    Object? totSugars = freezed,
+    Object? nutrients = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      descriptionLength: null == descriptionLength
-          ? _value.descriptionLength
-          : descriptionLength // ignore: cast_nullable_to_non_nullable
-              as num,
-      protein: freezed == protein
-          ? _value.protein
-          : protein // ignore: cast_nullable_to_non_nullable
-              as num?,
-      dietaryFiber: freezed == dietaryFiber
-          ? _value.dietaryFiber
-          : dietaryFiber // ignore: cast_nullable_to_non_nullable
-              as num?,
-      satFat: freezed == satFat
-          ? _value.satFat
-          : satFat // ignore: cast_nullable_to_non_nullable
-              as num?,
-      totCarb: freezed == totCarb
-          ? _value.totCarb
-          : totCarb // ignore: cast_nullable_to_non_nullable
-              as num?,
-      calories: freezed == calories
-          ? _value.calories
-          : calories // ignore: cast_nullable_to_non_nullable
-              as num?,
-      totFat: freezed == totFat
-          ? _value.totFat
-          : totFat // ignore: cast_nullable_to_non_nullable
-              as num?,
-      totSugars: freezed == totSugars
-          ? _value.totSugars
-          : totSugars // ignore: cast_nullable_to_non_nullable
-              as num?,
+      nutrients: null == nutrients
+          ? _value.nutrients
+          : nutrients // ignore: cast_nullable_to_non_nullable
+              as List<Nutrient>,
     ) as $Val);
   }
 }
@@ -132,17 +75,7 @@ abstract class _$$FoodModelImplCopyWith<$Res>
       __$$FoodModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String description,
-      num descriptionLength,
-      num? protein,
-      num? dietaryFiber,
-      num? satFat,
-      num? totCarb,
-      num? calories,
-      num? totFat,
-      num? totSugars});
+  $Res call({int id, String description, List<Nutrient> nutrients});
 }
 
 /// @nodoc
@@ -158,191 +91,88 @@ class __$$FoodModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? descriptionLength = null,
-    Object? protein = freezed,
-    Object? dietaryFiber = freezed,
-    Object? satFat = freezed,
-    Object? totCarb = freezed,
-    Object? calories = freezed,
-    Object? totFat = freezed,
-    Object? totSugars = freezed,
+    Object? nutrients = null,
   }) {
     return _then(_$FoodModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      descriptionLength: null == descriptionLength
-          ? _value.descriptionLength
-          : descriptionLength // ignore: cast_nullable_to_non_nullable
-              as num,
-      protein: freezed == protein
-          ? _value.protein
-          : protein // ignore: cast_nullable_to_non_nullable
-              as num?,
-      dietaryFiber: freezed == dietaryFiber
-          ? _value.dietaryFiber
-          : dietaryFiber // ignore: cast_nullable_to_non_nullable
-              as num?,
-      satFat: freezed == satFat
-          ? _value.satFat
-          : satFat // ignore: cast_nullable_to_non_nullable
-              as num?,
-      totCarb: freezed == totCarb
-          ? _value.totCarb
-          : totCarb // ignore: cast_nullable_to_non_nullable
-              as num?,
-      calories: freezed == calories
-          ? _value.calories
-          : calories // ignore: cast_nullable_to_non_nullable
-              as num?,
-      totFat: freezed == totFat
-          ? _value.totFat
-          : totFat // ignore: cast_nullable_to_non_nullable
-              as num?,
-      totSugars: freezed == totSugars
-          ? _value.totSugars
-          : totSugars // ignore: cast_nullable_to_non_nullable
-              as num?,
+      nutrients: null == nutrients
+          ? _value._nutrients
+          : nutrients // ignore: cast_nullable_to_non_nullable
+              as List<Nutrient>,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$FoodModelImpl implements _FoodModel {
+
+class _$FoodModelImpl extends _FoodModel {
   const _$FoodModelImpl(
       {required this.id,
       required this.description,
-      required this.descriptionLength,
-      this.protein,
-      this.dietaryFiber,
-      this.satFat,
-      this.totCarb,
-      this.calories,
-      this.totFat,
-      this.totSugars});
-
-  factory _$FoodModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$FoodModelImplFromJson(json);
+      required final List<Nutrient> nutrients})
+      : _nutrients = nutrients,
+        super._();
 
   @override
-  final String id;
+  final int id;
   @override
   final String description;
+  final List<Nutrient> _nutrients;
   @override
-  final num descriptionLength;
-  @override
-  final num? protein;
-  @override
-  final num? dietaryFiber;
-  @override
-  final num? satFat;
-  @override
-  final num? totCarb;
-  @override
-  final num? calories;
-  @override
-  final num? totFat;
-  @override
-  final num? totSugars;
-
-  @override
-  String toString() {
-    return 'FoodModel(id: $id, description: $description, descriptionLength: $descriptionLength, protein: $protein, dietaryFiber: $dietaryFiber, satFat: $satFat, totCarb: $totCarb, calories: $calories, totFat: $totFat, totSugars: $totSugars)';
+  List<Nutrient> get nutrients {
+    if (_nutrients is EqualUnmodifiableListView) return _nutrients;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_nutrients);
   }
 
   @override
-  bool operator ==(dynamic other) {
+  String toString() {
+    return 'FoodModel(id: $id, description: $description, nutrients: $nutrients)';
+  }
+
+  @override
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FoodModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.descriptionLength, descriptionLength) ||
-                other.descriptionLength == descriptionLength) &&
-            (identical(other.protein, protein) || other.protein == protein) &&
-            (identical(other.dietaryFiber, dietaryFiber) ||
-                other.dietaryFiber == dietaryFiber) &&
-            (identical(other.satFat, satFat) || other.satFat == satFat) &&
-            (identical(other.totCarb, totCarb) || other.totCarb == totCarb) &&
-            (identical(other.calories, calories) ||
-                other.calories == calories) &&
-            (identical(other.totFat, totFat) || other.totFat == totFat) &&
-            (identical(other.totSugars, totSugars) ||
-                other.totSugars == totSugars));
+            const DeepCollectionEquality()
+                .equals(other._nutrients, _nutrients));
   }
 
-  @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      description,
-      descriptionLength,
-      protein,
-      dietaryFiber,
-      satFat,
-      totCarb,
-      calories,
-      totFat,
-      totSugars);
+  int get hashCode => Object.hash(runtimeType, id, description,
+      const DeepCollectionEquality().hash(_nutrients));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$FoodModelImplCopyWith<_$FoodModelImpl> get copyWith =>
       __$$FoodModelImplCopyWithImpl<_$FoodModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$FoodModelImplToJson(
-      this,
-    );
-  }
 }
 
-abstract class _FoodModel implements FoodModel {
+abstract class _FoodModel extends FoodModel {
   const factory _FoodModel(
-      {required final String id,
+      {required final int id,
       required final String description,
-      required final num descriptionLength,
-      final num? protein,
-      final num? dietaryFiber,
-      final num? satFat,
-      final num? totCarb,
-      final num? calories,
-      final num? totFat,
-      final num? totSugars}) = _$FoodModelImpl;
-
-  factory _FoodModel.fromJson(Map<String, dynamic> json) =
-      _$FoodModelImpl.fromJson;
+      required final List<Nutrient> nutrients}) = _$FoodModelImpl;
+  const _FoodModel._() : super._();
 
   @override
-  String get id;
+  int get id;
   @override
   String get description;
   @override
-  num get descriptionLength;
-  @override
-  num? get protein;
-  @override
-  num? get dietaryFiber;
-  @override
-  num? get satFat;
-  @override
-  num? get totCarb;
-  @override
-  num? get calories;
-  @override
-  num? get totFat;
-  @override
-  num? get totSugars;
+  List<Nutrient> get nutrients;
   @override
   @JsonKey(ignore: true)
   _$$FoodModelImplCopyWith<_$FoodModelImpl> get copyWith =>
