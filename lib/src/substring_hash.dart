@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:usda_db_package/src/file_service.dart';
 import 'dart:developer' as dev;
+
+import 'file_service.dart';
 
 /// Class to handle substring hash db.
 class SubStringHash {
-  FileService fileLoader;
+  FileService fileService;
 
   Map<String, int>? _substrings;
   Map<String, int>? get substrings => _substrings;
@@ -13,7 +14,7 @@ class SubStringHash {
   Map<int, List<String>>? _indexHash;
   Map<int, List<String>>? get indexHash => _indexHash;
 
-  SubStringHash(this.fileLoader);
+  SubStringHash(this.fileService);
 
   /// Populates [_hashTable]
   ///
@@ -40,12 +41,13 @@ class SubStringHash {
   ///
   /// Returns a [Map] of the file, or {}, on error.
   Future<void> _loadData(String path) async {
-    final String response = await fileLoader.loadData(path);
-    Map<String, dynamic> jsonMap = await json.decode(response);
-    Map<int, List<String>> hash = await _parseIndexHash(jsonMap['indexHash']);
-    Map<String, int> substrings = await _parseSubstrings(jsonMap['substrings']);
-    _indexHash = hash;
-    _substrings = substrings;
+    throw UnimplementedError();
+    // final String response = await fileService.loadData(path);
+    // Map<String, dynamic> jsonMap = await json.decode(response);
+    // Map<int, List<String>> hash = await _parseIndexHash(jsonMap['indexHash']);
+    // Map<String, int> substrings = await _parseSubstrings(jsonMap['substrings']);
+    // _indexHash = hash;
+    // _substrings = substrings;
   }
 
   /// Parses the indexHash part of the json string to the [_indexHash] property
