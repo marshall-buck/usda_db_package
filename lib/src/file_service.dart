@@ -4,7 +4,7 @@ class FileService {
   static const String _dataPath = 'packages/usda_db_package/lib/data';
   static const String _fileNameManifest = 'file_manifest.txt';
   static const String fileNameFoods = 'db_food.json';
-  static const String fileNameSubstringHash = 'substring_hash.json';
+  static const String fileNameSubstringHash = 'autocomplete_hash.json';
 
   /// Opens a file from [fileName] located in the package's assets.
   /// Returns the contents as a [String].
