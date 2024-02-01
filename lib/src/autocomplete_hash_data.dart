@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
+import 'dart:math';
+
+import 'package:usda_db_package/src/initializer.dart';
 
 import './extensions/map_ext.dart';
 
@@ -26,30 +29,40 @@ import './extensions/map_ext.dart';
 ///   }
 /// ```
 ///  /*Cspell:enable
-class AutoCompleteHashData {
-  final Map<String, int> substringHash = {};
-  final Map<int, List<int>> indexHash = {};
-  late final String jsonString;
+class AutoCompleteHashData implements Initializer {
+  late final Map<String, int> _substringHash;
+  late final Map<int, List<int>> _indexHash;
 
-  AutoCompleteHashData({required this.jsonString});
+  Map<String, int> get substringHash => _substringHash;
+  Map<int, List<int>> get indexHash => _indexHash;
 
-  Future<void> _fromJson() async {
+  /// Populates the [substringHash] and [indexHash] properties, from
+  /// the given [jsonString].
+  @override
+  Future<void> init({required String jsonString}) async {
     try {
-      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-      Map<String, int> substringHash = jsonMap['substringHash'];
-      Map<int, List<int>> indexHash = jsonMap['indexHash'];
-      indexHash.deepConvertMapKeyToInt();
+      final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
+      // Manually converting the dynamic types to the expected Map types
+      _substringHash = {};
+      jsonMap['substringHash'].forEach((key, value) {
+        _substringHash[key] = value;
+      });
 
-      if (substringHash.isEmpty || indexHash.isEmpty) {
-        dev.log('Error decoding JSON',
+      _indexHash = {};
+      jsonMap['indexHash'].forEach((key, value) {
+        _indexHash[int.parse(key)] = List<int>.from(value);
+      });
+
+      if (_substringHash.isEmpty || _indexHash.isEmpty) {
+        dev.log('Properties are empty',
             name: 'AutoCompleteHashData.fromJson',
-            error: 'Invalid JSON format');
-        throw FormatException('Invalid JSON format');
+            error: 'Class properties must not be');
+        throw FormatException('Class properties must not be empty');
       }
     } catch (e, st) {
       dev.log('Error decoding JSON',
           name: 'AutoCompleteHashData', error: e.toString(), stackTrace: st);
-      throw FileSystemException(e.toString());
+      throw FormatException('Error decoding JSON');
     }
   }
 }
