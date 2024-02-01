@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as dev;
 
 import 'file_service.dart';
-import 'food_model.dart';
+import 'models/food_model.dart';
 
 /// Class to handle the main foods database.
 class Foods {

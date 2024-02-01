@@ -2,7 +2,7 @@ import 'dart:developer' as dev;
 
 import 'exceptions.dart';
 import 'file_service.dart';
-import 'food_model.dart';
+
 import 'foods.dart';
 import 'substring_hash.dart';
 import 'type_def.dart';
