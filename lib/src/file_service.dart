@@ -19,8 +19,6 @@ class FileService {
     try {
       contents = await rootBundle.loadString(assetPath);
     } catch (e, st) {
-      // If there's an error loading the asset, print the error and the attempted path
-      // print('Error loading file at $assetPath: $e');
       dev.log('Error loading file at $assetPath',
           name: 'FileService', error: e.toString(), stackTrace: st);
       throw FileSystemException(e.toString());
@@ -29,11 +27,12 @@ class FileService {
     return contents;
   }
 
+  /// opens the manifest file and returns the hash.
   Future<String> _getFileHash() async {
     try {
-      final String manifest =
+      final String hash =
           await rootBundle.loadString('$_dataPath/$fileNameManifest');
-      return manifest;
+      return hash;
     } catch (e, st) {
       // If there's an error loading the asset, print the error and the attempted path
       dev.log('Error loading file at $_dataPath/$fileNameManifest',
