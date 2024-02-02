@@ -1,11 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
-import 'dart:io';
-import 'dart:math';
 
 import 'package:usda_db_package/src/initializer.dart';
-
-import './extensions/map_ext.dart';
 
 /// Class to represent the [AutoCompleteHashData]'s structure and methods.
 /// This is the data structure that represents a substring tree, and a lookup table
@@ -30,8 +26,8 @@ import './extensions/map_ext.dart';
 /// ```
 ///  /*Cspell:enable
 class AutoCompleteHashData implements Initializer {
-  late final Map<String, int> _substringHash;
-  late final Map<int, List<int>> _indexHash;
+  final Map<String, int> _substringHash = {};
+  final Map<int, List<int>> _indexHash = {};
 
   Map<String, int> get substringHash => _substringHash;
   Map<int, List<int>> get indexHash => _indexHash;
@@ -42,13 +38,11 @@ class AutoCompleteHashData implements Initializer {
   Future<void> init({required String jsonString}) async {
     try {
       final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
-      // Manually converting the dynamic types to the expected Map types
-      _substringHash = {};
+
       jsonMap['substringHash'].forEach((key, value) {
         _substringHash[key] = value;
       });
 
-      _indexHash = {};
       jsonMap['indexHash'].forEach((key, value) {
         _indexHash[int.parse(key)] = List<int>.from(value);
       });

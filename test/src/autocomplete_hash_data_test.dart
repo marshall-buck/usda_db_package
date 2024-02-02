@@ -17,13 +17,17 @@ void main() {
         final String json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
-        print(hashData.substringHash);
 
-        // expect(hashData.indexHash, isNotEmpty);
-        // expect(hashData.substringHash, isNotEmpty);
-        // expect(hashData.indexHash.entries.first, {
-        //   0: [170381, 170382]
-        // });
+        expect(hashData.indexHash, isNotEmpty);
+        expect(hashData.substringHash, isNotEmpty);
+        expect(
+          hashData.indexHash.entries.first.value,
+          [170381, 170382],
+        );
+        expect(
+          hashData.indexHash.entries.first.key,
+          0,
+        );
       });
       test('throws FormatException', () async {});
       test('throws Error', () async {});
