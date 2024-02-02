@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 
-import 'package:usda_db_package/src/models/nutrient_model.dart';
-
 import 'initializer.dart';
 import 'models/food_model.dart';
+import 'models/nutrient_model.dart';
 
 /// Class to handle the main foods database.
 class Foods implements Initializer {
@@ -29,9 +28,9 @@ class Foods implements Initializer {
   }
 
   /// Dispose foodsList
-  void dispose() => _foodsList.clear();
+  void clearFoods() => _foodsList.clear();
 
-  FoodModel? getFood(String index) => _foodsList[index];
+  FoodModel? getFood(int index) => _foodsList[index];
 
   // Converts a Map<String, dynamic> to Map<String, List<String>>.
   void _convertJsonMapTypes(Map<String, dynamic> jsonMap) {
