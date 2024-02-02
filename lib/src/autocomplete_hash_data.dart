@@ -39,13 +39,8 @@ class AutoCompleteHashData implements Initializer {
     try {
       final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
 
-      jsonMap['substringHash'].forEach((key, value) {
-        _substringHash[key] = value;
-      });
-
-      jsonMap['indexHash'].forEach((key, value) {
-        _indexHash[int.parse(key)] = List<int>.from(value);
-      });
+      _convertSubstringHashToType(jsonMap['substringHash']);
+      _convertIndexHashToType(jsonMap['indexHash']);
 
       if (_substringHash.isEmpty || _indexHash.isEmpty) {
         dev.log('Properties are empty',
@@ -58,5 +53,17 @@ class AutoCompleteHashData implements Initializer {
           name: 'AutoCompleteHashData', error: e.toString(), stackTrace: st);
       throw FormatException('Error decoding JSON');
     }
+  }
+
+  void _convertIndexHashToType(Map<String, dynamic> map) {
+    map.forEach((key, value) {
+      _indexHash[int.parse(key)] = List<int>.from(value);
+    });
+  }
+
+  void _convertSubstringHashToType(Map<String, dynamic> map) {
+    map.forEach((key, value) {
+      _substringHash[key] = value;
+    });
   }
 }
