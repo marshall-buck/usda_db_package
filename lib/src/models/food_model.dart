@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'nutrient.dart';
+import 'nutrient_model.dart';
 
 part 'food_model.freezed.dart';
 
@@ -13,16 +13,15 @@ class FoodModel with _$FoodModel {
 
   const FoodModel._();
 
-  factory FoodModel.fromJson({required final Map<String, dynamic> jsonString}) {
-    final foodJson = jsonString.values.first;
+  factory FoodModel.fromJson({required final Map<String, dynamic> jsonMap}) {
+    final foodJson = jsonMap.values.first;
     final nutrientsJson = foodJson['nutrients'] as List<dynamic>;
 
-    final nutrients = nutrientsJson
-        .map((e) => Nutrient.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final nutrients =
+        nutrientsJson.map((e) => Nutrient.fromJson(jsonString: e)).toList();
 
     return FoodModel(
-      id: int.parse(jsonString.keys.first),
+      id: int.parse(jsonMap.keys.first),
       description: foodJson['description'],
       nutrients: nutrients,
     );

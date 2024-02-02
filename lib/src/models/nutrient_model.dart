@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'nutrient.freezed.dart';
+part 'nutrient_model.freezed.dart';
 
 @freezed
 class Nutrient with _$Nutrient {

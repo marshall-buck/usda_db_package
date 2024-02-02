@@ -13,7 +13,7 @@ void main() {
   group('AutoCompleteHashData', () {
     final hashData = AutoCompleteHashData();
     group('init() - ', () {
-      test('loads properties', () async {
+      test('properties are not empty', () async {
         final String json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
@@ -29,6 +29,24 @@ void main() {
           0,
         );
       });
+      test('substringHash is typed correctly', () async {
+        final String json = jsonEncode(mockHashTable);
+
+        await hashData.init(jsonString: json);
+        for (final element in hashData.substringHash.entries) {
+          expect(element.key, isA<String>());
+          expect(element.value, isA<int>());
+        }
+      });
+      test('indexHash is typed correctly', () async {
+        final String json = jsonEncode(mockHashTable);
+
+        await hashData.init(jsonString: json);
+        for (final element in hashData.indexHash.entries) {
+          expect(element.key, isA<int>());
+          expect(element.value, isA<List<int>>());
+        }
+      });
       test('throws FormatException if either properties are empty', () async {
         final emptyJson = jsonEncode({'substringHash': {}, 'indexHash': {}});
 
@@ -38,7 +56,14 @@ void main() {
         );
       });
 
-      test('throws Error', () async {});
+      test('throws FormatException if invalid json', () async {
+        final invalidJson = '{substringHash: {}}';
+
+        expect(
+          () async => await hashData.init(jsonString: invalidJson),
+          throwsA(isA<FormatException>()),
+        );
+      });
     });
   });
 }
