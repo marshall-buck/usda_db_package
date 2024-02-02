@@ -29,7 +29,15 @@ void main() {
           0,
         );
       });
-      test('throws FormatException', () async {});
+      test('throws FormatException if either properties are empty', () async {
+        final emptyJson = jsonEncode({'substringHash': {}, 'indexHash': {}});
+
+        expect(
+          () async => await hashData.init(jsonString: emptyJson),
+          throwsA(isA<FormatException>()),
+        );
+      });
+
       test('throws Error', () async {});
     });
   });

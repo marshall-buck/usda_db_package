@@ -12,20 +12,13 @@ class Nutrient with _$Nutrient {
   }) = _Nutrient;
   const Nutrient._();
 
-  // /// Converts Nutrient object to JSON.
-  // ///
-  // /// {id: 1004, amount: 0.5}
-  // Map<String, num> toJson() {
-  //   return {'id': id, 'amount': amount};
-  // }
-
   /// Maps JSON to Nutrient object.
-  factory Nutrient.fromJson(final Map<String, dynamic> json) {
+  factory Nutrient.fromJson({required final Map<String, dynamic> jsonString}) {
     return Nutrient(
-      id: json['id'],
-      name: originalNutrientTableEdit[json['id']]?['name'],
-      amount: json['amount'],
-      unit: originalNutrientTableEdit[json['id']]?['unit'],
+      id: jsonString['id'],
+      name: originalNutrientTableEdit[jsonString['id']]?['name'],
+      amount: jsonString['amount'],
+      unit: originalNutrientTableEdit[jsonString['id']]?['unit'],
     );
   }
 

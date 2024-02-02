@@ -38,16 +38,8 @@ class AutoCompleteHashData implements Initializer {
   Future<void> init({required String jsonString}) async {
     try {
       final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
-
-      _convertSubstringHashToType(jsonMap['substringHash']);
       _convertIndexHashToType(jsonMap['indexHash']);
-
-      if (_substringHash.isEmpty || _indexHash.isEmpty) {
-        dev.log('Properties are empty',
-            name: 'AutoCompleteHashData.fromJson',
-            error: 'Class properties must not be');
-        throw FormatException('Class properties must not be empty');
-      }
+      _convertSubstringHashToType(jsonMap['substringHash']);
     } catch (e, st) {
       dev.log('Error decoding JSON',
           name: 'AutoCompleteHashData', error: e.toString(), stackTrace: st);
@@ -56,12 +48,23 @@ class AutoCompleteHashData implements Initializer {
   }
 
   void _convertIndexHashToType(Map<String, dynamic> map) {
+    if (map.isEmpty) {
+      dev.log('IndexHash is empty',
+          name: 'AutoCompleteHashData.fromJson', error: 'IndexHash is empty');
+      throw FormatException('IndexHash is empty');
+    }
     map.forEach((key, value) {
       _indexHash[int.parse(key)] = List<int>.from(value);
     });
   }
 
   void _convertSubstringHashToType(Map<String, dynamic> map) {
+    if (map.isEmpty) {
+      dev.log('SubstringHash is empty',
+          name: 'AutoCompleteHashData.fromJson',
+          error: 'SubstringHash is empty');
+      throw FormatException('SubstringHash is empty');
+    }
     map.forEach((key, value) {
       _substringHash[key] = value;
     });

@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:developer' as dev;
 
 import 'file_service.dart';
+import 'initializer.dart';
 import 'models/food_model.dart';
 
 /// Class to handle the main foods database.
-class Foods {
+class Foods implements Initializer {
   FileService fileLoader;
-  final Map<String, FoodModel> _foodsList = {};
-  Map<String, FoodModel> get foodsList => _foodsList;
+  final Map<int, FoodModel> _foodsList = {};
+  Map<int, FoodModel> get foodsList => _foodsList;
 
   Foods(this.fileLoader);
 
@@ -17,7 +18,8 @@ class Foods {
   /// Parameters:
   /// - [path] The path of the  file.
 
-  Future<void> init(String path) async {
+  @override
+  Future<void> init({required String jsonString}) async {
     // Map<String, FoodModel> dbMap = await _loadData(path);
     // _foodsList = dbMap;
 
@@ -37,7 +39,7 @@ class Foods {
   /// - [path] The path of the  file.
   ///
   /// Returns a [Map] of the file, or {}, on error.
-  Future<Map<String, FoodModel>> _loadData(String path) async {
+  Future<Map<int, FoodModel>> _loadData(String path) async {
     final String response =
         await fileLoader.loadData(fileName: FileService.fileNameFoods);
     Map<String, dynamic> jsonMap = await json.decode(response);
