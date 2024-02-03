@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:usda_db_package/src/autocomplete_data.dart';
 
 import '../setup/mock_file_strings.dart';
@@ -59,6 +60,25 @@ void main() {
           () async => await hashData.init(jsonString: invalidJson),
           throwsA(isA<FormatException>()),
         );
+      });
+    });
+
+    group('getFoodIndexes() - ', () {
+      test('returns correct indexes', () async {
+        final String json = jsonEncode(mockHashTable);
+
+        await hashData.init(jsonString: json);
+        final indexes = hashData.getFoodIndexes(substring: 'aab');
+        const d = DeepCollectionEquality();
+        expect(d.equals(indexes, [170381, 170382]), true);
+      });
+      test('returns empty list if substring not found', () async {
+        final String json = jsonEncode(mockHashTable);
+
+        await hashData.init(jsonString: json);
+        final indexes = hashData.getFoodIndexes(substring: 'not found');
+        expect(indexes.isEmpty, true);
+        expect(indexes, isA<List>());
       });
     });
   });

@@ -49,34 +49,34 @@ class AutoCompleteData implements Initializer {
 
   /// Gets the list of indexes from the [substring].
   List<int?> getFoodIndexes({required String substring}) {
+    int? lookUpIndex;
     if (_substringHash.containsKey(substring)) {
-      final lookUpIndex = _substringHash[substring];
-      return _indexHash[lookUpIndex] ?? [];
+      lookUpIndex = _substringHash[substring];
     }
-    return [];
+    return _indexHash[lookUpIndex] ?? [];
   }
 
   /// Convert to proper types
-  void _convertIndexHashToType(Map<String, dynamic> map) {
-    if (map.isEmpty) {
+  void _convertIndexHashToType(Map<String, dynamic> mapFromJson) {
+    if (mapFromJson.isEmpty) {
       dev.log('IndexHash is empty',
           name: 'AutoCompleteHashData.fromJson', error: 'IndexHash is empty');
       throw const FormatException('IndexHash is empty');
     }
-    map.forEach((key, value) {
+    mapFromJson.forEach((key, value) {
       _indexHash[int.parse(key)] = List<int>.from(value);
     });
   }
 
   /// Convert to proper types
-  void _convertSubstringHashToType(Map<String, dynamic> map) {
-    if (map.isEmpty) {
+  void _convertSubstringHashToType(Map<String, dynamic> mapFromJson) {
+    if (mapFromJson.isEmpty) {
       dev.log('SubstringHash is empty',
           name: 'AutoCompleteHashData.fromJson',
           error: 'SubstringHash is empty');
       throw const FormatException('SubstringHash is empty');
     }
-    map.forEach((key, value) {
+    mapFromJson.forEach((key, value) {
       _substringHash[key] = value;
     });
   }
