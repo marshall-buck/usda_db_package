@@ -1,15 +1,17 @@
 import 'dart:developer' as dev;
 
+import 'package:usda_db_package/src/autocomplete_data.dart';
+
 import 'exceptions.dart';
 import 'file_service.dart';
 
 import 'foods.dart';
-import 'substring_hash.dart';
+
 import 'type_def.dart';
 
 class DB {
   FileService fileLoader;
-  SubStringHash? _substringHash;
+  AutoCompleteData? _autoCompleteData;
   Foods? _foods;
 
   DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
@@ -38,10 +40,9 @@ class DB {
 
   /// Call this method before disposing Consumer.
   void dispose() {
-    _foods?.clearFoods();
-    _substringHash?.dispose();
+    _foods?.clear();
+    _autoCompleteData?.clear();
     _foods = null;
-    _substringHash = null;
 
     dev.log('dispose completed', name: 'DB');
   }

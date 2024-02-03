@@ -29,7 +29,7 @@ void main() {
     test('clearFoods should clear foodsList', () async {
       await foods.init(
           jsonString: '{"1": {"description": "test food", "nutrients": []}}');
-      foods.clearFoods();
+      foods.clear();
       expect(foods.foodsList.isEmpty, true);
     });
 

@@ -68,6 +68,11 @@ class AutoCompleteData implements Initializer {
     });
   }
 
+  void clear() {
+    _substringHash.clear();
+    _indexHash.clear();
+  }
+
   /// Convert to proper types
   void _convertSubstringHashToType(Map<String, dynamic> mapFromJson) {
     if (mapFromJson.isEmpty) {

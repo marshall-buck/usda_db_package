@@ -28,7 +28,7 @@ class Foods implements Initializer {
   }
 
   /// Dispose foodsList
-  void clearFoods() => _foodsList.clear();
+  void clear() => _foodsList.clear();
 
   FoodModel? getFood(int index) => _foodsList[index];
 
