@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usda_db_package/src/foods.dart';
+import 'package:usda_db_package/src/foods_data.dart';
 import 'package:usda_db_package/src/models/food_model.dart';
 
 void main() {
   group('Foods', () {
-    late Foods foods;
+    late FoodsData foods;
 
     setUp(() {
-      foods = Foods();
+      foods = FoodsData();
     });
 
     test('init should populate foodsList', () async {

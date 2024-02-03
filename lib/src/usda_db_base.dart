@@ -5,44 +5,52 @@ import 'package:usda_db_package/src/autocomplete_data.dart';
 import 'exceptions.dart';
 import 'file_service.dart';
 
-import 'foods.dart';
+import 'foods_data.dart';
 
 import 'type_def.dart';
 
 class DB {
   FileService fileLoader;
   AutoCompleteData? _autoCompleteData;
-  Foods? _foods;
+  FoodsData? _foodsData;
 
   DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
 
   // Initialization Methods.
 
   /// Must be run to populate the database.
-  // Future<void> init() async {
-  //   try {
-  //     _substringHash = SubStringHash(fileLoader);
-  //     _foods = Foods(fileLoader);
-  //     await Future.wait([
-  //       _initSubstringHash(),
-  //       _initFoods(),
-  //     ], eagerError: true);
-  //     dev.log('init() completed ', name: 'DB');
-  //   } catch (e, st) {
-  //     dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
-  //     throw DBException(e.toString(), st);
-  //   }
-  // }
+  Future<void> init() async {
+    try {
+      _substringHash = SubStringHash(fileLoader);
+      _foodsData = FoodsData(fileLoader);
+      await Future.wait([
+        _initSubstringHash(),
+        _initFoods(),
+      ], eagerError: true);
+      dev.log('init() completed ', name: 'DB');
+    } catch (e, st) {
+      dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
+      throw DBException(e.toString(), st);
+    }
+  }
 
-  // Future<void> _initSubstringHash() async =>
-  //     await _substringHash!.init(pathToSubstringHash);
+  Future<void> _initAutocompleteData(String rootBundleSting) async {
+    _autoCompleteData = AutoCompleteData();
+    await _autoCompleteData?.init(jsonString: rootBundleSting);
+  }
+
+  Future<void> _initFoodsData(String rootBundleSting) async {
+    _autoCompleteData = AutoCompleteData();
+    await _autoCompleteData?.init(jsonString: rootBundleSting);
+  }
   // Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
   /// Call this method before disposing Consumer.
   void dispose() {
-    _foods?.clear();
+    _foodsData?.clear();
     _autoCompleteData?.clear();
-    _foods = null;
+    _foodsData = null;
+    _autoCompleteData = null;
 
     dev.log('dispose completed', name: 'DB');
   }
@@ -163,5 +171,5 @@ class DB {
 
   @override
   String toString() =>
-      'FoodsDb: ${_foods?.foodsList?.length} should be a number';
+      'FoodsDb: ${_foodsData?.foodsList?.length} should be a number';
 }

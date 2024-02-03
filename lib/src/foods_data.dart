@@ -6,7 +6,7 @@ import 'models/food_model.dart';
 import 'models/nutrient_model.dart';
 
 /// Class to handle the main foods database.
-class Foods implements Initializer {
+class FoodsData implements Initializer {
   final Map<int, FoodModel> _foodsList = {};
   Map<int, FoodModel> get foodsList => _foodsList;
 
