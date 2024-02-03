@@ -38,7 +38,7 @@ class DB {
 
   /// Call this method before disposing Consumer.
   void dispose() {
-    _foods?.dispose();
+    _foods?.clearFoods();
     _substringHash?.dispose();
     _foods = null;
     _substringHash = null;

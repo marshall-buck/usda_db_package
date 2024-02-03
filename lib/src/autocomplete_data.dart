@@ -3,7 +3,7 @@ import 'dart:developer' as dev;
 
 import 'package:usda_db_package/src/initializer.dart';
 
-/// Class to represent the [AutoCompleteHashData]'s structure and methods.
+/// Class to represent the [AutoCompleteData]'s structure and methods.
 /// This is the data structure that represents a substring tree, and a lookup table
 /// for the substrings values.
 ///
@@ -25,7 +25,7 @@ import 'package:usda_db_package/src/initializer.dart';
 ///   }
 /// ```
 ///  /*Cspell:enable
-class AutoCompleteHashData implements Initializer {
+class AutoCompleteData implements Initializer {
   final Map<String, int> _substringHash = {};
   final Map<int, List<int>> _indexHash = {};
 
@@ -48,7 +48,7 @@ class AutoCompleteHashData implements Initializer {
   }
 
   /// Gets the list of indexes from the [substring].
-  List<int?> getIndexes({required String substring}) {
+  List<int?> getFoodIndexes({required String substring}) {
     if (_substringHash.containsKey(substring)) {
       final lookUpIndex = _substringHash[substring];
       return _indexHash[lookUpIndex] ?? [];

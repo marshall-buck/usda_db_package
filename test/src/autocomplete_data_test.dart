@@ -1,17 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usda_db_package/src/autocomplete_hash_data.dart';
-
-import 'package:usda_db_package/src/file_service.dart';
+import 'package:usda_db_package/src/autocomplete_data.dart';
 
 import '../setup/mock_file_strings.dart';
-import '../setup/startup.dart';
 
 void main() {
   group('AutoCompleteHashData', () {
-    final hashData = AutoCompleteHashData();
+    final hashData = AutoCompleteData();
     group('init() - ', () {
       test('properties are not empty', () async {
         final String json = jsonEncode(mockHashTable);
@@ -57,7 +53,7 @@ void main() {
       });
 
       test('throws FormatException if invalid json', () async {
-        final invalidJson = '{substringHash: {}}';
+        const invalidJson = '{substringHash: {}}';
 
         expect(
           () async => await hashData.init(jsonString: invalidJson),
