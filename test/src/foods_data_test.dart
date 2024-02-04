@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/foods_data.dart';
 import 'package:usda_db_package/src/models/food_model.dart';
+import 'package:usda_db_package/src/models/nutrient_model.dart';
 
 import '../setup/mock_file_strings.dart';
 
@@ -22,8 +23,10 @@ void main() {
       expect(foods.foodsList.length, 6);
 
       expect(foods.foodsList, isA<Map<int, FoodModel>>());
+      expect(foods.foodsList[167512]?.description,
+          "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough");
+      expect(foods.foodsList[167512]?.nutrients, isA<List<Nutrient>>());
     });
-
     test('init should throw FormatException on invalid JSON', () async {
       try {
         await foods.init(jsonString: 'invalid json');

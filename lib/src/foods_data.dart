@@ -32,7 +32,7 @@ class FoodsData implements Initializer {
 
   FoodModel? getFood(int index) => _foodsList[index];
 
-  // Converts a Map<String, dynamic> to Map<String, List<String>>.
+  // Converts a Map<String, dynamic> to Map<int, FoodModel>>.
   void _convertJsonMapTypes(Map<String, dynamic> jsonMap) {
     for (final entry in jsonMap.entries) {
       final Map<String, dynamic> arg = Map.from({entry.key: entry.value});
