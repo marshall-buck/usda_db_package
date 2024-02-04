@@ -7,7 +7,7 @@ class Sanitizer {
 
   List<String> get sanitizedWords => sentence
       .getWordsToIndex()
-      .where((element) => !stopWords.contains(element) && element.length > 1)
+      .where((element) => !stopWords.contains(element))
       .toList();
 
   /// Constructor for the Sanitizer class.

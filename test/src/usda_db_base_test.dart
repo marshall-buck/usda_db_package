@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/file_service.dart';
 import 'package:usda_db_package/src/models/food_model.dart';
+import 'package:usda_db_package/src/type_def.dart';
 import 'package:usda_db_package/src/usda_db_base.dart';
 
 import '../setup/mock_file_strings.dart';
@@ -87,6 +88,28 @@ void main() {
         final foodItem = db.getFood(167512);
         expect(foodItem, isNotNull);
         expect(foodItem, isA<FoodModel>());
+      });
+    });
+
+    group('getAutocompleteList() - ', () {
+      test('returns a list of DescriptionRecord', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = DB(fileLoader: mockFileLoaderService);
+        await db.init();
+        final list = db.getAutocompleteList('apple');
+        expect(list, isNotEmpty);
+        expect(list, isA<List<DescriptionRecord>>());
+      });
+      test('throws DBException if db has not been initialized', () {
+        final db = DB(fileLoader: mockFileLoaderService);
+        expect(
+            () => db.getAutocompleteList('apple'), throwsA(isA<DBException>()));
       });
     });
   });

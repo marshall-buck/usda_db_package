@@ -67,60 +67,21 @@ class DB {
     dev.log('dispose completed', name: 'DB');
   }
 
-  Future<void> _initAutocompleteData() async {
-    final autoCompleteDataString = await fileLoader.loadData(
-        fileName: FileService.fileNameAutocompleteData);
-    _autoCompleteData = AutoCompleteData();
-
-    await _autoCompleteData?.init(jsonString: autoCompleteDataString);
-  }
-
-  Future<void> _initFoodsData() async {
-    final substringHashRootString =
-        await fileLoader.loadData(fileName: FileService.fileNameFoods);
-    _foodsData = FoodsData();
-
-    await _foodsData?.init(jsonString: substringHashRootString);
-  }
-
   /// Gets one food item from database and returns the [FoodModel] or [null] if not found.
-  FoodModel? getFood(int index) => _foodsData?.getFood(index);
-
-// TODO: Change to look for multiple terms
-// - sanitize sentence int list of strings
-// - for each word in list get set of indexes
-// - find intersections of all sets.
-
-// sanitize sentence into a list of searchable words
-  /// Use to return a list of food descriptions from search term.
-  /// Return List may be empty
-  // Future<List<SearchResultRecord>> getDescriptions(String sentence) async {
-  //   if (_substringHash == null || _foods == null) {
-  //     throw DBException('The DB has not been initialized! properly');
-  //   }
-  //   final listOfWords = cleanSentence(sentence).toList(growable: false);
-  //   if (listOfWords.isEmpty) return [];
-  //   final hashes = _findAllHashes(listOfWords);
-  //   if (listOfWords.isEmpty) return [];
-  //   final indexes = _findAllIndexes(hashes);
-  //   if (indexes.isEmpty) return [];
-  //   final List<FoodModel?> foods = await _findAllFoods(indexes);
-  //   if (foods.isEmpty) return [];
-  //   final List<SearchResultRecord> descriptions =
-  //       await _createSearchResultRecords(foods);
-  //   return descriptions;
-  // }
+  FoodModel? getFood(int id) => _foodsData?.getFood(id);
 
   List<DescriptionRecord?> getAutocompleteList(String searchString) {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
+
     _sanitizer = Sanitizer(sentence: searchString);
     if (_sanitizer!.sanitizedWords.isEmpty) return [];
     final termsToSearch = _sanitizer!.sanitizedWords;
+
     Set<int?> ids = {};
     List<DescriptionRecord?> descriptions = [];
-    // iterate through each word and get a list of indexes
+
     for (final term in termsToSearch) {
       ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));
     }
@@ -136,6 +97,22 @@ class DB {
   DescriptionRecord _createDescriptionRecord(FoodModel food) {
     dev.log('_createDescription', name: 'DB');
     return (food.description, food.description.length, food.id);
+  }
+
+  Future<void> _initAutocompleteData() async {
+    final autoCompleteDataString = await fileLoader.loadData(
+        fileName: FileService.fileNameAutocompleteData);
+    _autoCompleteData = AutoCompleteData();
+
+    await _autoCompleteData?.init(jsonString: autoCompleteDataString);
+  }
+
+  Future<void> _initFoodsData() async {
+    final substringHashRootString =
+        await fileLoader.loadData(fileName: FileService.fileNameFoods);
+    _foodsData = FoodsData();
+
+    await _foodsData?.init(jsonString: substringHashRootString);
   }
 
   @override
