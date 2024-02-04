@@ -1,5 +1,7 @@
 // cSpell: disable
 
+import 'dart:convert';
+
 const mockFoodsData = {
   167512: {
     "description":
@@ -74,6 +76,8 @@ const mockFoodsData = {
 
 final Map<String, dynamic> stringKeyedMap =
     mockFoodsData.map((k, v) => MapEntry(k.toString(), v as dynamic));
+
+final String fakeDBString = jsonEncode(stringKeyedMap);
 
 const mockHashTable = {
   "substringHash": {
