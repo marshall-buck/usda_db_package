@@ -2,6 +2,9 @@
 
 import 'dart:convert';
 
+final String mockDBString = jsonEncode(stringKeyedMap);
+final String mockHashString = jsonEncode(mockHashTable);
+
 const mockFoodsData = {
   167512: {
     "description":
@@ -76,8 +79,6 @@ const mockFoodsData = {
 
 final Map<String, dynamic> stringKeyedMap =
     mockFoodsData.map((k, v) => MapEntry(k.toString(), v as dynamic));
-
-final String fakeDBString = jsonEncode(stringKeyedMap);
 
 const mockHashTable = {
   "substringHash": {

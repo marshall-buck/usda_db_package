@@ -12,22 +12,19 @@ void main() {
   setUpAll(() => set_up_all());
   tearDown(() => tear_down());
 
-  final String fakeHashString = jsonEncode(mockHashTable);
   group('DB class tests', () {
     group('init() - ', () {
-      test('loads properties properly', () async {
-        final String fakeDBString = jsonEncode(stringKeyedMap);
-        // print(fakeDBString);
+      test('loads properties', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => fakeDBString);
+            .thenAnswer((_) async => mockDBString);
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => fakeHashString);
+            .thenAnswer((_) async => mockHashString);
 
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init();
-        // expect(db.isDataLoaded, true);
+        expect(db.isDataLoaded, true);
       });
     });
   });

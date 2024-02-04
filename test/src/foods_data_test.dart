@@ -15,7 +15,7 @@ void main() {
     tearDown(() => foods.clear());
 
     test('init should populate foodsList', () async {
-      await foods.init(jsonString: fakeDBString);
+      await foods.init(jsonString: mockDBString);
 
       expect(foods.foodsList.length, 6);
 
@@ -35,20 +35,20 @@ void main() {
     });
 
     test('clearFoods should clear foodsList', () async {
-      await foods.init(jsonString: fakeDBString);
+      await foods.init(jsonString: mockDBString);
       foods.clear();
       expect(foods.foodsList.isEmpty, true);
     });
 
     test('getFood should return correct food', () async {
-      await foods.init(jsonString: fakeDBString);
+      await foods.init(jsonString: mockDBString);
       FoodModel? food = foods.getFood(167517);
       expect(food?.description,
           "Waffle, buttermilk, frozen, ready-to-heat, toasted");
     });
 
     test('getFood should return null for non-existent food', () async {
-      await foods.init(jsonString: fakeDBString);
+      await foods.init(jsonString: mockDBString);
       FoodModel? food = foods.getFood(2);
       expect(food, null);
     });
