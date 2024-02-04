@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/file_service.dart';
+import 'package:usda_db_package/src/models/food_model.dart';
 import 'package:usda_db_package/src/usda_db_base.dart';
 
 import '../setup/mock_file_strings.dart';
@@ -54,6 +55,38 @@ void main() {
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init().catchError((e, st) => null);
         expect(db.isDataLoaded, false);
+      });
+    });
+    group('dispose() - ', () {
+      test('clears properties', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = DB(fileLoader: mockFileLoaderService);
+        await db.init();
+        db.dispose();
+        expect(db.isDataLoaded, false);
+      });
+    });
+
+    group('getFood() - ', () {
+      test('returns a FoodModel', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = DB(fileLoader: mockFileLoaderService);
+        await db.init();
+        final foodItem = db.getFood(167512);
+        expect(foodItem, isNotNull);
+        expect(foodItem, isA<FoodModel>());
       });
     });
   });
