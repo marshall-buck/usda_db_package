@@ -5,27 +5,45 @@ import 'package:usda_db_package/src/sanitizer.dart';
 void main() {
   group('Sanitizer class tests', () {
     group('get sanitizedWords', () {
-      test('Sanitizer removes stop words correctly', () {
-        final sanitizer = Sanitizer(sentence: 'I am a test (sentence)');
+      test('removes stop words correctly', () {
+        final sanitizer = Sanitizer(sentence: '2% only milk');
         final sanitizedWords = sanitizer.sanitizedWords;
         const d = ListEquality();
-        expect(d.equals(sanitizedWords, ['test', 'sentence']), true);
+        expect(d.equals(sanitizedWords, ['2%', 'milk']), true);
       });
 
-      test('Sanitizer handles empty sentence correctly', () {
+      test('handles empty sentence correctly', () {
         final sanitizer = Sanitizer(sentence: '');
         final sanitizedWords = sanitizer.sanitizedWords;
         expect(sanitizedWords, isEmpty);
       });
 
-      test('Sanitizer handles sentence with only stop words', () {
+      test('handles sentence with only stop words', () {
         final sanitizer = Sanitizer(sentence: 'am a an and at');
         final sanitizedWords = sanitizer.sanitizedWords;
         expect(sanitizedWords, isEmpty);
       });
 
-      test('Sanitizer handles sentence with no stop words', () {
+      test('handles sentence with no stop words', () {
         final sanitizer = Sanitizer(sentence: 'Test sentence no  stop words');
+        final sanitizedWords = sanitizer.sanitizedWords;
+        const d = ListEquality();
+        expect(
+            d.equals(
+                sanitizedWords, ['test', 'sentence', 'no', 'stop', 'words']),
+            true);
+      });
+      test('handles sentence with parenthesis)', () {
+        final sanitizer = Sanitizer(sentence: 'Test (sentence) no  stop words');
+        final sanitizedWords = sanitizer.sanitizedWords;
+        const d = ListEquality();
+        expect(
+            d.equals(
+                sanitizedWords, ['test', 'sentence', 'no', 'stop', 'words']),
+            true);
+      });
+      test('handles sentence with dashes)', () {
+        final sanitizer = Sanitizer(sentence: 'Test-sentence no  stop words');
         final sanitizedWords = sanitizer.sanitizedWords;
         const d = ListEquality();
         expect(
