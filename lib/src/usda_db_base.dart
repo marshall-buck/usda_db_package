@@ -7,18 +7,33 @@ import 'file_service.dart';
 
 import 'foods_data.dart';
 
+import 'models/food_model.dart';
 import 'type_def.dart';
 
+/// Class to handle the main database. This is the only class that should be
+/// exposed to the user.  All searching and data retrieval should be done through
+/// this class.
+///
+/// An optional [fileLoader] can be passed to the constructor.  This is useful
+/// for testing purposes.  If no [fileLoader] is passed, the default [FileService]
+/// will be used.
+///
+/// The initialization of the database is done by calling the [init] method.
+///
+/// Example:
+/// ```dart
+/// final db = DB();
+/// await db.init();
+/// ```
+
+/// It is suggested to use the class as some sort of singleton, perhaps using
+/// a package like get_it.
 class DB {
   FileService fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
 
   DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
-
-  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
-
-  // Initialization Methods.
 
   /// Must be run to populate the database.
   Future<void> init() async {
@@ -32,24 +47,8 @@ class DB {
     }
   }
 
-  Future<void> _initAutocompleteData() async {
-    _autoCompleteData = AutoCompleteData();
-    final autoCompleteDataString = await fileLoader.loadData(
-        fileName: FileService.fileNameAutocompleteData);
-
-    await _autoCompleteData?.init(jsonString: autoCompleteDataString);
-    print(_autoCompleteData?.substringHash);
-  }
-
-  Future<void> _initFoodsData() async {
-    _foodsData = FoodsData();
-    final substringHashRootString =
-        await fileLoader.loadData(fileName: FileService.fileNameFoods);
-    // print(substringHashRootString);
-    await _foodsData?.init(jsonString: substringHashRootString);
-    print(_foodsData?.foodsList);
-  }
-  // Future<void> _initFoods() async => await _foods!.init(pathToFoods);
+  /// Helper method to check if the database has been initialized.
+  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
 
   /// Call this method before disposing Consumer.
   void dispose() {
@@ -61,13 +60,25 @@ class DB {
     dev.log('dispose completed', name: 'DB');
   }
 
-  /// Gets one food from database and returns the [FoodModel].
-  // FoodModel? getFood(String index) {
-  //   if (_foods == null) {
-  //     throw DBException('The DB has not been initialized properly!');
-  //   }
-  //   return _foods!.getFood(index);
-  // }
+  Future<void> _initAutocompleteData() async {
+    _autoCompleteData = AutoCompleteData();
+    final autoCompleteDataString = await fileLoader.loadData(
+        fileName: FileService.fileNameAutocompleteData);
+
+    await _autoCompleteData?.init(jsonString: autoCompleteDataString);
+  }
+
+  Future<void> _initFoodsData() async {
+    _foodsData = FoodsData();
+    final substringHashRootString =
+        await fileLoader.loadData(fileName: FileService.fileNameFoods);
+    // print(substringHashRootString);
+    await _foodsData?.init(jsonString: substringHashRootString);
+  }
+
+  /// Gets one food item from database and returns the [FoodModel].
+  FoodModel? getFood(int index) => _foodsData?.getFood(index);
+
 // TODO: Change to look for multiple terms
 // - sanitize sentence int list of strings
 // - for each word in list get set of indexes
