@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/file_service.dart';
 
-import 'mock_file_strings.dart';
-
 class MockFileLoaderService extends Mock implements FileService {}
 
 late final FileService mockFileLoaderService;

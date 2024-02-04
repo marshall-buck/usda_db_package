@@ -54,14 +54,9 @@ class AutoCompleteData implements Initializer {
     _indexHash.clear();
   }
 
-  /// Gets the [List] of food ids from the [substring].
-  List<int?> getFoodIndexes({required String substring}) {
-    int? lookUpIndex;
-    if (_substringHash.containsKey(substring)) {
-      lookUpIndex = _substringHash[substring];
-    }
-    return _indexHash[lookUpIndex] ?? [];
-  }
+  /// Gets the [List] of food ids from one [substring].
+  List<int?> getFoodIndexes({required String substring}) =>
+      _indexHash[_substringHash[substring]] ?? [];
 
   /// Convert [_indexHash] to proper types.
   void _convertIndexHashToType(Map<String, dynamic> mapFromJson) {

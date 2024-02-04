@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 
 import 'package:usda_db_package/src/autocomplete_data.dart';
+import 'package:usda_db_package/src/sanitizer.dart';
 
 import 'exceptions.dart';
 import 'file_service.dart';
@@ -32,6 +33,7 @@ class DB {
   FileService fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
+  Sanitizer? _sanitizer;
 
   DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
 
@@ -109,73 +111,25 @@ class DB {
   //   return descriptions;
   // }
 
-  // Future<List<DescriptionRecord>> getAutocompleteList(String term) async {
-  //   if (!isDataLoaded) {
-  //     throw DBException('The DB has not been initialized! properly');
-  //   }
-
-  //   final List<String?> indexes = await _findAllIndexes(term);
-  //   final List<FoodModel?> foods = await _findAllFoods(indexes);
-  //   final List<SearchResultRecord> descriptions =
-  //       await _createSearchResultRecords(foods);
-  //   return descriptions;
-  // }
-
-  List<String> _intersectAll(List<Set<String>> sets) {
-    // If there are no sets, return an empty list
-    if (sets.isEmpty) return [];
-
-    // Start with the first set as the initial intersection
-    Set<String> intersection = sets.first;
-
-    // Iterate over the rest of the sets and update the intersection
-    for (var set in sets.skip(1)) {
-      intersection = intersection.intersection(set);
+  List<DescriptionRecord?> getAutocompleteList(String searchString) {
+    if (!isDataLoaded) {
+      throw DBException('The DB has not been initialized! properly');
     }
-
-    // Return the intersection as a list
-    return intersection.toList();
-  }
-
-  /// Return all indexes for a list of hashes.
-  // List<String> _findAllIndexes(List<int> hashes) {
-  //   dev.log('_findAllIndexes', name: 'DB');
-  //   List<Set<String>> indexes = [];
-  //   for (final hash in hashes) {
-  //     final index = _substringHash!.getIndexes(hash).toSet();
-  //     if (index.isNotEmpty) {
-  //       indexes.add(index);
-  //     }
-  //   }
-
-  //   return _intersectAll(indexes);
-  // }
-
-  // List<int> _findAllHashes(List<String> words) {
-  //   Set<int> hashes = {};
-  //   for (final word in words) {
-  //     final hash = _substringHash!.getHashLookup(word);
-  //     if (hash != -1) {
-  //       hashes.add(hash);
-  //     }
-  //   }
-  //   return hashes.toList();
-  // }
-
-  /// Finds all foods from a list of ids.
-  List<FoodModel?> _findFoodsFromIds(List<int> ids) {
-    dev.log('_findAllFoods', name: 'DB');
-    return ids.map((id) => getFood(id)).toList();
-  }
-
-  /// Helper function to create a list of [DescriptionRecord] from a list of [FoodModel]'s.
-  /// Sorted by description's length. Shortest first.
-  List<DescriptionRecord?> _createDescriptionRecords(List<FoodModel?> foods) {
-    dev.log('_createDescriptions', name: 'DB');
-    return foods.isEmpty
-        ? []
-        : foods.map((food) => _createDescriptionRecord(food!)).toList()
-      ..sort((a, b) => a!.$2.compareTo(b!.$2));
+    _sanitizer = Sanitizer(sentence: searchString);
+    if (_sanitizer!.sanitizedWords.isEmpty) return [];
+    final termsToSearch = _sanitizer!.sanitizedWords;
+    Set<int?> ids = {};
+    List<DescriptionRecord?> descriptions = [];
+    // iterate through each word and get a list of indexes
+    for (final term in termsToSearch) {
+      ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));
+    }
+    for (final id in ids.toList()) {
+      final food = getFood(id!);
+      descriptions.add(_createDescriptionRecord(food!));
+    }
+    descriptions.sort((a, b) => a!.$2.compareTo(b!.$2));
+    return descriptions;
   }
 
   /// Helper function to create a [DescriptionRecord] from a [food] item.
