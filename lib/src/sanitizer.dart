@@ -5,7 +5,10 @@ import 'extensions/string_ext.dart';
 class Sanitizer {
   final String sentence;
 
-  Set<String> get sanitizedWords => sentence.getWordsToIndex();
+  List<String> get sanitizedWords => sentence
+      .getWordsToIndex()
+      .where((element) => !stopWords.contains(element) && element.length > 1)
+      .toList();
 
   /// Constructor for the Sanitizer class.
   Sanitizer({required this.sentence});

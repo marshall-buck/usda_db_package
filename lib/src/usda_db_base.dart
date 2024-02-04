@@ -81,7 +81,7 @@ class DB {
     await _foodsData?.init(jsonString: substringHashRootString);
   }
 
-  /// Gets one food item from database and returns the [FoodModel].
+  /// Gets one food item from database and returns the [FoodModel] or [null] if not found.
   FoodModel? getFood(int index) => _foodsData?.getFood(index);
 
 // TODO: Change to look for multiple terms
@@ -109,8 +109,8 @@ class DB {
   //   return descriptions;
   // }
 
-  // Future<List<SearchResultRecord>> getDescriptions(String term) async {
-  //   if (_substringHash == null || _foods == null) {
+  // Future<List<DescriptionRecord>> getAutocompleteList(String term) async {
+  //   if (!isDataLoaded) {
   //     throw DBException('The DB has not been initialized! properly');
   //   }
 
@@ -162,29 +162,16 @@ class DB {
   //   return hashes.toList();
   // }
 
-  /// Finds all foods from a list of indexes
-  // Future<List<FoodModel?>> _findAllFoods(List<String?> indexes) async {
-  //   dev.log('_findAllFoods', name: 'DB');
-  //   final List<FoodModel?> out = [];
-  //   for (final index in indexes) {
-  //     final food = getFood(index ?? '');
-  //     if (food != null) {
-  //       out.add(food);
-  //     }
-  //   }
-  //   return out;
-  // }
+  /// Finds all foods from a list of ids.
+  List<FoodModel?> _findFoodsFromIds(List<int> ids) {
+    dev.log('_findAllFoods', name: 'DB');
+    return ids.map((id) => getFood(id)).toList();
+  }
 
   /// Helper function to create a list of [DescriptionRecord] from a list of [FoodModel]'s.
+  /// Sorted by description's length. Shortest first.
   List<DescriptionRecord?> _createDescriptionRecords(List<FoodModel?> foods) {
     dev.log('_createDescriptions', name: 'DB');
-    // if (foods.isEmpty) return [];
-    // final List<DescriptionRecord> descriptionsList =
-    //     foods.map((food) => _createDescriptionRecord(food!)).toList();
-
-    // descriptionsList.sort((a, b) => a.$2.compareTo(b.$2));
-    // return descriptionsList;
-
     return foods.isEmpty
         ? []
         : foods.map((food) => _createDescriptionRecord(food!)).toList()

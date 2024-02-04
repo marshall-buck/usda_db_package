@@ -40,7 +40,7 @@ void main() {
 
     group('getWordsToIndex()', () {
       test('Sentence should be stripped of all non alpha chars', () {
-        const sentence1 = 'Doughnuts, yeast-Leavened, with jelly filling';
+        const sentence1 = 'Doughnuts, yeast-Leavened, (with) jelly filling';
         expect(sentence1.getWordsToIndex(),
             {'doughnuts', 'yeast', 'leavened', 'with', 'jelly', 'filling'});
         const sentence2 =

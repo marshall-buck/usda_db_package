@@ -30,6 +30,7 @@ class FoodsData implements Initializer {
   /// Dispose foodsList
   void clear() => _foodsList.clear();
 
+  /// Returns a [FoodModel] from the [_foodsList] or [null] if not found.
   FoodModel? getFood(int index) => _foodsList[index];
 
   // Converts a Map<String, dynamic> to Map<int, FoodModel>>.
