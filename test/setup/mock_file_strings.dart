@@ -1,70 +1,80 @@
 // cSpell: disable
 
-const String mocDB = '''
-{
-    "167512": {
-        "description": "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",
-        "descriptionLength": 81,
-        "Protein": 5.88,
-        "Dietary Fiber": 1.2,
-        "Saturated Fat": 2.94,
-        "Total Fat": 13.2,
-        "Total Carbs": 41.2,
-        "Calories": 307,
-        "Total Sugars": 5.88
-    },
-    "167513": {
-        "description": "Pillsbury, Cinnamon Rolls with Icing, refrigerated dough",
-        "descriptionLength": 56,
-        "Protein": 4.34,
-        "Dietary Fiber": 1.4,
-        "Saturated Fat": 3.25,
-        "Total Fat": 11.3,
-        "Total Carbs": 53.4,
-        "Calories": 330,
-        "Total Sugars": 21.3
-    },
-    "167514": {
-        "description": "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
-        "descriptionLength": 64,
-        "Total Fat": 3.7,
-        "Total Carbs": 79.8,
-        "Calories": 377,
-        "Protein": 6.1
-    },
-    "167515": {
-        "description": "George Weston Bakeries, Thomas English Muffins",
-        "descriptionLength": 46,
-        "Saturated Fat": 0.308,
-        "Protein": 8.0,
-        "Total Fat": 1.8,
-        "Total Carbs": 46.0,
-        "Calories": 232
-    },
-    "167516": {
-        "description": "Waffles, buttermilk, frozen, ready-to-heat",
-        "descriptionLength": 42,
-        "Saturated Fat": 1.9,
-        "Protein": 6.58,
-        "Dietary Fiber": 2.2,
-        "Calories": 273,
-        "Total Sugars": 4.3,
-        "Total Fat": 9.22,
-        "Total Carbs": 41.0
-    },
-    "167517": {
-        "description": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
-        "descriptionLength": 50,
-        "Saturated Fat": 2.28,
-        "Total Fat": 9.49,
-        "Total Carbs": 48.4,
-        "Calories": 309,
-        "Total Sugars": 4.41,
-        "Protein": 7.42,
-        "Dietary Fiber": 2.6
-    }
-}
-''';
+const mockFoodsData = {
+  167512: {
+    "description":
+        "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",
+    "nutrients": [
+      {"id": 1003, "amount": 5.88},
+      {"id": 1079, "amount": 1.2},
+      {"id": 1258, "amount": 2.94},
+      {"id": 1004, "amount": 13.2},
+      {"id": 1005, "amount": 41.2},
+      {"id": 1008, "amount": 307},
+      {"id": 2000, "amount": 5.88}
+    ]
+  },
+  167513: {
+    "description": "Pillsbury, Cinnamon Rolls with Icing, refrigerated dough",
+    "nutrients": [
+      {"id": 1003, "amount": 4.34},
+      {"id": 1079, "amount": 1.4},
+      {"id": 1258, "amount": 3.25},
+      {"id": 1004, "amount": 11.3},
+      {"id": 1005, "amount": 53.4},
+      {"id": 1008, "amount": 330},
+      {"id": 2000, "amount": 21.3}
+    ]
+  },
+  167514: {
+    "description":
+        "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
+    "nutrients": [
+      {"id": 1004, "amount": 3.7},
+      {"id": 1005, "amount": 79.8},
+      {"id": 1008, "amount": 377},
+      {"id": 1003, "amount": 6.1}
+    ]
+  },
+  167515: {
+    "description": "George Weston Bakeries, Thomas English Muffins",
+    "nutrients": [
+      {"id": 1258, "amount": 0.308},
+      {"id": 1003, "amount": 8.0},
+      {"id": 1004, "amount": 1.8},
+      {"id": 1005, "amount": 46.0},
+      {"id": 1008, "amount": 232}
+    ]
+  },
+  167516: {
+    "description": "Waffles, buttermilk, frozen, ready-to-heat",
+    "nutrients": [
+      {"id": 1258, "amount": 1.9},
+      {"id": 1003, "amount": 6.58},
+      {"id": 1079, "amount": 2.2},
+      {"id": 1008, "amount": 273},
+      {"id": 2000, "amount": 4.3},
+      {"id": 1004, "amount": 9.22},
+      {"id": 1005, "amount": 41.0}
+    ]
+  },
+  167517: {
+    "description": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
+    "nutrients": [
+      {"id": 1258, "amount": 2.28},
+      {"id": 1004, "amount": 9.49},
+      {"id": 1005, "amount": 48.4},
+      {"id": 1008, "amount": 309},
+      {"id": 2000, "amount": 4.41},
+      {"id": 1003, "amount": 7.42},
+      {"id": 1079, "amount": 2.6}
+    ]
+  },
+};
+
+final Map<String, dynamic> stringKeyedMap =
+    mockFoodsData.map((k, v) => MapEntry(k.toString(), v as dynamic));
+
 const mockHashTable = {
   "substringHash": {
     "aab": 0,

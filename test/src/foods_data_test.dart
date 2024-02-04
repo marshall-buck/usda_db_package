@@ -1,20 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/foods_data.dart';
 import 'package:usda_db_package/src/models/food_model.dart';
 
+import '../setup/mock_file_strings.dart';
+
 void main() {
-  group('Foods', () {
+  group('FoodsData class test', () {
     late FoodsData foods;
 
     setUp(() {
       foods = FoodsData();
     });
+    tearDown(() => foods.clear());
 
     test('init should populate foodsList', () async {
-      await foods.init(
-          jsonString: '{"1": {"description": "test food", "nutrients": []}}');
-      expect(foods.foodsList.length, 1);
-      expect(foods.foodsList[1]?.description, 'test food');
+      final String fakeDBString = jsonEncode(stringKeyedMap);
+      await foods.init(jsonString: fakeDBString);
+
+      expect(foods.foodsList.length, 6);
+
+      expect(foods.foodsList, isA<Map<int, FoodModel>>());
     });
 
     test('init should throw FormatException on invalid JSON', () async {

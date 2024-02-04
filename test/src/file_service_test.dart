@@ -12,16 +12,23 @@ void main() {
   group('FileService', () {
     final fileService = FileService();
     group('loadData() - ', () {
-      test('loadData returns file contents as string', () async {
+      test('loadData returns Autocomplete file contents as string ', () async {
         final String contents = await fileService.loadData(
-            fileName: FileService.fileNameSubstringHash);
+            fileName: FileService.fileNameAutocompleteData);
+        expect(contents, isA<String>());
+        expect(contents, isNotEmpty);
+        // print(contents);
+      });
+      test('loadData returns Foods file contents as string ', () async {
+        final String contents =
+            await fileService.loadData(fileName: FileService.fileNameFoods);
         expect(contents, isA<String>());
         expect(contents, isNotEmpty);
         // print(contents);
       });
 
       test('loadData throws exception if file does not exist', () async {
-        final String fileName = 'non_existent_file.txt';
+        const String fileName = 'non_existent_file.txt';
 
         expect(
           () async => await fileService.loadData(fileName: fileName),

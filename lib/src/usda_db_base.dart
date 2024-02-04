@@ -16,17 +16,15 @@ class DB {
 
   DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
 
+  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
+
   // Initialization Methods.
 
   /// Must be run to populate the database.
   Future<void> init() async {
     try {
-      _substringHash = SubStringHash(fileLoader);
-      _foodsData = FoodsData(fileLoader);
-      await Future.wait([
-        _initSubstringHash(),
-        _initFoods(),
-      ], eagerError: true);
+      await Future.wait([_initAutocompleteData(), _initFoodsData()],
+          eagerError: true);
       dev.log('init() completed ', name: 'DB');
     } catch (e, st) {
       dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
@@ -34,14 +32,22 @@ class DB {
     }
   }
 
-  Future<void> _initAutocompleteData(String rootBundleSting) async {
+  Future<void> _initAutocompleteData() async {
     _autoCompleteData = AutoCompleteData();
-    await _autoCompleteData?.init(jsonString: rootBundleSting);
+    final autoCompleteDataString = await fileLoader.loadData(
+        fileName: FileService.fileNameAutocompleteData);
+
+    await _autoCompleteData?.init(jsonString: autoCompleteDataString);
+    print(_autoCompleteData?.substringHash);
   }
 
-  Future<void> _initFoodsData(String rootBundleSting) async {
-    _autoCompleteData = AutoCompleteData();
-    await _autoCompleteData?.init(jsonString: rootBundleSting);
+  Future<void> _initFoodsData() async {
+    _foodsData = FoodsData();
+    final substringHashRootString =
+        await fileLoader.loadData(fileName: FileService.fileNameFoods);
+    // print(substringHashRootString);
+    await _foodsData?.init(jsonString: substringHashRootString);
+    print(_foodsData?.foodsList);
   }
   // Future<void> _initFoods() async => await _foods!.init(pathToFoods);
 
@@ -115,29 +121,29 @@ class DB {
   }
 
   /// Return all indexes for a list of hashes.
-  List<String> _findAllIndexes(List<int> hashes) {
-    dev.log('_findAllIndexes', name: 'DB');
-    List<Set<String>> indexes = [];
-    for (final hash in hashes) {
-      final index = _substringHash!.getIndexes(hash).toSet();
-      if (index.isNotEmpty) {
-        indexes.add(index);
-      }
-    }
+  // List<String> _findAllIndexes(List<int> hashes) {
+  //   dev.log('_findAllIndexes', name: 'DB');
+  //   List<Set<String>> indexes = [];
+  //   for (final hash in hashes) {
+  //     final index = _substringHash!.getIndexes(hash).toSet();
+  //     if (index.isNotEmpty) {
+  //       indexes.add(index);
+  //     }
+  //   }
 
-    return _intersectAll(indexes);
-  }
+  //   return _intersectAll(indexes);
+  // }
 
-  List<int> _findAllHashes(List<String> words) {
-    Set<int> hashes = {};
-    for (final word in words) {
-      final hash = _substringHash!.getHashLookup(word);
-      if (hash != -1) {
-        hashes.add(hash);
-      }
-    }
-    return hashes.toList();
-  }
+  // List<int> _findAllHashes(List<String> words) {
+  //   Set<int> hashes = {};
+  //   for (final word in words) {
+  //     final hash = _substringHash!.getHashLookup(word);
+  //     if (hash != -1) {
+  //       hashes.add(hash);
+  //     }
+  //   }
+  //   return hashes.toList();
+  // }
 
   /// Finds all foods from a list of indexes
   // Future<List<FoodModel?>> _findAllFoods(List<String?> indexes) async {

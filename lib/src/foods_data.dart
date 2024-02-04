@@ -3,7 +3,6 @@ import 'dart:developer' as dev;
 
 import 'initializer.dart';
 import 'models/food_model.dart';
-import 'models/nutrient_model.dart';
 
 /// Class to handle the main foods database.
 class FoodsData implements Initializer {
@@ -19,11 +18,12 @@ class FoodsData implements Initializer {
   Future<void> init({required String jsonString}) async {
     try {
       final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
+
       _convertJsonMapTypes(jsonMap);
     } catch (e, st) {
       dev.log('Error decoding JSON',
           name: 'Foods', error: e.toString(), stackTrace: st);
-      throw const FormatException('Error decoding JSON');
+      throw const FormatException('Error decoding JSON in FoodsData class');
     }
   }
 
@@ -34,15 +34,10 @@ class FoodsData implements Initializer {
 
   // Converts a Map<String, dynamic> to Map<String, List<String>>.
   void _convertJsonMapTypes(Map<String, dynamic> jsonMap) {
-    Map<int, FoodModel> convertedMap = jsonMap.map((key, value) {
-      // print('$key, $value');
-      FoodModel convertedValue = FoodModel(
-        id: int.parse(key),
-        description: value['description'],
-        nutrients: List<Nutrient>.from(value['nutrients']),
-      );
-      return MapEntry(convertedValue.id, convertedValue);
-    });
-    _foodsList.addAll(convertedMap);
+    for (final entry in jsonMap.entries) {
+      final Map<String, dynamic> arg = Map.from({entry.key: entry.value});
+      final food = FoodModel.fromJson(jsonMap: arg);
+      _foodsList[food.id] = food;
+    }
   }
 }
