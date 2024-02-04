@@ -108,6 +108,7 @@ class DB {
   //       await _createSearchResultRecords(foods);
   //   return descriptions;
   // }
+
   // Future<List<SearchResultRecord>> getDescriptions(String term) async {
   //   if (_substringHash == null || _foods == null) {
   //     throw DBException('The DB has not been initialized! properly');
@@ -174,24 +175,29 @@ class DB {
   //   return out;
   // }
 
-  // Future<List<SearchResultRecord>> _createSearchResultRecords(
-  //     List<FoodModel?> foods) async {
-  //   dev.log('_createDescriptions', name: 'DB');
-  //   if (foods.isEmpty) return [];
-  //   final List<SearchResultRecord> out =
-  //       foods.map((food) => _createSearchResultRecord(food!)).toList();
+  /// Helper function to create a list of [DescriptionRecord] from a list of [FoodModel]'s.
+  List<DescriptionRecord?> _createDescriptionRecords(List<FoodModel?> foods) {
+    dev.log('_createDescriptions', name: 'DB');
+    // if (foods.isEmpty) return [];
+    // final List<DescriptionRecord> descriptionsList =
+    //     foods.map((food) => _createDescriptionRecord(food!)).toList();
 
-  //   out.sort((a, b) => a.$2.compareTo(b.$2));
-  //   return out;
-  // }
+    // descriptionsList.sort((a, b) => a.$2.compareTo(b.$2));
+    // return descriptionsList;
 
-  // /// Helper function to create a [SearchResultRecord] for the food description
-  // SearchResultRecord _createSearchResultRecord(FoodModel food) {
-  //   dev.log('_createDescription', name: 'DB');
-  //   return (food.description, food.descriptionLength, food.id);
-  // }
+    return foods.isEmpty
+        ? []
+        : foods.map((food) => _createDescriptionRecord(food!)).toList()
+      ..sort((a, b) => a!.$2.compareTo(b!.$2));
+  }
+
+  /// Helper function to create a [DescriptionRecord] from a [food] item.
+  DescriptionRecord _createDescriptionRecord(FoodModel food) {
+    dev.log('_createDescription', name: 'DB');
+    return (food.description, food.description.length, food.id);
+  }
 
   @override
   String toString() =>
-      'FoodsDb: ${_foodsData?.foodsList?.length} should be a number';
+      'FoodsDb: ${_foodsData?.foodsList.length} should be a number';
 }
