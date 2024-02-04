@@ -38,10 +38,15 @@ class DB {
   /// Must be run to populate the database.
   Future<void> init() async {
     try {
-      await Future.wait([_initAutocompleteData(), _initFoodsData()],
-          eagerError: true);
+      await Future.wait(
+        [_initAutocompleteData(), _initFoodsData()],
+        eagerError: true,
+      );
       dev.log('init() completed ', name: 'DB');
     } catch (e, st) {
+      // All or none of the data should be loaded.  If an error occurs.
+      dispose();
+
       dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
       throw DBException(e.toString(), st);
     }
@@ -61,18 +66,18 @@ class DB {
   }
 
   Future<void> _initAutocompleteData() async {
-    _autoCompleteData = AutoCompleteData();
     final autoCompleteDataString = await fileLoader.loadData(
         fileName: FileService.fileNameAutocompleteData);
+    _autoCompleteData = AutoCompleteData();
 
     await _autoCompleteData?.init(jsonString: autoCompleteDataString);
   }
 
   Future<void> _initFoodsData() async {
-    _foodsData = FoodsData();
     final substringHashRootString =
         await fileLoader.loadData(fileName: FileService.fileNameFoods);
-    // print(substringHashRootString);
+    _foodsData = FoodsData();
+
     await _foodsData?.init(jsonString: substringHashRootString);
   }
 
