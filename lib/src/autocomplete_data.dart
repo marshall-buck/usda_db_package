@@ -5,7 +5,8 @@ import 'package:usda_db_package/src/initializer.dart';
 
 /// Class to represent the [AutoCompleteData]'s structure and methods.
 /// This is the data structure that represents a substring tree, and a lookup table
-/// for the substrings values.
+/// for the substrings values.  The lookup table is a map of substring values to
+/// a list of food ids.
 ///
 /// The json file format is as follows:
 /// /*Cspell:disable
@@ -47,7 +48,13 @@ class AutoCompleteData implements Initializer {
     }
   }
 
-  /// Gets the list of indexes from the [substring].
+  /// Reverts data to empty state.
+  void clear() {
+    _substringHash.clear();
+    _indexHash.clear();
+  }
+
+  /// Gets the [List] of food ids from the [substring].
   List<int?> getFoodIndexes({required String substring}) {
     int? lookUpIndex;
     if (_substringHash.containsKey(substring)) {
@@ -56,7 +63,7 @@ class AutoCompleteData implements Initializer {
     return _indexHash[lookUpIndex] ?? [];
   }
 
-  /// Convert to proper types
+  /// Convert [_indexHash] to proper types.
   void _convertIndexHashToType(Map<String, dynamic> mapFromJson) {
     if (mapFromJson.isEmpty) {
       dev.log('IndexHash is empty',
@@ -68,12 +75,7 @@ class AutoCompleteData implements Initializer {
     });
   }
 
-  void clear() {
-    _substringHash.clear();
-    _indexHash.clear();
-  }
-
-  /// Convert to proper types
+  /// Convert [_substringHash] to proper types.
   void _convertSubstringHashToType(Map<String, dynamic> mapFromJson) {
     if (mapFromJson.isEmpty) {
       dev.log('SubstringHash is empty',
