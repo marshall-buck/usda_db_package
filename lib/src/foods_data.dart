@@ -4,16 +4,13 @@ import 'dart:developer' as dev;
 import 'initializer.dart';
 import 'models/food_model.dart';
 
-/// Class to handle the main foods database.
+/// Class to handle the foods database.
 class FoodsData implements Initializer {
   final Map<int, FoodModel> _foodsList = {};
   Map<int, FoodModel> get foodsList => _foodsList;
 
-  /// Initializes the instance
-  ///
-  /// Parameters:
-  /// - [path] The path of the  file.
-
+  /// Initializes by decoding a JSON string, and populating [_foodsList]
+  /// with the decoded data.
   @override
   Future<void> init({required String jsonString}) async {
     try {
@@ -27,7 +24,7 @@ class FoodsData implements Initializer {
     }
   }
 
-  /// Dispose foodsList
+  /// Empty the foodsList object.
   void clear() => _foodsList.clear();
 
   /// Returns a [FoodModel] from the [_foodsList] or [null] if not found.

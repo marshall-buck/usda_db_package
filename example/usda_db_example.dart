@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:usda_db_package/src/type_def.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
 final db = DB();
