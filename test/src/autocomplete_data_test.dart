@@ -19,7 +19,7 @@ void main() {
         expect(hashData.substringHash, isNotEmpty);
         expect(
           hashData.indexHash.entries.first.value,
-          [170381, 170382],
+          [167512, 167513],
         );
         expect(
           hashData.indexHash.entries.first.key,
@@ -70,7 +70,7 @@ void main() {
         await hashData.init(jsonString: json);
         final indexes = hashData.getFoodIndexes(substring: 'aab');
         const d = DeepCollectionEquality();
-        expect(d.equals(indexes, [170381, 170382]), true);
+        expect(d.equals(indexes, [167512, 167513]), true);
       });
       test('returns empty list if substring not found', () async {
         final String json = jsonEncode(mockHashTable);

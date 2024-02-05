@@ -3,15 +3,13 @@ import 'extensions/string_ext.dart';
 /// Sanitizer class to take a sentence and use the same method to sanitize
 /// the sentence the same way the autocomplete data substrings are created.
 class Sanitizer {
-  final String sentence;
-
-  List<String> get sanitizedWords => sentence
+  List<String> sanitizedWords(String sentence) => sentence
       .getWordsToIndex()
-      .where((element) => !stopWords.contains(element))
+      .where((element) => !stopWords.contains(element) && element.length > 1)
       .toList();
 
   /// Constructor for the Sanitizer class.
-  Sanitizer({required this.sentence});
+  // Sanitizer({required this.sentence});
 
   static const List<String> stopWords = [
     "about",

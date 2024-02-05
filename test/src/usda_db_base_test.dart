@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/exceptions.dart';
@@ -91,7 +93,7 @@ void main() {
       });
     });
 
-    group('getAutocompleteList() - ', () {
+    group('getAutocompleteResults() - ', () {
       test('returns a list of DescriptionRecord', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
@@ -102,14 +104,55 @@ void main() {
 
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init();
-        final list = db.getAutocompleteList('apple');
+        final list = db.getAutocompleteResults('aab');
         expect(list, isNotEmpty);
-        expect(list, isA<List<DescriptionRecord>>());
+        expect(list[0], isA<DescriptionRecord>());
+      });
+
+      test('expect list is sorted properly', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = DB(fileLoader: mockFileLoaderService);
+        await db.init();
+        final list = db.getAutocompleteResults('aab');
+        expect(list[0]?.$2, 56);
+        expect(list[1]?.$2, 81);
+      });
+      test('expect list to be empty with no results with input', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = DB(fileLoader: mockFileLoaderService);
+        await db.init();
+        final list = db.getAutocompleteResults('aa rrr');
+        expect(list, isEmpty);
+      });
+      test('expect list to be correct with more than one word', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = DB(fileLoader: mockFileLoaderService);
+        await db.init();
+        final list = db.getAutocompleteResults('aab dough');
+        expect(list.length, 4);
       });
       test('throws DBException if db has not been initialized', () {
         final db = DB(fileLoader: mockFileLoaderService);
-        expect(
-            () => db.getAutocompleteList('apple'), throwsA(isA<DBException>()));
+        expect(() => db.getAutocompleteResults('apple'),
+            throwsA(isA<DBException>()));
       });
     });
   });

@@ -33,11 +33,14 @@ class DB {
   FileService fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
-  Sanitizer? _sanitizer;
+  final Sanitizer _sanitizer = Sanitizer();
 
   DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
 
   /// Must be run to populate the database.
+  /// Will throw a [DBException] if either the foods or autocomplete data
+  /// fails to load. If an error occurs the database properties
+  /// will be disposed of and will need to be re-initialized.
   Future<void> init() async {
     try {
       await Future.wait(
@@ -57,7 +60,7 @@ class DB {
   /// Helper method to check if the database has been initialized.
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
 
-  /// Call this method before disposing Consumer.
+  /// Sets all data properties to null.
   void dispose() {
     _foodsData?.clear();
     _autoCompleteData?.clear();
@@ -70,26 +73,39 @@ class DB {
   /// Gets one food item from database and returns the [FoodModel] or [null] if not found.
   FoodModel? getFood(int id) => _foodsData?.getFood(id);
 
-  List<DescriptionRecord?> getAutocompleteList(String searchString) {
+  /// Returns a list of [DescriptionRecord]'s that match the [searchString].
+  List<DescriptionRecord?> getAutocompleteResults(String searchString) {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
+    final sanitizedWords = _sanitizer.sanitizedWords(searchString);
 
-    _sanitizer = Sanitizer(sentence: searchString);
-    if (_sanitizer!.sanitizedWords.isEmpty) return [];
-    final termsToSearch = _sanitizer!.sanitizedWords;
+    if (sanitizedWords.isEmpty) return [];
 
+    Set<int?> ids = _getIds(sanitizedWords);
+
+    final descriptions = _getDescriptions(ids);
+    descriptions.sort((a, b) => a!.$2.compareTo(b!.$2));
+    print(descriptions);
+    return descriptions;
+  }
+
+  /// Returns a [Set] of food ids that match the [sanitizedWords].
+  Set<int?> _getIds(List<String> sanitizedWords) {
     Set<int?> ids = {};
-    List<DescriptionRecord?> descriptions = [];
-
-    for (final term in termsToSearch) {
+    for (final term in sanitizedWords) {
       ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));
     }
+    return ids;
+  }
+
+  /// Returns a [List] of [DescriptionRecord]'s that match the [ids].
+  List<DescriptionRecord?> _getDescriptions(Set<int?> ids) {
+    List<DescriptionRecord?> descriptions = [];
     for (final id in ids.toList()) {
       final food = getFood(id!);
       descriptions.add(_createDescriptionRecord(food!));
     }
-    descriptions.sort((a, b) => a!.$2.compareTo(b!.$2));
     return descriptions;
   }
 
