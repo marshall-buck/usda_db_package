@@ -74,7 +74,8 @@ class DB {
   FoodModel? getFood(int id) => _foodsData?.getFood(id);
 
   /// Returns a list of [DescriptionRecord]'s that match the [searchString].
-  List<DescriptionRecord?> getAutocompleteResults(String searchString) {
+  Future<List<DescriptionRecord?>> getAutocompleteResults(
+      String searchString) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -86,7 +87,7 @@ class DB {
 
     final descriptions = _getDescriptions(ids);
     descriptions.sort((a, b) => a!.$2.compareTo(b!.$2));
-    print(descriptions);
+
     return descriptions;
   }
 

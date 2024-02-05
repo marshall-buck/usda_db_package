@@ -104,7 +104,7 @@ void main() {
 
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init();
-        final list = db.getAutocompleteResults('aab');
+        final list = await db.getAutocompleteResults('aab');
         expect(list, isNotEmpty);
         expect(list[0], isA<DescriptionRecord>());
       });
@@ -119,7 +119,7 @@ void main() {
 
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init();
-        final list = db.getAutocompleteResults('aab');
+        final list = await db.getAutocompleteResults('aab');
         expect(list[0]?.$2, 56);
         expect(list[1]?.$2, 81);
       });
@@ -133,7 +133,7 @@ void main() {
 
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init();
-        final list = db.getAutocompleteResults('aa rrr');
+        final list = await db.getAutocompleteResults('aa rrr');
         expect(list, isEmpty);
       });
       test('expect list to be correct with more than one word', () async {
@@ -146,7 +146,7 @@ void main() {
 
         final db = DB(fileLoader: mockFileLoaderService);
         await db.init();
-        final list = db.getAutocompleteResults('aab dough');
+        final list = await db.getAutocompleteResults('aab dough');
         expect(list.length, 4);
       });
       test('throws DBException if db has not been initialized', () {
