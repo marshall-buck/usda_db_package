@@ -40,7 +40,7 @@ class UsdaDB {
   /// Will throw a [DBException] if either the foods or autocomplete data
   /// fails to load. If an error occurs the database properties
   /// will be disposed of and will need to be re-initialized.
-  @override
+
   Future<void> init() async {
     try {
       await Future.wait(
