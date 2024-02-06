@@ -1,14 +1,13 @@
 import 'dart:developer' as dev;
 
-import 'package:usda_db_package/src/autocomplete_data.dart';
-import 'package:usda_db_package/src/sanitizer.dart';
-
+import 'autocomplete_data.dart';
 import 'exceptions.dart';
 import 'file_service.dart';
 
 import 'foods_data.dart';
 
 import 'models/food_model.dart';
+import 'sanitizer.dart';
 import 'type_def.dart';
 
 /// Class to handle the main database. This is the only class that should be
@@ -29,18 +28,19 @@ import 'type_def.dart';
 
 /// It is suggested to use the class as some sort of singleton, perhaps using
 /// a package like get_it.
-class DB {
+class UsdaDB {
   FileService fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   final Sanitizer _sanitizer = Sanitizer();
 
-  DB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
+  UsdaDB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
 
   /// Must be run to populate the database.
   /// Will throw a [DBException] if either the foods or autocomplete data
   /// fails to load. If an error occurs the database properties
   /// will be disposed of and will need to be re-initialized.
+  @override
   Future<void> init() async {
     try {
       await Future.wait(

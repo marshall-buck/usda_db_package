@@ -23,7 +23,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         expect(db.isDataLoaded, true);
       });
@@ -35,7 +35,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
 
         expect(() async => await db.init(), throwsA(isA<DBException>()));
         expect(db.isDataLoaded, false);
@@ -43,7 +43,7 @@ void main() {
     });
     group('isDataLoaded() - ', () {
       test('returns false if db has not been initiated', () {
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         expect(db.isDataLoaded, false);
       });
       test('returns false if db.init throws', () async {
@@ -53,7 +53,7 @@ void main() {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init().catchError((e, st) => null);
         expect(db.isDataLoaded, false);
       });
@@ -67,7 +67,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         db.dispose();
         expect(db.isDataLoaded, false);
@@ -83,7 +83,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         final foodItem = db.getFood(167512);
         expect(foodItem, isNotNull);
@@ -100,7 +100,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         final list = await db.getAutocompleteResults('aab');
         expect(list, isNotEmpty);
@@ -115,7 +115,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         final list = await db.getAutocompleteResults('aab');
         expect(list[0]?.$2, 56);
@@ -129,7 +129,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         final list = await db.getAutocompleteResults('aa rrr');
         expect(list, isEmpty);
@@ -142,13 +142,13 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
 
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         await db.init();
         final list = await db.getAutocompleteResults('aab dough');
         expect(list.length, 4);
       });
       test('throws DBException if db has not been initialized', () {
-        final db = DB(fileLoader: mockFileLoaderService);
+        final db = UsdaDB(fileLoader: mockFileLoaderService);
         expect(() => db.getAutocompleteResults('apple'),
             throwsA(isA<DBException>()));
       });

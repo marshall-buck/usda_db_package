@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
-final db = DB();
+final db = UsdaDB();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
