@@ -22,13 +22,13 @@ import 'type_def.dart';
 /// the [init] method must be called again.
 ///
 /// Once the database is initialized, the [isDataLoaded] property can be used to check
-/// if the data has been loaded successfully. The [isLoadingData] property can be used
+/// if the data has been loaded successfully. The [isInitializing] property can be used
 /// to check if the database is currently being initialized.
 ///
-/// Food items can be retrieved from the database using the [getFood] method, which
+/// Food items can be retrieved from the database using the [queryFoods] method, which
 /// takes an ID as a parameter and returns the corresponding [FoodModel] object.
 ///
-/// Autocomplete searches can be performed using the [getAutocompleteResults] method,
+/// Autocomplete searches can be performed using the [queryFoodDescriptions] method,
 /// which takes a search string as a parameter and returns a list of [DescriptionRecord] objects
 /// that match the search string.
 ///
@@ -50,7 +50,7 @@ class UsdaDB {
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   final Sanitizer _sanitizer = Sanitizer();
-  bool _isLoadingData = false;
+  bool _isInitializing = false;
 
   UsdaDB({FileService? fileLoader}) : _fileLoader = fileLoader ?? FileService();
 
@@ -58,19 +58,20 @@ class UsdaDB {
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
 
   /// Returns true while [init] is running.
-  bool get isLoadingData => _isLoadingData;
+  bool get isInitializing => _isInitializing;
 
   /// Initializes the database by loading data from files.
   ///
   /// Throws a [DBException] if an error occurs during initialization.
-  Future<void> init() async {
-    _isLoadingData = true;
+  Future<bool> init() async {
+    _isInitializing = true;
     try {
       await Future.wait(
         [_initAutocompleteData(), _initFoodsData()],
         eagerError: true,
       );
       dev.log('init() completed ', name: 'DB');
+      return true;
     } catch (e, st) {
       // All or none of the data should be loaded.  If an error occurs.
       dispose();
@@ -78,7 +79,7 @@ class UsdaDB {
       dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
       throw DBException(e.toString(), st);
     } finally {
-      _isLoadingData = false;
+      _isInitializing = false;
     }
   }
 
@@ -94,13 +95,18 @@ class UsdaDB {
 
   /// Retrieves a [FoodModel] from the database based on its [id].
   ///
-  /// Returns the [FoodModel] if found, otherwise returns `null`.
-  FoodModel? getFood(int id) => _foodsData?.getFood(id);
+  /// Returns a [Future<FoodModel>] if found, otherwise returns `null`.
+  Future<FoodModel?> queryFoods(int id) async {
+    if (!isDataLoaded) {
+      throw DBException('The DB has not been initialized! properly');
+    }
+    return _foodsData!.getFood(id);
+  }
 
   /// Retrieves a list of [DescriptionRecord]s that match the given [searchString].
   ///
   /// Throws a [DBException] if the database has not been properly initialized.
-  Future<List<DescriptionRecord?>> getAutocompleteResults(
+  Future<List<DescriptionRecord?>> queryFoodDescriptions(
       String searchString) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
@@ -111,7 +117,7 @@ class UsdaDB {
 
     Set<int?> ids = _getIds(sanitizedWords);
 
-    final descriptions = _getDescriptions(ids);
+    final descriptions = await _getDescriptions(ids);
     descriptions.sort((a, b) => a!.$2.compareTo(b!.$2));
 
     return descriptions;
@@ -127,10 +133,10 @@ class UsdaDB {
   }
 
   /// Retrieves a list of [DescriptionRecord]s that match the given [ids].
-  List<DescriptionRecord?> _getDescriptions(Set<int?> ids) {
+  Future<List<DescriptionRecord?>> _getDescriptions(Set<int?> ids) async {
     List<DescriptionRecord?> descriptions = [];
     for (final id in ids.toList()) {
-      final food = getFood(id!);
+      final food = await queryFoods(id!);
       descriptions.add(_createDescriptionRecord(food!));
     }
     return descriptions;

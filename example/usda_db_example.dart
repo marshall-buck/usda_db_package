@@ -26,7 +26,7 @@ class AutocompleteBasicUserExample extends StatelessWidget {
     debugPrint('textEditingValue ${textEditingValue.text}');
 
     if (textEditingValue.text.length > 1) {
-      final results = await db.getAutocompleteResults(textEditingValue.text);
+      final results = await db.queryFoodDescriptions(textEditingValue.text);
       // Filter out any null results, if necessary, to ensure the list only contains non-nullable elements.
       return results.whereType<DescriptionRecord>().toList();
     }
