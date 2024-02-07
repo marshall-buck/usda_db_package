@@ -10,38 +10,61 @@ import 'models/food_model.dart';
 import 'sanitizer.dart';
 import 'type_def.dart';
 
-/// Class to handle the main database. This is the only class that should be
-/// exposed to the user.  All searching and data retrieval should be done through
-/// this class.
+/// A class representing the USDA database.
 ///
-/// An optional [fileLoader] can be passed to the constructor.  This is useful
-/// for testing purposes.  If no [fileLoader] is passed, the default [FileService]
-/// will be used.
+/// This class is responsible for loading and managing the data in the database.
+/// It provides methods for initializing the database, retrieving food items,
+/// and performing autocomplete searches.
 ///
-/// The initialization of the database is done by calling the [init] method.
+/// The database must be initialized by calling the [init] method before any other
+/// operations can be performed. If the initialization fails, a [DBException] will be thrown
+/// and the database properties will be disposed of. To re-initialize the database,
+/// the [init] method must be called again.
 ///
-/// Example:
+/// Once the database is initialized, the [isDataLoaded] property can be used to check
+/// if the data has been loaded successfully. The [isLoadingData] property can be used
+/// to check if the database is currently being initialized.
+///
+/// Food items can be retrieved from the database using the [getFood] method, which
+/// takes an ID as a parameter and returns the corresponding [FoodModel] object.
+///
+/// Autocomplete searches can be performed using the [getAutocompleteResults] method,
+/// which takes a search string as a parameter and returns a list of [DescriptionRecord] objects
+/// that match the search string.
+///
+/// The [dispose] method can be used to clear all data properties and reset the database.
+///
+/// Example usage:
 /// ```dart
-/// final db = DB();
-/// await db.init();
+/// final usdaDB = UsdaDB();
+/// await usdaDB.init();
+/// final food = usdaDB.getFood(1);
+/// final autocompleteResults = await usdaDB.getAutocompleteResults('apple');
+/// usdaDB.dispose();
 /// ```
 
 /// It is suggested to use the class as some sort of singleton, perhaps using
 /// a package like get_it.
 class UsdaDB {
-  FileService fileLoader;
+  final FileService _fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   final Sanitizer _sanitizer = Sanitizer();
+  bool _isLoadingData = false;
 
-  UsdaDB({FileService? fileLoader}) : fileLoader = fileLoader ?? FileService();
+  UsdaDB({FileService? fileLoader}) : _fileLoader = fileLoader ?? FileService();
 
-  /// Must be run to populate the database.
-  /// Will throw a [DBException] if either the foods or autocomplete data
-  /// fails to load. If an error occurs the database properties
-  /// will be disposed of and will need to be re-initialized.
+  /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
+  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
 
+  /// Returns true while [init] is running.
+  bool get isLoadingData => _isLoadingData;
+
+  /// Initializes the database by loading data from files.
+  ///
+  /// Throws a [DBException] if an error occurs during initialization.
   Future<void> init() async {
+    _isLoadingData = true;
     try {
       await Future.wait(
         [_initAutocompleteData(), _initFoodsData()],
@@ -54,13 +77,12 @@ class UsdaDB {
 
       dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
       throw DBException(e.toString(), st);
+    } finally {
+      _isLoadingData = false;
     }
   }
 
-  /// Helper method to check if the database has been initialized.
-  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
-
-  /// Sets all data properties to null.
+  /// Disposes the database by clearing all data properties.
   void dispose() {
     _foodsData?.clear();
     _autoCompleteData?.clear();
@@ -70,10 +92,14 @@ class UsdaDB {
     dev.log('dispose completed', name: 'DB');
   }
 
-  /// Gets one food item from database and returns the [FoodModel] or [null] if not found.
+  /// Retrieves a [FoodModel] from the database based on its [id].
+  ///
+  /// Returns the [FoodModel] if found, otherwise returns `null`.
   FoodModel? getFood(int id) => _foodsData?.getFood(id);
 
-  /// Returns a list of [DescriptionRecord]'s that match the [searchString].
+  /// Retrieves a list of [DescriptionRecord]s that match the given [searchString].
+  ///
+  /// Throws a [DBException] if the database has not been properly initialized.
   Future<List<DescriptionRecord?>> getAutocompleteResults(
       String searchString) async {
     if (!isDataLoaded) {
@@ -91,7 +117,7 @@ class UsdaDB {
     return descriptions;
   }
 
-  /// Returns a [Set] of food ids that match the [sanitizedWords].
+  /// Retrieves a set of food ids that match the given [sanitizedWords].
   Set<int?> _getIds(List<String> sanitizedWords) {
     Set<int?> ids = {};
     for (final term in sanitizedWords) {
@@ -100,7 +126,7 @@ class UsdaDB {
     return ids;
   }
 
-  /// Returns a [List] of [DescriptionRecord]'s that match the [ids].
+  /// Retrieves a list of [DescriptionRecord]s that match the given [ids].
   List<DescriptionRecord?> _getDescriptions(Set<int?> ids) {
     List<DescriptionRecord?> descriptions = [];
     for (final id in ids.toList()) {
@@ -110,23 +136,25 @@ class UsdaDB {
     return descriptions;
   }
 
-  /// Helper function to create a [DescriptionRecord] from a [food] item.
+  /// Creates a [DescriptionRecord] from a [food] item.
   DescriptionRecord _createDescriptionRecord(FoodModel food) {
     dev.log('_createDescription', name: 'DB');
     return (food.description, food.description.length, food.id);
   }
 
+  /// Initializes the autocomplete data by loading it from a file.
   Future<void> _initAutocompleteData() async {
-    final autoCompleteDataString = await fileLoader.loadData(
+    final autoCompleteDataString = await _fileLoader.loadData(
         fileName: FileService.fileNameAutocompleteData);
     _autoCompleteData = AutoCompleteData();
 
     await _autoCompleteData?.init(jsonString: autoCompleteDataString);
   }
 
+  /// Initializes the foods data by loading it from a file.
   Future<void> _initFoodsData() async {
     final substringHashRootString =
-        await fileLoader.loadData(fileName: FileService.fileNameFoods);
+        await _fileLoader.loadData(fileName: FileService.fileNameFoods);
     _foodsData = FoodsData();
 
     await _foodsData?.init(jsonString: substringHashRootString);
