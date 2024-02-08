@@ -24,7 +24,7 @@ final db = UsdaDB();
 ```dart
 await  db.init();
 ```
-> There are only 3 public methods needed.
+> There are only 3 public methods needed. Once init is run.
 ```dart
 final FoodModel? food = db.getFood(123);
 
