@@ -5,43 +5,45 @@ import 'dart:developer' as dev;
 
 /// A class that provides file-related services.
 ///
-/// This class is responsible for opening files located in the package's
-/// assets and returning their contents as a string.
+/// The [loadData] method takes a [fileName] parameter and returns the
+/// contents of the file as a [String].
 ///
-/// It also provides a method to open the manifest file and retrieve the hash.
+/// The [fileNameManifest] is the name of the manifest file that contains the hash
+/// of the data files.
+/// The [fileNameFoods] is the name of the file that contains the
+/// food data.
+/// he [fileNameAutocompleteData] is the name of the file that contains
+/// the autocomplete data.
 ///
-/// The file paths and names are defined as constants within the class.
-///
-/// Example usage:
-/// ```dart
-/// FileService fileService = FileService();
-/// String contents = await fileService.loadData(fileName: 'example.txt');
-/// ```
+/// The [_getFileHash] method retrieves the hash from the manifest file.
 class FileService {
   static const String _dataPath = 'packages/usda_db_package/lib/data';
   static const String fileNameManifest = 'file_manifest.txt';
   static const String fileNameFoods = 'foods_db.json';
   static const String fileNameAutocompleteData = 'autocomplete_hash.json';
 
-  /// Opens a file from [fileName] located in the package's assets.
-  /// Returns the contents as a [String].
+  /// Returns the contents of the file as a [String].
+  ///
+  /// Throws a [FileSystemException] if the file cannot be loaded.
   Future<String> loadData({required String fileName}) async {
     final fileHash = await _getFileHash();
     final String assetPath = '$_dataPath/${fileHash}_$fileName';
-    final String contents;
+    final String fileString;
 
     try {
-      contents = await rootBundle.loadString(assetPath);
+      fileString = await rootBundle.loadString(assetPath);
     } catch (e, st) {
       dev.log('Error loading file at $assetPath',
           name: 'FileService', error: e.toString(), stackTrace: st);
       throw FileSystemException(e.toString());
     }
 
-    return contents;
+    return fileString;
   }
 
   /// Opens the manifest file and returns the hash.
+  ///
+  /// Throws a [FileSystemException] if the file cannot be loaded.
   Future<String> _getFileHash() async {
     try {
       final String hash =
