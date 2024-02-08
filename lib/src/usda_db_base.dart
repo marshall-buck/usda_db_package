@@ -42,7 +42,7 @@ import 'type_def.dart';
 /// final autocompleteResults = await usdaDB.getAutocompleteResults('apple');
 /// usdaDB.dispose();
 /// ```
-
+///
 /// It is suggested to use the class as some sort of singleton, perhaps using
 /// a package like get_it.
 class UsdaDB {
