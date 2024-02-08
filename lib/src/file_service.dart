@@ -3,6 +3,20 @@ import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:developer' as dev;
 
+/// A class that provides file-related services.
+///
+/// This class is responsible for opening files located in the package's
+/// assets and returning their contents as a string.
+///
+/// It also provides a method to open the manifest file and retrieve the hash.
+///
+/// The file paths and names are defined as constants within the class.
+///
+/// Example usage:
+/// ```dart
+/// FileService fileService = FileService();
+/// String contents = await fileService.loadData(fileName: 'example.txt');
+/// ```
 class FileService {
   static const String _dataPath = 'packages/usda_db_package/lib/data';
   static const String fileNameManifest = 'file_manifest.txt';
@@ -27,7 +41,7 @@ class FileService {
     return contents;
   }
 
-  /// opens the manifest file and returns the hash.
+  /// Opens the manifest file and returns the hash.
   Future<String> _getFileHash() async {
     try {
       final String hash =
