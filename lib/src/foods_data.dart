@@ -5,12 +5,32 @@ import 'initializer.dart';
 import 'models/food_model.dart';
 
 /// Class to handle the foods database.
+/// A class that represents the data for foods.
+///
+/// This class is responsible for initializing the foods database and providing
+/// methods to retrieve food items from the database.
+///
+/// The [FoodsData] class is initialized by calling the [init] method, which
+/// takes a JSON string as a parameter. The JSON string is decoded and the
+/// resulting map is used to populate the [foodsList] property.
+///
+/// The [foodsList] property is a map that stores food IDs as keys and
+/// [FoodModel] objects as values.
+///
+/// The [getFood] method takes a food ID as a parameter and returns the
+/// corresponding [FoodModel] object from the [foodsList] map. If the food ID
+/// is not found in the map, the method returns null.
+///
+/// The  [clear] method reverts the data to an empty state by clearing the [foodsList] map.
+/// Implements the [Initializer] interface.
 class FoodsData implements Initializer {
   final Map<int, FoodModel> _foodsList = {};
   Map<int, FoodModel> get foodsList => _foodsList;
 
   /// Initializes by decoding a JSON string, and populating [_foodsList]
   /// with the decoded data.
+  ///
+  /// Throws a [FormatException] if the JSON string cannot be decoded.
   @override
   Future<void> init({required String jsonString}) async {
     try {
