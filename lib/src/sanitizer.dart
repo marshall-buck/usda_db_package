@@ -1,16 +1,18 @@
 import 'extensions/string_ext.dart';
 
-/// Sanitizer class to take a sentence and use the same method to sanitize
-/// the sentence the same way the autocomplete data substrings are created.
+/// A class that provides string sanitization services.
+///
+/// The [sanitizedWords] method takes a [sentence] parameter and returns a list of
+/// strings. The method removes stop words and words with a length of 1 from the
+/// sentence and returns the remaining words as a list.
 class Sanitizer {
+  /// Returns a list of sanitized strings from the given [sentence].
   List<String> sanitizedWords(String sentence) => sentence
       .getWordsToIndex()
       .where((element) => !stopWords.contains(element) && element.length > 1)
       .toList();
 
-  /// Constructor for the Sanitizer class.
-  // Sanitizer({required this.sentence});
-
+  /// A list of stop words to be removed from the input sentence.
   static const List<String> stopWords = [
     "about",
     "above",
