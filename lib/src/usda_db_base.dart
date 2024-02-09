@@ -10,6 +10,22 @@ import 'models/food_model.dart';
 import 'sanitizer.dart';
 import 'type_def.dart';
 
+//TODO: Refactor the initialization into on method.
+// Private constructor
+// UsdaDB._(this._fileLoader);
+
+// // Factory constructor
+// static Future<UsdaDB> create({FileService? fileLoader}) async {
+//   var instance = UsdaDB._(fileLoader ?? FileService());
+//   await instance._init();
+//   return instance;
+// }
+
+// // Initialization method
+// Future<void> _init() async {
+//   // Initialization logic here
+// }
+
 /// A class representing the USDA database.
 ///
 /// This class is responsible for loading and managing the data in the database.
