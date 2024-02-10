@@ -16,14 +16,11 @@ To use the package, you can follow the steps below:
 ```dart
 import 'package:usda_db_package/usda_db_package.dart';
 ```
-> Initialize the instance.
+> Initialize the instance and load the data with the class init method.
 ```dart
-final db = UsdaDB();
+final db = UsdaDB.init();
 ```
->  Load the data.
-```dart
-await  db.init();
-```
+
 > There are only 3 public methods needed. Once init is run.
 ```dart
 final FoodModel? food = db.getFood(123);

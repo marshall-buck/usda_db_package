@@ -10,22 +10,6 @@ import 'models/food_model.dart';
 import 'sanitizer.dart';
 import 'type_def.dart';
 
-//TODO: Refactor the initialization into on method.  Move the final throws into create method.
-// Private constructor
-// UsdaDB._(this._fileLoader);
-
-// // Factory constructor
-// static Future<UsdaDB> create({FileService? fileLoader}) async {
-//   var instance = UsdaDB._(fileLoader ?? FileService());
-//   await instance._init();
-//   return instance;
-// }
-
-// // Initialization method
-// Future<void> _init() async {
-//   // Initialization logic here
-// }
-
 /// A class representing the USDA database.
 ///
 /// This class is responsible for loading and managing the data in the database.
@@ -52,15 +36,18 @@ import 'type_def.dart';
 ///
 /// Example usage:
 /// ```dart
-/// final usdaDB = UsdaDB();
-/// await usdaDB.init();
+/// final usdaDB = UsdaDB().init();
+
 /// final food = usdaDB.getFood(1);
 /// final autocompleteResults = await usdaDB.getAutocompleteResults('apple');
 /// usdaDB.dispose();
 /// ```
+/// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
+/// If no `FileService` instance is provided during initialization, a default instance will be used.
 ///
-/// It is suggested to use the class as some sort of singleton, perhaps using
-/// a package like get_it.
+/// See also:
+/// - [DescriptionRecord], a typedef representing a record in the autocomplete search results.
+
 class UsdaDB {
   final FileService _fileLoader;
   AutoCompleteData? _autoCompleteData;
@@ -68,11 +55,21 @@ class UsdaDB {
   final Sanitizer _sanitizer = Sanitizer();
   static bool _isInitializing = false;
 
-  // UsdaDB({FileService? fileLoader}) : _fileLoader = fileLoader ?? FileService();
-
   UsdaDB._(this._fileLoader);
 
-// Factory constructor
+  /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
+  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
+
+  /// Returns true while [init] is running.
+  bool get isInitializing => _isInitializing;
+
+  /// Initializes the [UsdaDB].
+  ///
+  /// This static method is used to initialize the class by loading the data
+  /// and returning an instance of [UsdaDB].
+  ///
+  /// If an error occurs during the initialization process, a [DBException] is
+  /// thrown with the error message and stack trace.
   static Future<UsdaDB> init({FileService? fileLoader}) async {
     _isInitializing = true;
     final instance = UsdaDB._(fileLoader ?? FileService());
@@ -88,15 +85,9 @@ class UsdaDB {
     }
   }
 
-  /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
-  bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
-
-  /// Returns true while [init] is running.
-  bool get isInitializing => _isInitializing;
-
-  /// Initializes the database by loading data from files.
+  /// Loads the from the files and initializes the [_autoCompleteData] and [_foodsData].
   ///
-  /// Throws a [DBException] if an error occurs during initialization.
+  /// Rethrows to [init] method if an error occurs.
   Future<void> _loadData() async {
     try {
       await Future.wait(
