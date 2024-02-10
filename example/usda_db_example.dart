@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
-final db = UsdaDB();
+late final UsdaDB db;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await db.init();
+  db = await UsdaDB.init();
   runApp(const AutocompleteExampleApp());
 }
 

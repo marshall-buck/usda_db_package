@@ -10,7 +10,7 @@ import 'models/food_model.dart';
 import 'sanitizer.dart';
 import 'type_def.dart';
 
-//TODO: Refactor the initialization into on method.
+//TODO: Refactor the initialization into on method.  Move the final throws into create method.
 // Private constructor
 // UsdaDB._(this._fileLoader);
 
@@ -66,9 +66,27 @@ class UsdaDB {
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   final Sanitizer _sanitizer = Sanitizer();
-  bool _isInitializing = false;
+  static bool _isInitializing = false;
 
-  UsdaDB({FileService? fileLoader}) : _fileLoader = fileLoader ?? FileService();
+  // UsdaDB({FileService? fileLoader}) : _fileLoader = fileLoader ?? FileService();
+
+  UsdaDB._(this._fileLoader);
+
+// Factory constructor
+  static Future<UsdaDB> init({FileService? fileLoader}) async {
+    _isInitializing = true;
+    final instance = UsdaDB._(fileLoader ?? FileService());
+    try {
+      await instance._loadData();
+      return instance;
+    } catch (e, st) {
+      dev.log('create() error',
+          name: 'DB', error: e.toString(), stackTrace: st);
+      throw DBException(e.toString(), st);
+    } finally {
+      _isInitializing = false;
+    }
+  }
 
   /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
@@ -79,23 +97,17 @@ class UsdaDB {
   /// Initializes the database by loading data from files.
   ///
   /// Throws a [DBException] if an error occurs during initialization.
-  Future<bool> init() async {
-    _isInitializing = true;
+  Future<void> _loadData() async {
     try {
       await Future.wait(
         [_initAutocompleteData(), _initFoodsData()],
         eagerError: true,
       );
       dev.log('init() completed ', name: 'DB');
-      return true;
-    } catch (e, st) {
+    } catch (e) {
       // All or none of the data should be loaded.  If an error occurs.
       dispose();
-
-      dev.log('init() error', name: 'DB', error: e.toString(), stackTrace: st);
-      throw DBException(e.toString(), st);
-    } finally {
-      _isInitializing = false;
+      rethrow;
     }
   }
 
