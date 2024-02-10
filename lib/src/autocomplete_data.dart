@@ -6,7 +6,7 @@ import 'package:usda_db_package/src/initializer.dart';
 ///
 /// Class to represent the [AutoCompleteData]'s structure and methods.
 ///
-/// This class implements the [Initializer] interface, which provides a method to
+/// This class implements the [DataInitializer] interface, which provides a method to
 /// initialize the [AutoCompleteData] instance from a JSON string.
 ///
 /// The [AutoCompleteData] class represents a substring tree and a lookup table for
@@ -59,7 +59,7 @@ import 'package:usda_db_package/src/initializer.dart';
 /// ```
 ///  /*Cspell:enable
 
-class AutoCompleteData implements Initializer {
+class AutoCompleteData implements DataInitializer {
   final Map<String, int> _substringHash = {};
   final Map<int, List<int>> _indexHash = {};
 

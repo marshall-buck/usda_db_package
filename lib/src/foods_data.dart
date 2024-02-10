@@ -22,8 +22,8 @@ import 'models/food_model.dart';
 /// is not found in the map, the method returns null.
 ///
 /// The  [clear] method reverts the data to an empty state by clearing the [foodsList] map.
-/// Implements the [Initializer] interface.
-class FoodsData implements Initializer {
+/// Implements the [DataInitializer] interface.
+class FoodsData implements DataInitializer {
   final Map<int, FoodModel> _foodsList = {};
   Map<int, FoodModel> get foodsList => _foodsList;
 
