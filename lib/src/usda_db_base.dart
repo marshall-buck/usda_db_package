@@ -100,7 +100,7 @@ class UsdaDB {
   }
 
   /// Disposes the database by clearing all data properties.
-  void dispose() {
+  Future<void> dispose() async {
     _foodsData?.clear();
     _autoCompleteData?.clear();
     _foodsData = null;

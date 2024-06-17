@@ -50,7 +50,7 @@ void main() {
                 fileName: FileService.fileNameAutocompleteData))
             .thenAnswer((_) async => mockHashString);
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        db.dispose();
+        await db.dispose();
 
         expect(db.isDataLoaded, equals(false));
       });
@@ -65,7 +65,7 @@ void main() {
             .thenAnswer((_) async => mockHashString);
 
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        db.dispose();
+        await db.dispose();
         expect(db.isDataLoaded, false);
       });
     });
