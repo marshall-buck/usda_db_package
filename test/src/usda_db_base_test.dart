@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/file_service.dart';
 import 'package:usda_db_package/src/models/food_model.dart';
-import 'package:usda_db_package/src/type_def.dart';
+
 import 'package:usda_db_package/src/usda_db_base.dart';
 
 import '../setup/mock_file_strings.dart';
@@ -86,8 +86,8 @@ void main() {
       });
     });
 
-    group('queryFoodDescriptions() - ', () {
-      test('returns a list of DescriptionRecord', () async {
+    group('queryFoods() - ', () {
+      test('returns a list of FoodModels', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
             .thenAnswer((_) async => mockDBString);
@@ -96,24 +96,11 @@ void main() {
             .thenAnswer((_) async => mockHashString);
 
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoodDescriptions('aab');
+        final list = await db.queryFoods(searchString: 'aab');
         expect(list, isNotEmpty);
-        expect(list[0], isA<DescriptionRecord>());
+        expect(list[0], isA<FoodModel>());
       });
 
-      test('expect list is sorted properly', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
-
-        final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoodDescriptions('aab');
-        expect(list[0]?.$2, 56);
-        expect(list[1]?.$2, 81);
-      });
       test('expect list to be empty with no results with input', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
@@ -123,7 +110,7 @@ void main() {
             .thenAnswer((_) async => mockHashString);
 
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoodDescriptions('aa rrr');
+        final list = await db.queryFoods(searchString: 'aa rrr');
         expect(list, isEmpty);
       });
       test('expect list to be correct with more than one word', () async {
@@ -135,12 +122,12 @@ void main() {
             .thenAnswer((_) async => mockHashString);
 
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoodDescriptions('aab dough');
+        final list = await db.queryFoods(searchString: 'aab dough');
         expect(list.length, 4);
       });
       // test('throws DBException if db has not been initialized', () async {
       //   final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-      //   expect(() => db.queryFoodDescriptions('apple'),
+      //   expect(() => db.queryFoods('apple'),
       //       throwsA(isA<DBException>()));
       // });
     });

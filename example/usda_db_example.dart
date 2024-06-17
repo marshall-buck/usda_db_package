@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:usda_db_package/src/models/food_model.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
 late final UsdaDB db;
@@ -14,21 +15,21 @@ void main() async {
 
 class AutocompleteBasicUserExample extends StatelessWidget {
   const AutocompleteBasicUserExample({super.key});
-  static late final List<DescriptionRecord> results;
+  static late final List<FoodModel> results;
 
-  static String _displayStringForOption(DescriptionRecord option) => option.$1;
+  static String _displayStringForOption(FoodModel option) => option.description;
 
   /// What happens as keys are pressed
   /// A function that returns the current selectable options objects given
   ///  the current TextEditingValue.
-  static FutureOr<List<DescriptionRecord>> _optionsBuilder(
+  static FutureOr<List<FoodModel>> _optionsBuilder(
       TextEditingValue textEditingValue) async {
     debugPrint('textEditingValue ${textEditingValue.text}');
 
     if (textEditingValue.text.length > 1) {
-      final results = await db.queryFoodDescriptions(textEditingValue.text);
+      final results = await db.queryFoods(searchString: textEditingValue.text);
       // Filter out any null results, if necessary, to ensure the list only contains non-nullable elements.
-      return results.whereType<DescriptionRecord>().toList();
+      return results.whereType<FoodModel>().toList();
     }
     return [];
   }
@@ -36,10 +37,10 @@ class AutocompleteBasicUserExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Autocomplete<DescriptionRecord>(
+      body: Autocomplete<FoodModel>(
         displayStringForOption: _displayStringForOption,
         optionsBuilder: _optionsBuilder,
-        onSelected: (DescriptionRecord selection) {
+        onSelected: (FoodModel selection) {
           debugPrint('You just selected ${_displayStringForOption(selection)}');
         },
       ),

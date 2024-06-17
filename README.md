@@ -41,7 +41,7 @@ final db = UsdaDB.init();
 ```dart
 final FoodModel? food = db.getFood(123);
 
-final Future<List<DescriptionRecord?>> results = await db.getAutocompleteResults('apple');
+final Future<List<FoodModel?>> foods = await db.queryFoods('apple');
 
 db.dispose();
 ```

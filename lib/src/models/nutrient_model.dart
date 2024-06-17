@@ -22,7 +22,6 @@ class Nutrient with _$Nutrient {
     );
   }
 
-  static const keepTheseNutrients = [1003, 1004, 1005, 1008, 1079, 1258, 2000];
 /*CSpell:disable*/
   /// Some names have been changed to be more user friendly.
   static const originalNutrientTableEdit = {

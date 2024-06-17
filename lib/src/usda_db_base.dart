@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as dev;
 
 import 'autocomplete_data.dart';
@@ -8,7 +9,6 @@ import 'foods_data.dart';
 
 import 'models/food_model.dart';
 import 'sanitizer.dart';
-import 'type_def.dart';
 
 /// A class representing the USDA database.
 ///
@@ -26,10 +26,10 @@ import 'type_def.dart';
 /// to check if the database is currently being initialized.
 ///
 /// Food items can be retrieved from the database using the [queryFood] method, which
-/// takes an ID as a parameter and returns the corresponding [FoodModel] object.
+/// takes an [int] as a parameter and returns the corresponding [FoodModel] object.
 ///
-/// Autocomplete searches can be performed using the [queryFoodDescriptions] method,
-/// which takes a search string as a parameter and returns a list of [DescriptionRecord] objects
+/// Autocomplete searches can be performed using the [queryFoods] method,
+/// which takes a search string as a parameter and returns a list of [FoodModel] objects
 /// that match the search string.
 ///
 /// The [dispose] method can be used to clear all data properties and reset the database.
@@ -39,14 +39,11 @@ import 'type_def.dart';
 /// final usdaDB = UsdaDB().init();
 
 /// final food = usdaDB.getFood(1);
-/// final autocompleteResults = await usdaDB.getAutocompleteResults('apple');
+/// final autocompleteResults = await usdaDB.queryFoods('apple');
 /// usdaDB.dispose();
 /// ```
 /// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
-///
-/// See also:
-/// - [DescriptionRecord], a typedef representing a record in the autocomplete search results.
 
 class UsdaDB {
   final FileService _fileLoader;
@@ -122,11 +119,10 @@ class UsdaDB {
     return _foodsData!.getFood(id);
   }
 
-  /// Retrieves a list of [DescriptionRecord]s that match the given [searchString].
+  /// Returns a [List] of [FoodModel] items based on a [searchTerm].
   ///
-  /// Throws a [DBException] if the database has not been properly initialized.
-  Future<List<DescriptionRecord?>> queryFoodDescriptions(
-      String searchString) async {
+  /// [List] will return empty if no matches are found.
+  Future<List<FoodModel?>> queryFoods({required String searchString}) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -136,10 +132,14 @@ class UsdaDB {
 
     Set<int?> ids = _getIds(sanitizedWords);
 
-    final descriptions = await _getDescriptions(ids);
-    descriptions.sort((a, b) => a!.$2.compareTo(b!.$2));
+    if (ids.isEmpty) return [];
 
-    return descriptions;
+    List<FoodModel?> foods = [];
+    for (final id in ids.toList()) {
+      final food = await queryFood(id!);
+      foods.add(food);
+    }
+    return foods;
   }
 
   /// Retrieves a set of food ids that match the given [sanitizedWords].
@@ -149,22 +149,6 @@ class UsdaDB {
       ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));
     }
     return ids;
-  }
-
-  /// Retrieves a list of [DescriptionRecord]s that match the given [ids].
-  Future<List<DescriptionRecord?>> _getDescriptions(Set<int?> ids) async {
-    List<DescriptionRecord?> descriptions = [];
-    for (final id in ids.toList()) {
-      final food = await queryFood(id!);
-      descriptions.add(_createDescriptionRecord(food!));
-    }
-    return descriptions;
-  }
-
-  /// Creates a [DescriptionRecord] from a [food] item.
-  DescriptionRecord _createDescriptionRecord(FoodModel food) {
-    dev.log('_createDescription', name: 'DB');
-    return (food.description, food.description.length, food.id);
   }
 
   /// Initializes the autocomplete data by loading it from a file.
