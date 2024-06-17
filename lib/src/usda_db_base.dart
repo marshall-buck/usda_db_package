@@ -112,7 +112,7 @@ class UsdaDB {
   /// Retrieves a [FoodModel] from the database based on its [id].
   ///
   /// Returns a [Future<FoodModel>] if found, otherwise returns `null`.
-  Future<FoodModel?> queryFood(int id) async {
+  Future<FoodModel?> queryFood({required int id}) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -136,7 +136,7 @@ class UsdaDB {
 
     List<FoodModel?> foods = [];
     for (final id in ids.toList()) {
-      final food = await queryFood(id!);
+      final food = await queryFood(id: id!);
       foods.add(food);
     }
     return foods;

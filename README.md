@@ -34,14 +34,14 @@ import 'package:usda_db_package/usda_db_package.dart';
 ```
 > Initialize the instance and load the data with the class init method.  Most likely you will use a singleton pattern to ensure only one instance is created.
 ```dart
-final db = UsdaDB.init();
+final Future<UsdaDB> db = await  UsdaDB.init();
 ```
 
 > There are only 3 public methods needed. Once init is run.
 ```dart
-final FoodModel? food = db.getFood(123);
+final Future<FoodModel?> food = await db.queryFood(id: 123);
 
-final Future<List<FoodModel?>> foods = await db.queryFoods('apple');
+final Future<List<FoodModel?>> foods = await db.queryFoods(searchString: 'apple');
 
 db.dispose();
 ```

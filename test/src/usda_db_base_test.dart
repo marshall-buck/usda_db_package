@@ -80,7 +80,7 @@ void main() {
             .thenAnswer((_) async => mockHashString);
 
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-        final foodItem = await db.queryFood(167512);
+        final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
         expect(foodItem, isA<FoodModel>());
       });
