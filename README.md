@@ -32,10 +32,10 @@ The files are as follows:
 ```dart
 import 'package:usda_db_package/usda_db_package.dart';
 ```
-> UsdaDB.init() will return an instance of the class.
+> Initialize the class by calling the static `init` method which will return the instance.
 
 ```dart
-final Future<UsdaDB> db = await  UsdaDB.init();
+final Future<UsdaDB> db = await UsdaDB.init();
 ```
 
 > Once init is run, the following methods can be called.
@@ -47,3 +47,7 @@ final Future<List<FoodModel?>> foods = await db.queryFoods(searchString: 'apple'
 
 await db.dispose();
 ```
+
+The `isDataLoaded` property can be used to check if the data has been loaded successfully.
+
+The `isInitializing` property can be used to check if the database is currently being initialized.

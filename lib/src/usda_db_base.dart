@@ -17,11 +17,9 @@ import 'sanitizer.dart';
 /// and performing autocomplete searches.
 ///
 /// The database must be initialized by calling the [init] method before any other
-/// operations can be performed. If the initialization fails, a [DBException] will be thrown
-/// and the database properties will be disposed of. To re-initialize the database,
-/// the [init] method must be called again.
+/// operations can be performed. If the initialization fails, a [DBException] will be thrown.
 ///
-/// Once the database is initialized, the [isDataLoaded] property can be used to check
+/// The [isDataLoaded] property can be used to check
 /// if the data has been loaded successfully. The [isInitializing] property can be used
 /// to check if the database is currently being initialized.
 ///
@@ -36,11 +34,10 @@ import 'sanitizer.dart';
 ///
 /// Example usage:
 /// ```dart
-/// final usdaDB = UsdaDB().init();
-
-/// final food = usdaDB.getFood(1);
-/// final autocompleteResults = await usdaDB.queryFoods('apple');
-/// usdaDB.dispose();
+/// final Future<UsdaDB> db = await  UsdaDB.init();
+/// final Future<FoodModel?> food = await db.queryFood(id: 123);
+/// final Future<List<FoodModel?>> foods = await db.queryFoods(searchString: 'apple');
+/// await db.dispose();
 /// ```
 /// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
