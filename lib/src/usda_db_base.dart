@@ -25,7 +25,7 @@ import 'type_def.dart';
 /// if the data has been loaded successfully. The [isInitializing] property can be used
 /// to check if the database is currently being initialized.
 ///
-/// Food items can be retrieved from the database using the [queryFoods] method, which
+/// Food items can be retrieved from the database using the [queryFood] method, which
 /// takes an ID as a parameter and returns the corresponding [FoodModel] object.
 ///
 /// Autocomplete searches can be performed using the [queryFoodDescriptions] method,
@@ -115,7 +115,7 @@ class UsdaDB {
   /// Retrieves a [FoodModel] from the database based on its [id].
   ///
   /// Returns a [Future<FoodModel>] if found, otherwise returns `null`.
-  Future<FoodModel?> queryFoods(int id) async {
+  Future<FoodModel?> queryFood(int id) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -155,7 +155,7 @@ class UsdaDB {
   Future<List<DescriptionRecord?>> _getDescriptions(Set<int?> ids) async {
     List<DescriptionRecord?> descriptions = [];
     for (final id in ids.toList()) {
-      final food = await queryFoods(id!);
+      final food = await queryFood(id!);
       descriptions.add(_createDescriptionRecord(food!));
     }
     return descriptions;
