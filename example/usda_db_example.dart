@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:usda_db_package/src/models/food_model.dart';
+
 import 'package:usda_db_package/usda_db_package.dart';
 
 late final UsdaDB db;
