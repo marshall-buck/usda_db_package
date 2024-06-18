@@ -176,3 +176,6 @@ class SrLegacyNutrientModel with _$SrLegacyNutrientModel {
     2000: {"name": "Totlal Sugars", "unit": "g"}
   };
 }
+
+typedef _InternalNutrients = SrLegacyNutrientModel;
+typedef SrLegacyNutrientType = _InternalNutrients;

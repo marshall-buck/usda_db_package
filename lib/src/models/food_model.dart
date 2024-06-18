@@ -30,3 +30,6 @@ class SrLegacyFoodModel with _$SrLegacyFoodModel {
     );
   }
 }
+
+typedef _InternalFoods = SrLegacyFoodModel;
+typedef SrLegacyFoodType = _InternalFoods;
