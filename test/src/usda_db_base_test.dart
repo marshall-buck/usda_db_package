@@ -82,7 +82,7 @@ void main() {
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
-        expect(foodItem, isA<FoodModel>());
+        expect(foodItem, isA<SrLegacyFoodModel>());
       });
     });
 
@@ -98,7 +98,7 @@ void main() {
         final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab');
         expect(list, isNotEmpty);
-        expect(list[0], isA<FoodModel>());
+        expect(list[0], isA<SrLegacyFoodModel>());
       });
 
       test('expect list to be empty with no results with input', () async {

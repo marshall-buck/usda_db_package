@@ -3,18 +3,19 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'nutrient_model.freezed.dart';
 
 @freezed
-class Nutrient with _$Nutrient {
-  const factory Nutrient({
+class SrLegacyNutrientModel with _$SrLegacyNutrientModel {
+  const factory SrLegacyNutrientModel({
     required final int id,
     final String? name,
     required final num amount,
     final String? unit,
-  }) = _Nutrient;
-  const Nutrient._();
+  }) = _SrLegacyNutrientModel;
+  const SrLegacyNutrientModel._();
 
   /// Maps JSON to Nutrient object.
-  factory Nutrient.fromJson({required final Map<String, dynamic> jsonString}) {
-    return Nutrient(
+  factory SrLegacyNutrientModel.fromJson(
+      {required final Map<String, dynamic> jsonString}) {
+    return SrLegacyNutrientModel(
       id: jsonString['id'],
       name: originalNutrientTableEdit[jsonString['id']]?['name'],
       amount: jsonString['amount'],

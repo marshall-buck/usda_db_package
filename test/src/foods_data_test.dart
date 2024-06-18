@@ -19,10 +19,11 @@ void main() {
 
       expect(foods.foodsList.length, 6);
 
-      expect(foods.foodsList, isA<Map<int, FoodModel>>());
+      expect(foods.foodsList, isA<Map<int, SrLegacyFoodModel>>());
       expect(foods.foodsList[167512]?.description,
           "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough");
-      expect(foods.foodsList[167512]?.nutrients, isA<List<Nutrient>>());
+      expect(foods.foodsList[167512]?.nutrients,
+          isA<List<SrLegacyNutrientModel>>());
       expect(foods.foodsList[167512]?.nutrients.length, 7);
     });
     test('init should throw FormatException on invalid JSON', () async {
@@ -42,14 +43,14 @@ void main() {
 
     test('getFood should return correct food', () async {
       await foods.init(jsonString: mockDBString);
-      FoodModel? food = foods.getFood(167517);
+      SrLegacyFoodModel? food = foods.getFood(167517);
       expect(food?.description,
           "Waffle, buttermilk, frozen, ready-to-heat, toasted");
     });
 
     test('getFood should return null for non-existent food', () async {
       await foods.init(jsonString: mockDBString);
-      FoodModel? food = foods.getFood(2);
+      SrLegacyFoodModel? food = foods.getFood(2);
       expect(food, null);
     });
   });

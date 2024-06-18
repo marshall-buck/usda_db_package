@@ -15,28 +15,31 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$FoodModel {
+mixin _$SrLegacyFoodModel {
   int get id => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
-  List<Nutrient> get nutrients => throw _privateConstructorUsedError;
+  List<SrLegacyNutrientModel> get nutrients =>
+      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $FoodModelCopyWith<FoodModel> get copyWith =>
+  $SrLegacyFoodModelCopyWith<SrLegacyFoodModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $FoodModelCopyWith<$Res> {
-  factory $FoodModelCopyWith(FoodModel value, $Res Function(FoodModel) then) =
-      _$FoodModelCopyWithImpl<$Res, FoodModel>;
+abstract class $SrLegacyFoodModelCopyWith<$Res> {
+  factory $SrLegacyFoodModelCopyWith(
+          SrLegacyFoodModel value, $Res Function(SrLegacyFoodModel) then) =
+      _$SrLegacyFoodModelCopyWithImpl<$Res, SrLegacyFoodModel>;
   @useResult
-  $Res call({int id, String description, List<Nutrient> nutrients});
+  $Res call(
+      {int id, String description, List<SrLegacyNutrientModel> nutrients});
 }
 
 /// @nodoc
-class _$FoodModelCopyWithImpl<$Res, $Val extends FoodModel>
-    implements $FoodModelCopyWith<$Res> {
-  _$FoodModelCopyWithImpl(this._value, this._then);
+class _$SrLegacyFoodModelCopyWithImpl<$Res, $Val extends SrLegacyFoodModel>
+    implements $SrLegacyFoodModelCopyWith<$Res> {
+  _$SrLegacyFoodModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -62,28 +65,29 @@ class _$FoodModelCopyWithImpl<$Res, $Val extends FoodModel>
       nutrients: null == nutrients
           ? _value.nutrients
           : nutrients // ignore: cast_nullable_to_non_nullable
-              as List<Nutrient>,
+              as List<SrLegacyNutrientModel>,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$FoodModelImplCopyWith<$Res>
-    implements $FoodModelCopyWith<$Res> {
-  factory _$$FoodModelImplCopyWith(
-          _$FoodModelImpl value, $Res Function(_$FoodModelImpl) then) =
-      __$$FoodModelImplCopyWithImpl<$Res>;
+abstract class _$$SrLegacyFoodModelImplCopyWith<$Res>
+    implements $SrLegacyFoodModelCopyWith<$Res> {
+  factory _$$SrLegacyFoodModelImplCopyWith(_$SrLegacyFoodModelImpl value,
+          $Res Function(_$SrLegacyFoodModelImpl) then) =
+      __$$SrLegacyFoodModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String description, List<Nutrient> nutrients});
+  $Res call(
+      {int id, String description, List<SrLegacyNutrientModel> nutrients});
 }
 
 /// @nodoc
-class __$$FoodModelImplCopyWithImpl<$Res>
-    extends _$FoodModelCopyWithImpl<$Res, _$FoodModelImpl>
-    implements _$$FoodModelImplCopyWith<$Res> {
-  __$$FoodModelImplCopyWithImpl(
-      _$FoodModelImpl _value, $Res Function(_$FoodModelImpl) _then)
+class __$$SrLegacyFoodModelImplCopyWithImpl<$Res>
+    extends _$SrLegacyFoodModelCopyWithImpl<$Res, _$SrLegacyFoodModelImpl>
+    implements _$$SrLegacyFoodModelImplCopyWith<$Res> {
+  __$$SrLegacyFoodModelImplCopyWithImpl(_$SrLegacyFoodModelImpl _value,
+      $Res Function(_$SrLegacyFoodModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -93,7 +97,7 @@ class __$$FoodModelImplCopyWithImpl<$Res>
     Object? description = null,
     Object? nutrients = null,
   }) {
-    return _then(_$FoodModelImpl(
+    return _then(_$SrLegacyFoodModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -105,18 +109,18 @@ class __$$FoodModelImplCopyWithImpl<$Res>
       nutrients: null == nutrients
           ? _value._nutrients
           : nutrients // ignore: cast_nullable_to_non_nullable
-              as List<Nutrient>,
+              as List<SrLegacyNutrientModel>,
     ));
   }
 }
 
 /// @nodoc
 
-class _$FoodModelImpl extends _FoodModel {
-  const _$FoodModelImpl(
+class _$SrLegacyFoodModelImpl extends _SrLegacyFoodModel {
+  const _$SrLegacyFoodModelImpl(
       {required this.id,
       required this.description,
-      required final List<Nutrient> nutrients})
+      required final List<SrLegacyNutrientModel> nutrients})
       : _nutrients = nutrients,
         super._();
 
@@ -124,9 +128,9 @@ class _$FoodModelImpl extends _FoodModel {
   final int id;
   @override
   final String description;
-  final List<Nutrient> _nutrients;
+  final List<SrLegacyNutrientModel> _nutrients;
   @override
-  List<Nutrient> get nutrients {
+  List<SrLegacyNutrientModel> get nutrients {
     if (_nutrients is EqualUnmodifiableListView) return _nutrients;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_nutrients);
@@ -134,14 +138,14 @@ class _$FoodModelImpl extends _FoodModel {
 
   @override
   String toString() {
-    return 'FoodModel(id: $id, description: $description, nutrients: $nutrients)';
+    return 'SrLegacyFoodModel(id: $id, description: $description, nutrients: $nutrients)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FoodModelImpl &&
+            other is _$SrLegacyFoodModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -156,25 +160,27 @@ class _$FoodModelImpl extends _FoodModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$FoodModelImplCopyWith<_$FoodModelImpl> get copyWith =>
-      __$$FoodModelImplCopyWithImpl<_$FoodModelImpl>(this, _$identity);
+  _$$SrLegacyFoodModelImplCopyWith<_$SrLegacyFoodModelImpl> get copyWith =>
+      __$$SrLegacyFoodModelImplCopyWithImpl<_$SrLegacyFoodModelImpl>(
+          this, _$identity);
 }
 
-abstract class _FoodModel extends FoodModel {
-  const factory _FoodModel(
-      {required final int id,
-      required final String description,
-      required final List<Nutrient> nutrients}) = _$FoodModelImpl;
-  const _FoodModel._() : super._();
+abstract class _SrLegacyFoodModel extends SrLegacyFoodModel {
+  const factory _SrLegacyFoodModel(
+          {required final int id,
+          required final String description,
+          required final List<SrLegacyNutrientModel> nutrients}) =
+      _$SrLegacyFoodModelImpl;
+  const _SrLegacyFoodModel._() : super._();
 
   @override
   int get id;
   @override
   String get description;
   @override
-  List<Nutrient> get nutrients;
+  List<SrLegacyNutrientModel> get nutrients;
   @override
   @JsonKey(ignore: true)
-  _$$FoodModelImplCopyWith<_$FoodModelImpl> get copyWith =>
+  _$$SrLegacyFoodModelImplCopyWith<_$SrLegacyFoodModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

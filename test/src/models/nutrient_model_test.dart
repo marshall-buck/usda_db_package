@@ -6,14 +6,14 @@ void main() {
   group('Nutrient class tests', () {
     group('Constructor tests', () {
       test('initiates properly', () {
-        const Nutrient nutrient = Nutrient(
+        const SrLegacyNutrientModel nutrient = SrLegacyNutrientModel(
           id: 1,
           name: 'Test Nutrient',
           amount: 10.0,
           unit: 'g',
         );
 
-        expect(nutrient, isA<Nutrient>());
+        expect(nutrient, isA<SrLegacyNutrientModel>());
         expect(nutrient.id, 1);
         expect(nutrient.name, 'Test Nutrient');
         expect(nutrient.amount, 10.0);
@@ -27,9 +27,10 @@ void main() {
           'amount': 10.0,
         };
 
-        final Nutrient nutrient = Nutrient.fromJson(jsonString: json);
+        final SrLegacyNutrientModel nutrient =
+            SrLegacyNutrientModel.fromJson(jsonString: json);
 
-        expect(nutrient, isA<Nutrient>());
+        expect(nutrient, isA<SrLegacyNutrientModel>());
         expect(nutrient.id, 1003);
         expect(nutrient.name, 'Protein');
         expect(nutrient.amount, 10.0);

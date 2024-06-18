@@ -24,10 +24,10 @@ import 'sanitizer.dart';
 /// to check if the database is currently being initialized.
 ///
 /// Food items can be retrieved from the database using the [queryFood] method, which
-/// takes an [int] as a parameter and returns the corresponding [FoodModel] object.
+/// takes an [int] as a parameter and returns the corresponding [SrLegacyFoodModel] object.
 ///
 /// Autocomplete searches can be performed using the [queryFoods] method,
-/// which takes a search string as a parameter and returns a list of [FoodModel] objects
+/// which takes a search string as a parameter and returns a list of [SrLegacyFoodModel] objects
 /// that match the search string.
 ///
 /// The [dispose] method can be used to clear all data properties and reset the database.
@@ -106,20 +106,21 @@ class UsdaDB {
     dev.log('dispose completed', name: 'DB');
   }
 
-  /// Retrieves a [FoodModel] from the database based on its [id].
+  /// Retrieves a [SrLegacyFoodModel] from the database based on its [id].
   ///
   /// Returns a [Future<FoodModel>] if found, otherwise returns `null`.
-  Future<FoodModel?> queryFood({required int id}) async {
+  Future<SrLegacyFoodModel?> queryFood({required int id}) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
     return _foodsData!.getFood(id);
   }
 
-  /// Returns a [List] of [FoodModel] items based on a [searchTerm].
+  /// Returns a [List] of [SrLegacyFoodModel] items based on a [searchTerm].
   ///
   /// [List] will return empty if no matches are found.
-  Future<List<FoodModel?>> queryFoods({required String searchString}) async {
+  Future<List<SrLegacyFoodModel?>> queryFoods(
+      {required String searchString}) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -131,7 +132,7 @@ class UsdaDB {
 
     if (ids.isEmpty) return [];
 
-    List<FoodModel?> foods = [];
+    List<SrLegacyFoodModel?> foods = [];
     for (final id in ids.toList()) {
       final food = await queryFood(id: id!);
       foods.add(food);

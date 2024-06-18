@@ -6,15 +6,16 @@ void main() {
   group('FoodModel class tests', () {
     group('Constructor tests', () {
       test('initiates properly', () {
-        const FoodModel foodModel = FoodModel(
+        const SrLegacyFoodModel foodModel = SrLegacyFoodModel(
           id: 1,
           description: 'Test Food',
           nutrients: [
-            Nutrient(id: 1, name: 'Test Nutrient', amount: 10.0, unit: 'g')
+            SrLegacyNutrientModel(
+                id: 1, name: 'Test Nutrient', amount: 10.0, unit: 'g')
           ],
         );
 
-        expect(foodModel, isA<FoodModel>());
+        expect(foodModel, isA<SrLegacyFoodModel>());
         expect(foodModel.id, 1);
         expect(foodModel.description, 'Test Food');
         expect(foodModel.nutrients.first.id, 1);
@@ -35,9 +36,10 @@ void main() {
           }
         };
 
-        final FoodModel foodModel = FoodModel.fromJson(jsonMap: json);
+        final SrLegacyFoodModel foodModel =
+            SrLegacyFoodModel.fromJson(jsonMap: json);
 
-        expect(foodModel, isA<FoodModel>());
+        expect(foodModel, isA<SrLegacyFoodModel>());
         expect(foodModel.id, 1);
         expect(foodModel.description, 'Test Food');
         expect(foodModel.nutrients.first.id, 1003);

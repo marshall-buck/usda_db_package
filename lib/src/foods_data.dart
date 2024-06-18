@@ -15,17 +15,17 @@ import 'models/food_model.dart';
 /// resulting map is used to populate the [foodsList] property.
 ///
 /// The [foodsList] property is a map that stores food IDs as keys and
-/// [FoodModel] objects as values.
+/// [SrLegacyFoodModel] objects as values.
 ///
 /// The [getFood] method takes a food ID as a parameter and returns the
-/// corresponding [FoodModel] object from the [foodsList] map. If the food ID
+/// corresponding [SrLegacyFoodModel] object from the [foodsList] map. If the food ID
 /// is not found in the map, the method returns null.
 ///
 /// The  [clear] method reverts the data to an empty state by clearing the [foodsList] map.
 /// Implements the [DataInitializer] interface.
 class FoodsData implements DataInitializer {
-  final Map<int, FoodModel> _foodsList = {};
-  Map<int, FoodModel> get foodsList => _foodsList;
+  final Map<int, SrLegacyFoodModel> _foodsList = {};
+  Map<int, SrLegacyFoodModel> get foodsList => _foodsList;
 
   /// Initializes by decoding a JSON string, and populating [_foodsList]
   /// with the decoded data.
@@ -47,14 +47,14 @@ class FoodsData implements DataInitializer {
   /// Empty the foodsList object.
   void clear() => _foodsList.clear();
 
-  /// Returns a [FoodModel] from the [_foodsList] or [null] if not found.
-  FoodModel? getFood(int index) => _foodsList[index];
+  /// Returns a [SrLegacyFoodModel] from the [_foodsList] or [null] if not found.
+  SrLegacyFoodModel? getFood(int index) => _foodsList[index];
 
   // Converts a Map<String, dynamic> to Map<int, FoodModel>>.
   void _convertJsonMapTypes(Map<String, dynamic> jsonMap) {
     for (final entry in jsonMap.entries) {
       final Map<String, dynamic> arg = Map.from({entry.key: entry.value});
-      final food = FoodModel.fromJson(jsonMap: arg);
+      final food = SrLegacyFoodModel.fromJson(jsonMap: arg);
       _foodsList[food.id] = food;
     }
   }

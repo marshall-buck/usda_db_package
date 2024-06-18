@@ -15,29 +15,31 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$Nutrient {
+mixin _$SrLegacyNutrientModel {
   int get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   num get amount => throw _privateConstructorUsedError;
   String? get unit => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $NutrientCopyWith<Nutrient> get copyWith =>
+  $SrLegacyNutrientModelCopyWith<SrLegacyNutrientModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $NutrientCopyWith<$Res> {
-  factory $NutrientCopyWith(Nutrient value, $Res Function(Nutrient) then) =
-      _$NutrientCopyWithImpl<$Res, Nutrient>;
+abstract class $SrLegacyNutrientModelCopyWith<$Res> {
+  factory $SrLegacyNutrientModelCopyWith(SrLegacyNutrientModel value,
+          $Res Function(SrLegacyNutrientModel) then) =
+      _$SrLegacyNutrientModelCopyWithImpl<$Res, SrLegacyNutrientModel>;
   @useResult
   $Res call({int id, String? name, num amount, String? unit});
 }
 
 /// @nodoc
-class _$NutrientCopyWithImpl<$Res, $Val extends Nutrient>
-    implements $NutrientCopyWith<$Res> {
-  _$NutrientCopyWithImpl(this._value, this._then);
+class _$SrLegacyNutrientModelCopyWithImpl<$Res,
+        $Val extends SrLegacyNutrientModel>
+    implements $SrLegacyNutrientModelCopyWith<$Res> {
+  _$SrLegacyNutrientModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -74,22 +76,24 @@ class _$NutrientCopyWithImpl<$Res, $Val extends Nutrient>
 }
 
 /// @nodoc
-abstract class _$$NutrientImplCopyWith<$Res>
-    implements $NutrientCopyWith<$Res> {
-  factory _$$NutrientImplCopyWith(
-          _$NutrientImpl value, $Res Function(_$NutrientImpl) then) =
-      __$$NutrientImplCopyWithImpl<$Res>;
+abstract class _$$SrLegacyNutrientModelImplCopyWith<$Res>
+    implements $SrLegacyNutrientModelCopyWith<$Res> {
+  factory _$$SrLegacyNutrientModelImplCopyWith(
+          _$SrLegacyNutrientModelImpl value,
+          $Res Function(_$SrLegacyNutrientModelImpl) then) =
+      __$$SrLegacyNutrientModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int id, String? name, num amount, String? unit});
 }
 
 /// @nodoc
-class __$$NutrientImplCopyWithImpl<$Res>
-    extends _$NutrientCopyWithImpl<$Res, _$NutrientImpl>
-    implements _$$NutrientImplCopyWith<$Res> {
-  __$$NutrientImplCopyWithImpl(
-      _$NutrientImpl _value, $Res Function(_$NutrientImpl) _then)
+class __$$SrLegacyNutrientModelImplCopyWithImpl<$Res>
+    extends _$SrLegacyNutrientModelCopyWithImpl<$Res,
+        _$SrLegacyNutrientModelImpl>
+    implements _$$SrLegacyNutrientModelImplCopyWith<$Res> {
+  __$$SrLegacyNutrientModelImplCopyWithImpl(_$SrLegacyNutrientModelImpl _value,
+      $Res Function(_$SrLegacyNutrientModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -100,7 +104,7 @@ class __$$NutrientImplCopyWithImpl<$Res>
     Object? amount = null,
     Object? unit = freezed,
   }) {
-    return _then(_$NutrientImpl(
+    return _then(_$SrLegacyNutrientModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -123,8 +127,8 @@ class __$$NutrientImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$NutrientImpl extends _Nutrient {
-  const _$NutrientImpl(
+class _$SrLegacyNutrientModelImpl extends _SrLegacyNutrientModel {
+  const _$SrLegacyNutrientModelImpl(
       {required this.id, this.name, required this.amount, this.unit})
       : super._();
 
@@ -139,14 +143,14 @@ class _$NutrientImpl extends _Nutrient {
 
   @override
   String toString() {
-    return 'Nutrient(id: $id, name: $name, amount: $amount, unit: $unit)';
+    return 'SrLegacyNutrientModel(id: $id, name: $name, amount: $amount, unit: $unit)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NutrientImpl &&
+            other is _$SrLegacyNutrientModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.amount, amount) || other.amount == amount) &&
@@ -159,17 +163,18 @@ class _$NutrientImpl extends _Nutrient {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$NutrientImplCopyWith<_$NutrientImpl> get copyWith =>
-      __$$NutrientImplCopyWithImpl<_$NutrientImpl>(this, _$identity);
+  _$$SrLegacyNutrientModelImplCopyWith<_$SrLegacyNutrientModelImpl>
+      get copyWith => __$$SrLegacyNutrientModelImplCopyWithImpl<
+          _$SrLegacyNutrientModelImpl>(this, _$identity);
 }
 
-abstract class _Nutrient extends Nutrient {
-  const factory _Nutrient(
+abstract class _SrLegacyNutrientModel extends SrLegacyNutrientModel {
+  const factory _SrLegacyNutrientModel(
       {required final int id,
       final String? name,
       required final num amount,
-      final String? unit}) = _$NutrientImpl;
-  const _Nutrient._() : super._();
+      final String? unit}) = _$SrLegacyNutrientModelImpl;
+  const _SrLegacyNutrientModel._() : super._();
 
   @override
   int get id;
@@ -181,6 +186,6 @@ abstract class _Nutrient extends Nutrient {
   String? get unit;
   @override
   @JsonKey(ignore: true)
-  _$$NutrientImplCopyWith<_$NutrientImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SrLegacyNutrientModelImplCopyWith<_$SrLegacyNutrientModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
