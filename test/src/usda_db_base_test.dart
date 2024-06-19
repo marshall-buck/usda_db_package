@@ -70,7 +70,7 @@ void main() {
       });
     });
 
-    group('queryFoods() - ', () {
+    group('queryFood() - ', () {
       test('returns a FoodModel', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
@@ -83,6 +83,18 @@ void main() {
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
         expect(foodItem, isA<SrLegacyFoodModel>());
+      });
+      test('returns null if no food', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+
+        final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
+        final foodItem = await db.queryFood(id: 1675121);
+        expect(foodItem, isNull);
       });
     });
 
