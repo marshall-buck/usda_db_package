@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'nutrient_model.dart';
+import 'models.dart';
 
 part 'food_model.freezed.dart';
 

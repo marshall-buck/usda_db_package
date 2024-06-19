@@ -1,4 +1,3 @@
 export 'src/usda_db_base.dart' show UsdaDB;
 
-export 'src/models/food_model.dart' show SrLegacyFoodModel;
-export 'src/models//nutrient_model.dart' show SrLegacyNutrientModel;
+export 'src/models/models.dart';

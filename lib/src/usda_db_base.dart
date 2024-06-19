@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:developer' as dev;
 
+import '../src/models/models.dart';
+
 import 'autocomplete_data.dart';
 import 'exceptions.dart';
 import 'file_service.dart';
 
 import 'foods_data.dart';
 
-import 'models/food_model.dart';
 import 'sanitizer.dart';
 
 /// A class representing the USDA database.

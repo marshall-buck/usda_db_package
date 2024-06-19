@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/file_service.dart';
-import 'package:usda_db_package/src/models/food_model.dart';
+import 'package:usda_db_package/src/models/models.dart';
 
 import 'package:usda_db_package/src/usda_db_base.dart';
 

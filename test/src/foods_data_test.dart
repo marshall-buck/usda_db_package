@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/foods_data.dart';
-import 'package:usda_db_package/src/models/food_model.dart';
-import 'package:usda_db_package/src/models/nutrient_model.dart';
+import 'package:usda_db_package/src/models/models.dart';
 
 import '../setup/mock_file_strings.dart';
 

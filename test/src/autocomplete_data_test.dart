@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:usda_db_package/src/autocomplete_data.dart';
 
 import '../setup/mock_file_strings.dart';
