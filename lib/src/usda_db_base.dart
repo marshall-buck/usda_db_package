@@ -73,7 +73,9 @@ class UsdaDB {
       return instance;
     } catch (e, st) {
       dev.log('create() error',
-          name: 'DB', error: e.toString(), stackTrace: st);
+          name: 'UsdaDB Package: UsdaDB.init()',
+          error: e.toString(),
+          stackTrace: st);
       throw DBException(e.toString(), st);
     } finally {
       _isInitializing = false;
