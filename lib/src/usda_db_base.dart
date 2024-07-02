@@ -72,7 +72,7 @@ class UsdaDB {
       await instance._loadData();
       return instance;
     } catch (e, st) {
-      dev.log('create() error',
+      dev.log('error',
           name: 'UsdaDB Package: UsdaDB.init()',
           error: e.toString(),
           stackTrace: st);
@@ -172,5 +172,6 @@ class UsdaDB {
 
   @override
   String toString() =>
-      'FoodsDb: ${_foodsData?.foodsList.length} should be a number';
+      '''FoodsDb: There are ${_foodsData?.foodsList.length} food items
+            ready to search in the USDA SR Legacy Database.''';
 }
