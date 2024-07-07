@@ -44,13 +44,13 @@ import 'sanitizer.dart';
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
 
 class UsdaDB {
-  final FileService _fileLoader;
+  late final FileService _fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   final Sanitizer _sanitizer = Sanitizer();
   static bool _isInitializing = false;
 
-  UsdaDB._(this._fileLoader);
+  UsdaDB();
 
   /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
@@ -65,12 +65,11 @@ class UsdaDB {
   ///
   /// If an error occurs during the initialization process, a [DBException] is
   /// thrown with the error message and stack trace.
-  static Future<UsdaDB> init({FileService? fileLoader}) async {
+  Future<void> init({FileService? fileLoader}) async {
     _isInitializing = true;
-    final instance = UsdaDB._(fileLoader ?? FileService());
+    _fileLoader = fileLoader ?? FileService();
     try {
-      await instance._loadData();
-      return instance;
+      await _loadData();
     } catch (e, st) {
       dev.log('error',
           name: 'UsdaDB Package: UsdaDB.init()',
