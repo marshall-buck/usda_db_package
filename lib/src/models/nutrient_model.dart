@@ -6,9 +6,9 @@ part 'nutrient_model.freezed.dart';
 class SrLegacyNutrientModel with _$SrLegacyNutrientModel {
   const factory SrLegacyNutrientModel({
     required final int id,
-    final String? name,
+    required final String name,
     required final num amount,
-    final String? unit,
+    required final String unit,
   }) = _SrLegacyNutrientModel;
   const SrLegacyNutrientModel._();
 
@@ -17,9 +17,9 @@ class SrLegacyNutrientModel with _$SrLegacyNutrientModel {
       {required final Map<String, dynamic> jsonString}) {
     return SrLegacyNutrientModel(
       id: jsonString['id'],
-      name: originalNutrientTableEdit[jsonString['id']]?['name'],
+      name: originalNutrientTableEdit[jsonString['id']]?['name'] as String,
       amount: jsonString['amount'],
-      unit: originalNutrientTableEdit[jsonString['id']]?['unit'],
+      unit: originalNutrientTableEdit[jsonString['id']]?['unit'] as String,
     );
   }
 
