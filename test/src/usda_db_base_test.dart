@@ -133,11 +133,6 @@ void main() {
         expect(list.length, 4);
         await db.dispose();
       });
-      // test('throws DBException if db has not been initialized', () async {
-      //   final db = await UsdaDB.init(fileLoader: mockFileLoaderService);
-      //   expect(() => db.queryFoods('apple'),
-      //       throwsA(isA<DBException>()));
-      // });
     });
   });
 
