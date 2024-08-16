@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mocktail/mocktail.dart';
@@ -136,6 +138,34 @@ void main() {
       //   expect(() => db.queryFoods('apple'),
       //       throwsA(isA<DBException>()));
       // });
+    });
+  });
+
+  group('Test Db files', () {
+    test('Opening foods_db returns a  string', () async {
+      final fileLoader = FileService();
+
+      final jsonString = await fileLoader.loadData(fileName: 'foods_db.json');
+      expect(jsonString, isA<String>());
+      try {
+        final jsonObject = jsonDecode(jsonString);
+        expect(jsonObject, isA<Map<String, dynamic>>());
+      } catch (e) {
+        fail('Failed to decode JSON: $e');
+      }
+    });
+    test('Opening autocomplete_hash returns a  string', () async {
+      final fileLoader = FileService();
+
+      final jsonString =
+          await fileLoader.loadData(fileName: 'autocomplete_hash.json');
+      expect(jsonString, isA<String>());
+      try {
+        final jsonObject = jsonDecode(jsonString);
+        expect(jsonObject, isA<Map<String, dynamic>>());
+      } catch (e) {
+        fail('Failed to decode JSON: $e');
+      }
     });
   });
 }
