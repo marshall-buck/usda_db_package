@@ -90,7 +90,7 @@ class AutoCompleteData implements DataInitializer {
 
   /// Returns a list of food IDs associated with the provided [substring].
   /// If the [substring] is not found, an empty list is returned.
-  List<int> getFoodIndexes({required String substring}) =>
+  List<int?> getFoodIndexes({required String substring}) =>
       _indexHash[_substringHash[substring]] ?? [];
 
   /// Converts the provided JSON map into the appropriate type for the [_indexHash] property.

@@ -2,8 +2,7 @@ import 'extensions/string_ext.dart';
 
 /// A class that provides string sanitization services.
 ///
-/// The [sanitizedWords] method takes a [sentence] parameter and returns a list of
-/// strings. The method removes stop words and words with a length of 1 from the
+/// The [sanitizedWords] method takes a [sentence] parameter and returns a list of strings. The method removes stop words and words with a length of 1 from the
 /// sentence and returns the remaining words as a list.
 class Sanitizer {
   /// Returns a list of sanitized strings from the given [sentence].

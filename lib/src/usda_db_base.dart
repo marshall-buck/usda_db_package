@@ -120,9 +120,12 @@ class UsdaDB {
 
   /// Returns a [List] of [SrLegacyFoodModel] items based on a [searchTerm].
   ///
+  /// [all] determines whether the food description contains any word,
+  ///  or must contain all words in the [searchTerm].
+  ///
   /// [List] will return empty if no matches are found.
   Future<List<SrLegacyFoodModel?>> queryFoods(
-      {required String searchString}) async {
+      {required String searchString, bool all = true}) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -130,7 +133,8 @@ class UsdaDB {
 
     if (sanitizedWords.isEmpty) return [];
 
-    Set<int?> ids = _getIds(sanitizedWords);
+    Set<int?> ids =
+        all == true ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
 
     if (ids.isEmpty) return [];
 
@@ -142,8 +146,36 @@ class UsdaDB {
     return foods;
   }
 
-  /// Retrieves a set of food ids that match the given [sanitizedWords].
-  Set<int?> _getIds(List<String> sanitizedWords) {
+  /// Retrieves a set of foodIds whose descriptions contain ALL the words in the
+  /// list of [sanitizedWords]
+  Set<int?> _getIdsAll(List<String> sanitizedWords) {
+    if (sanitizedWords.isEmpty) {
+      return {};
+    }
+
+    Set<int?> ids =
+        _autoCompleteData!.getFoodIndexes(substring: sanitizedWords[0]).toSet();
+    if (sanitizedWords.length == 1) {
+      return ids;
+    }
+    for (int i = 1; i < sanitizedWords.length; i++) {
+      final term = sanitizedWords[i];
+      final setTerm =
+          _autoCompleteData!.getFoodIndexes(substring: term).toSet();
+      ids = ids.intersection(setTerm);
+
+      // Early exit if intersection is empty
+      if (ids.isEmpty) {
+        break;
+      }
+    }
+
+    return ids;
+  }
+
+  /// Retrieves a set of foodIds whose descriptions contain ANY of the words
+  ///  in the list of [sanitizedWords]
+  Set<int?> _getIdsAny(List<String> sanitizedWords) {
     Set<int?> ids = {};
     for (final term in sanitizedWords) {
       ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));

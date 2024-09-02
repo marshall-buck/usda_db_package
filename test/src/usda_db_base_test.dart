@@ -92,7 +92,7 @@ void main() {
     });
 
     group('queryFoods() - ', () {
-      test('returns a list of FoodModels', () async {
+      test('returns a list of FoodModels, with one word term', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
             .thenAnswer((_) async => mockDBString);
@@ -103,11 +103,13 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab');
         expect(list, isNotEmpty);
+        expect(list.length, 3);
         expect(list[0], isA<SrLegacyFoodModel>());
         await db.dispose();
       });
 
-      test('expect list to be empty with no results with input', () async {
+      test('''expect list to be empty with no results with 2 word input,
+                  each input does not have a match''', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
             .thenAnswer((_) async => mockDBString);
@@ -120,7 +122,8 @@ void main() {
         expect(list, isEmpty);
         await db.dispose();
       });
-      test('expect list to be correct with more than one word', () async {
+      test('''expect list to be empty with no results with 2 word input,
+                  one input does not have a match and one does''', () async {
         when(() => mockFileLoaderService.loadData(
                 fileName: FileService.fileNameFoods))
             .thenAnswer((_) async => mockDBString);
@@ -129,7 +132,35 @@ void main() {
             .thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoods(searchString: 'aab dough');
+        final list = await db.queryFoods(searchString: 'aab rrr');
+        expect(list, isEmpty);
+        await db.dispose();
+      });
+      // TODO:Here is where i ned to check if all or any words are a match.
+      test('expect list to return only descriptions with ALL words', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+        final db = UsdaDB();
+        await db.init(fileLoader: mockFileLoaderService);
+        final list = await db.queryFoods(searchString: 'aab, dough');
+        expect(list.length, 1);
+        await db.dispose();
+      });
+      test('expect list to return only descriptions with ANY words', () async {
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async => mockDBString);
+        when(() => mockFileLoaderService.loadData(
+                fileName: FileService.fileNameAutocompleteData))
+            .thenAnswer((_) async => mockHashString);
+        final db = UsdaDB();
+        await db.init(fileLoader: mockFileLoaderService);
+        final list =
+            await db.queryFoods(searchString: 'aab, dough', all: false);
         expect(list.length, 4);
         await db.dispose();
       });
