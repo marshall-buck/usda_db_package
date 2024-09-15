@@ -35,9 +35,9 @@ extension StringExtensions on String {
     return isNotEmpty ? [this] : [];
   }
 
-  /// Cleans up a sentence, removing all unwanted characters
-  /// Returns a set of lowercased words to be indexed.
-  Set<String> getWordsToIndex() {
+  /// Cleans up a sentence, removing all unwanted characters.
+  /// Returns a set of lowercased words.
+  Set<String> sanitizeSentence() {
     final words = <List<String>>[];
 
     for (final word in split(' ')) {

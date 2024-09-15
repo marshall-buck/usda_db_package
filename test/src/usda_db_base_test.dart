@@ -135,7 +135,7 @@ void main() {
       });
 
       test('''
-expect list to be empty with no results with 2 word input,
+                expect list to be empty with no results with 2 word input,
                   each input does not have a match''', () async {
         when(
           () => mockFileLoaderService.loadData(
@@ -154,7 +154,7 @@ expect list to be empty with no results with 2 word input,
         await db.dispose();
       });
       test('''
-expect list to be empty with no results with 2 word input,
+                  expect list to be empty with no results with 2 word input,
                   one input does not have a match and one does''', () async {
         when(
           () => mockFileLoaderService.loadData(

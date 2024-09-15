@@ -135,7 +135,7 @@ class UsdaDB {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
-    final sanitizedWords = _sanitizer.sanitizedWords(searchString);
+    final sanitizedWords = _sanitizer.createSearchList(searchString);
 
     if (sanitizedWords.isEmpty) return [];
 
@@ -161,6 +161,7 @@ class UsdaDB {
 
     var ids =
         _autoCompleteData!.getFoodIndexes(substring: sanitizedWords[0]).toSet();
+
     if (sanitizedWords.length == 1) {
       return ids;
     }

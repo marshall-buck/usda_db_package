@@ -50,17 +50,17 @@ void main() {
       });
     });
 
-    group('getWordsToIndex()', () {
+    group('sanitizeSentence()', () {
       test('Sentence should be stripped of all non alpha chars', () {
         const sentence1 = 'Doughnuts, yeast-Leavened, (with) jelly filling';
         expect(
-          sentence1.getWordsToIndex(),
+          sentence1.sanitizeSentence(),
           {'doughnuts', 'yeast', 'leavened', 'with', 'jelly', 'filling'},
         );
         const sentence2 =
             'Muffins, plain, prepared from recipe, made with low fat (2%) milk';
 
-        expect(sentence2.getWordsToIndex(), {
+        expect(sentence2.sanitizeSentence(), {
           'muffins',
           'plain',
           'prepared',
@@ -74,11 +74,11 @@ void main() {
           'milk',
         });
 
-        const sentence3 = 'Puff pastry, frozen, ready- -to-bake ';
+        const sentence3 = 'Puff a pastry, frozen, ready- -to-bake ';
 
         expect(
-          sentence3.getWordsToIndex(),
-          {'puff', 'pastry', 'frozen', 'ready', 'to', 'bake'},
+          sentence3.sanitizeSentence(),
+          {'puff', 'a', 'pastry', 'frozen', 'ready', 'to', 'bake'},
         );
       });
     });

@@ -2,14 +2,22 @@ import 'extensions/string_ext.dart';
 
 /// A class that provides string sanitization services.
 ///
-/// The [sanitizedWords] method takes a sentence parameter and returns a list of strings. The method removes stop words and words with a length of 1 from the
-/// sentence and returns the remaining words as a list.
+/// The [createSearchList] method takes a sentence parameter and returns a
+/// list of strings. The method removes stop words and words with a length of 1
+/// from the sentence and returns the remaining words as a list.
 class Sanitizer {
   /// Returns a list of sanitized strings from the given [sentence].
-  List<String> sanitizedWords(String sentence) => sentence
-      .getWordsToIndex()
-      .where((element) => !stopWords.contains(element) && element.length > 1)
-      .toList();
+  List<String> createSearchList(String sentence) {
+    final sanitized = _sanitizeSentence(sentence);
+    final withoutStopWords = _removeStopWords(sanitized);
+    return withoutStopWords;
+  }
+
+  List<String> _sanitizeSentence(String sentence) =>
+      sentence.sanitizeSentence().toList();
+
+  List<String> _removeStopWords(List<String> sentence) =>
+      sentence.where((element) => !stopWords.contains(element)).toList();
 
   /// A list of stop words to be removed from the input sentence.
   static const List<String> stopWords = [
