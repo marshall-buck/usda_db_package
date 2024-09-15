@@ -44,13 +44,12 @@ import 'sanitizer.dart';
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
 
 class UsdaDB {
+  UsdaDB();
   late final FileService _fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   final Sanitizer _sanitizer = Sanitizer();
   static bool _isInitializing = false;
-
-  UsdaDB();
 
   /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
@@ -71,10 +70,12 @@ class UsdaDB {
     try {
       await _loadData();
     } catch (e, st) {
-      dev.log('error',
-          name: 'UsdaDB Package: UsdaDB.init()',
-          error: e.toString(),
-          stackTrace: st);
+      dev.log(
+        'error',
+        name: 'UsdaDB Package: UsdaDB.init()',
+        error: e.toString(),
+        stackTrace: st,
+      );
       throw DBException(e.toString(), st);
     } finally {
       _isInitializing = false;
@@ -87,13 +88,16 @@ class UsdaDB {
   Future<void> _loadData() async {
     try {
       await Future.wait(
-        [_initAutocompleteData(), _initFoodsData()],
+        [
+          _initAutocompleteData(),
+          _initFoodsData(),
+        ],
         eagerError: true,
       );
       dev.log('init() completed ', name: 'DB');
     } catch (e) {
-      // All or none of the data should be loaded.  If an error occurs.
-      dispose();
+      await // All or none of the data should be loaded.  If an error occurs.
+          dispose();
       rethrow;
     }
   }
@@ -115,17 +119,19 @@ class UsdaDB {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
-    return _foodsData!.getFood(id);
+    return _foodsData!.queryFood(id);
   }
 
-  /// Returns a [List] of [SrLegacyFoodModel] items based on a [searchTerm].
+  /// Returns a [List] of [SrLegacyFoodModel] items based on a searchTerm.
   ///
   /// [all] determines whether the food description contains any word,
-  ///  or must contain all words in the [searchTerm].
+  ///  or must contain all words in the searchTerm.
   ///
   /// [List] will return empty if no matches are found.
-  Future<List<SrLegacyFoodModel?>> queryFoods(
-      {required String searchString, bool all = true}) async {
+  Future<List<SrLegacyFoodModel?>> queryFoods({
+    required String searchString,
+    bool all = true,
+  }) async {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
@@ -133,12 +139,12 @@ class UsdaDB {
 
     if (sanitizedWords.isEmpty) return [];
 
-    Set<int?> ids =
+    final ids =
         all == true ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
 
     if (ids.isEmpty) return [];
 
-    List<SrLegacyFoodModel?> foods = [];
+    final foods = <SrLegacyFoodModel?>[];
     for (final id in ids.toList()) {
       final food = await queryFood(id: id!);
       foods.add(food);
@@ -153,12 +159,12 @@ class UsdaDB {
       return {};
     }
 
-    Set<int?> ids =
+    var ids =
         _autoCompleteData!.getFoodIndexes(substring: sanitizedWords[0]).toSet();
     if (sanitizedWords.length == 1) {
       return ids;
     }
-    for (int i = 1; i < sanitizedWords.length; i++) {
+    for (var i = 1; i < sanitizedWords.length; i++) {
       final term = sanitizedWords[i];
       final setTerm =
           _autoCompleteData!.getFoodIndexes(substring: term).toSet();
@@ -176,7 +182,7 @@ class UsdaDB {
   /// Retrieves a set of foodIds whose descriptions contain ANY of the words
   ///  in the list of [sanitizedWords]
   Set<int?> _getIdsAny(List<String> sanitizedWords) {
-    Set<int?> ids = {};
+    final ids = <int?>{};
     for (final term in sanitizedWords) {
       ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));
     }
@@ -186,7 +192,8 @@ class UsdaDB {
   /// Initializes the autocomplete data by loading it from a file.
   Future<void> _initAutocompleteData() async {
     final autoCompleteDataString = await _fileLoader.loadData(
-        fileName: FileService.fileNameAutocompleteData);
+      fileName: FileService.fileNameAutocompleteData,
+    );
     _autoCompleteData = AutoCompleteData();
 
     await _autoCompleteData?.init(jsonString: autoCompleteDataString);
@@ -202,7 +209,8 @@ class UsdaDB {
   }
 
   @override
-  String toString() =>
-      '''FoodsDb: There are ${_foodsData?.foodsList.length} food items
-            ready to search in the USDA SR Legacy Database.''';
+  String toString() => '''
+            FoodsDb: There are ${_foodsData?.foodsList.length} food items
+            ready to search in the USDA SR Legacy Database.
+      ''';
 }

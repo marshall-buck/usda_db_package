@@ -5,7 +5,7 @@ void main() {
   group('Nutrient class tests', () {
     group('Constructor tests', () {
       test('initiates properly', () {
-        const SrLegacyNutrientModel nutrient = SrLegacyNutrientModel(
+        const nutrient = SrLegacyNutrientModel(
           id: 1,
           name: 'Test Nutrient',
           amount: 10.0,
@@ -21,12 +21,12 @@ void main() {
     });
     group('fromJson', () {
       test('converts json to Nutrient', () {
-        final Map<String, dynamic> json = {
+        final json = <String, dynamic>{
           'id': 1003,
           'amount': 10.0,
         };
 
-        final SrLegacyNutrientModel nutrient =
+        final nutrient =
             SrLegacyNutrientModel.fromJson(jsonString: json);
 
         expect(nutrient, isA<SrLegacyNutrientModel>());

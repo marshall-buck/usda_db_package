@@ -12,10 +12,12 @@ extension StringExtensions on String {
   /// not in the set defined by [^\w()%\-] or a string that contains one or more
   /// digits followed by a percent sign.
   String removeUnwantedChars() {
-    final stringSanitizerRegEx = RegExp(r"[^\w()%\-\/]|(\d+%)");
+    final stringSanitizerRegEx = RegExp(r'[^\w()%\-\/]|(\d+%)');
 
     return replaceAllMapped(
-        stringSanitizerRegEx, (final match) => match.group(1) ?? '');
+      stringSanitizerRegEx,
+      (match) => match.group(1) ?? '',
+    );
   }
 
   /// Separates words with dashes or parentheses and forward slashes.
@@ -36,18 +38,19 @@ extension StringExtensions on String {
   /// Cleans up a sentence, removing all unwanted characters
   /// Returns a set of lowercased words to be indexed.
   Set<String> getWordsToIndex() {
-    final List<List<String>> words = [];
+    final words = <List<String>>[];
 
     for (final word in split(' ')) {
-      final String charDash = word.removeUnwantedChars().toLowerCase();
-      final List<String> splitWords =
+      final charDash = word.removeUnwantedChars().toLowerCase();
+      final splitWords =
           charDash.stripDashedAndParenthesisAndForwardSlashesWord();
 
       if (splitWords.isNotEmpty) {
         words.add(splitWords);
       }
     }
-    final wordsSet = words.expand((final list) => list).toSet();
+    final wordsSet = words.expand((list) => list).toSet();
+    // ignore: cascade_invocations
     wordsSet.remove('');
     return wordsSet;
   }

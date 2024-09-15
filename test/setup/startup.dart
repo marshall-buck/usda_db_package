@@ -6,12 +6,11 @@ class MockFileLoaderService extends Mock implements FileService {}
 
 late final FileService mockFileLoaderService;
 
-// ignore_for_file: non_constant_identifier_names
-tear_down() {
+void tearDownStartup() {
   reset(mockFileLoaderService);
 }
 
-set_up_all() {
+void setUpStartup() {
   TestWidgetsFlutterBinding.ensureInitialized();
   mockFileLoaderService = MockFileLoaderService();
 }

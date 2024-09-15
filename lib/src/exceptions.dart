@@ -1,8 +1,7 @@
 class DBException implements Exception {
+  DBException(this.errorMessage, [this.stackTrace]);
   final String errorMessage;
   final StackTrace? stackTrace;
-
-  DBException(this.errorMessage, [this.stackTrace]);
 
   @override
   String toString() {

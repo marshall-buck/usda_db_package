@@ -1,32 +1,21 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:equatable/equatable.dart';
 
 import 'models.dart';
 
-part 'food_model.freezed.dart';
+class SrLegacyFoodModel extends Equatable {
+  const SrLegacyFoodModel({
+    required this.id,
+    required this.description,
+    required this.nutrients,
+  });
 
-@freezed
-class SrLegacyFoodModel with _$SrLegacyFoodModel {
-  const factory SrLegacyFoodModel(
-          {required final int id,
-          required final String description,
-          required final List<SrLegacyNutrientModel> nutrients}) =
-      _SrLegacyFoodModel;
+  final int id;
 
-  const SrLegacyFoodModel._();
+  final String description;
 
-  factory SrLegacyFoodModel.fromJson(
-      {required final Map<String, dynamic> jsonMap}) {
-    final foodJson = jsonMap.values.first;
-    final nutrientsJson = foodJson['nutrients'] as List<dynamic>;
+  final List<SrLegacyNutrientModel> nutrients;
 
-    final nutrients = nutrientsJson
-        .map((e) => SrLegacyNutrientModel.fromJson(jsonString: e))
-        .toList();
-
-    return SrLegacyFoodModel(
-      id: int.parse(jsonMap.keys.first),
-      description: foodJson['description'],
-      nutrients: nutrients,
-    );
-  }
+  @override
+  List<Object> get props => [id, description, nutrients];
 }

@@ -11,7 +11,7 @@ void main() {
     final hashData = AutoCompleteData();
     group('init() - ', () {
       test('properties are not empty', () async {
-        final String json = jsonEncode(mockHashTable);
+        final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
 
@@ -27,7 +27,7 @@ void main() {
         );
       });
       test('substringHash is typed correctly', () async {
-        final String json = jsonEncode(mockHashTable);
+        final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
         for (final element in hashData.substringHash.entries) {
@@ -36,7 +36,7 @@ void main() {
         }
       });
       test('indexHash is typed correctly', () async {
-        final String json = jsonEncode(mockHashTable);
+        final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
         for (final element in hashData.indexHash.entries) {
@@ -45,10 +45,11 @@ void main() {
         }
       });
       test('throws FormatException if either properties are empty', () async {
+        // ignore: inference_failure_on_collection_literal
         final emptyJson = jsonEncode({'substringHash': {}, 'indexHash': {}});
 
         expect(
-          () async => await hashData.init(jsonString: emptyJson),
+          () async => hashData.init(jsonString: emptyJson),
           throwsA(isA<FormatException>()),
         );
       });
@@ -57,7 +58,7 @@ void main() {
         const invalidJson = '{substringHash: {}}';
 
         expect(
-          () async => await hashData.init(jsonString: invalidJson),
+          () async => hashData.init(jsonString: invalidJson),
           throwsA(isA<FormatException>()),
         );
       });
@@ -65,7 +66,7 @@ void main() {
 
     group('getFoodIndexes() - ', () {
       test('returns correct indexes', () async {
-        final String json = jsonEncode(mockHashTable);
+        final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
         final indexes = hashData.getFoodIndexes(substring: 'aab');
@@ -73,12 +74,12 @@ void main() {
         expect(d.equals(indexes, [167512, 167513, 167515]), true);
       });
       test('returns empty list if substring not found', () async {
-        final String json = jsonEncode(mockHashTable);
+        final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
         final indexes = hashData.getFoodIndexes(substring: 'not found');
         expect(indexes.isEmpty, true);
-        expect(indexes, isA<List>());
+        expect(indexes, isA<List<void>>());
       });
     });
   });

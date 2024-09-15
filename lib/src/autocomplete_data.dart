@@ -19,13 +19,17 @@ import 'package:usda_db_package/src/initializer.dart';
 /// list of food IDs as values.
 ///
 /// The [init] method populates the [substringHash] and [indexHash] properties
-/// from the given JSON string. It decodes the JSON string, converts the index hash and substring hash to the proper types, and stores them in the respective properties.
+/// from the given JSON string. It decodes the JSON string, converts the index hash a
+/// nd substring hash to the proper types, and stores them in the respective properties.
 ///
 /// The [clear] method reverts the data to an empty state by clearing the
 /// [substringHash] and [indexHash] maps.
 ///
-/// The [getFoodIndexes] method takes a [substring] as input and returns a
-/// list of food IDs associated with that substring. It retrieves the hash value of the substring from the [substringHash] map and uses it to retrieve the corresponding list of food IDs from the [indexHash] map. If the substring is not found in the [substringHash] map, an empty list is returned.
+/// The [getFoodIndexes] method takes a substring as input and returns a
+/// list of food IDs associated with that substring. It retrieves the hash value of
+/// the substring from the [substringHash] map and uses it to retrieve the corresponding
+/// list of food IDs from the [indexHash] map. If the substring is not found in the
+/// [substringHash] map, an empty list is returned.
 ///
 /// The [AutoCompleteData] class also includes private helper methods
 /// [_convertIndexHashToType] and [_convertSubstringHashToType] to convert the
@@ -42,7 +46,7 @@ import 'package:usda_db_package/src/initializer.dart';
 ///  initialization follows a specific format, as described in the class documentation.
 /// /// The json file format is as follows:
 /// /*Cspell:disable
-/// ```
+/// ```dart
 ///  {
 /// substringHash = {
 ///   'aba': 0,
@@ -71,12 +75,20 @@ class AutoCompleteData implements DataInitializer {
   @override
   Future<void> init({required String jsonString}) async {
     try {
-      final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
-      _convertIndexHashToType(jsonMap['indexHash']);
-      _convertSubstringHashToType(jsonMap['substringHash']);
+      final jsonMap = await jsonDecode(jsonString);
+      // ignore: avoid_dynamic_calls
+      final indexHash = jsonMap['indexHash'] as Map<String, dynamic>;
+      // ignore: avoid_dynamic_calls
+      final substringHash = jsonMap['substringHash'] as Map<String, dynamic>;
+      _convertIndexHashToType(indexHash);
+      _convertSubstringHashToType(substringHash);
     } catch (e, st) {
-      dev.log('Error decoding JSON',
-          name: 'AutoCompleteHashData', error: e.toString(), stackTrace: st);
+      dev.log(
+        'Error decoding JSON',
+        name: 'AutoCompleteHashData',
+        error: e.toString(),
+        stackTrace: st,
+      );
       throw FormatException('Error decoding JSON: $e');
     }
   }
@@ -96,25 +108,30 @@ class AutoCompleteData implements DataInitializer {
   /// Converts the provided JSON map into the appropriate type for the [_indexHash] property.
   void _convertIndexHashToType(Map<String, dynamic> mapFromJson) {
     if (mapFromJson.isEmpty) {
-      dev.log('IndexHash is empty',
-          name: 'AutoCompleteHashData.fromJson', error: 'IndexHash is empty');
+      dev.log(
+        'IndexHash is empty',
+        name: 'AutoCompleteHashData.fromJson',
+        error: 'IndexHash is empty',
+      );
       throw const FormatException('IndexHash is empty');
     }
     mapFromJson.forEach((key, value) {
-      _indexHash[int.parse(key)] = List<int>.from(value);
+      _indexHash[int.parse(key)] = List<int>.from(value as Iterable);
     });
   }
 
   /// Converts the provided JSON map into the appropriate type for the [_substringHash] property.
   void _convertSubstringHashToType(Map<String, dynamic> mapFromJson) {
     if (mapFromJson.isEmpty) {
-      dev.log('SubstringHash is empty',
-          name: 'AutoCompleteHashData.fromJson',
-          error: 'SubstringHash is empty');
+      dev.log(
+        'SubstringHash is empty',
+        name: 'AutoCompleteHashData.fromJson',
+        error: 'SubstringHash is empty',
+      );
       throw const FormatException('SubstringHash is empty');
     }
     mapFromJson.forEach((key, value) {
-      _substringHash[key] = value;
+      _substringHash[key] = value as int;
     });
   }
 }

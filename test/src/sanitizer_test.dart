@@ -8,7 +8,7 @@ void main() {
       test('removes stop words correctly', () {
         final sanitizer = Sanitizer();
         final sanitizedWords = sanitizer.sanitizedWords('once test');
-        const d = ListEquality();
+        const d = ListEquality<String>();
         expect(d.equals(sanitizedWords, ['test']), true);
       });
 
@@ -29,45 +29,55 @@ void main() {
         final sanitizer = Sanitizer();
         final sanitizedWords =
             sanitizer.sanitizedWords('Test sentence no  stop words');
-        const d = ListEquality();
+        const d = ListEquality<String>();
         expect(
-            d.equals(
-                sanitizedWords, ['test', 'sentence', 'no', 'stop', 'words']),
-            true);
+          d.equals(
+            sanitizedWords,
+            ['test', 'sentence', 'no', 'stop', 'words'],
+          ),
+          true,
+        );
       });
       test('handles sentence with parenthesis)', () {
         final sanitizer = Sanitizer();
         final sanitizedWords =
             sanitizer.sanitizedWords('Test (sentence) no  stop words');
-        const d = ListEquality();
+        const d = ListEquality<String>();
         expect(
-            d.equals(
-                sanitizedWords, ['test', 'sentence', 'no', 'stop', 'words']),
-            true);
+          d.equals(
+            sanitizedWords,
+            ['test', 'sentence', 'no', 'stop', 'words'],
+          ),
+          true,
+        );
       });
       test('handles sentence with dashes)', () {
         final sanitizer = Sanitizer();
         final sanitizedWords =
             sanitizer.sanitizedWords('Test-sentence no  stop words');
-        const d = ListEquality();
+        const d = ListEquality<String>();
         expect(
-            d.equals(
-                sanitizedWords, ['test', 'sentence', 'no', 'stop', 'words']),
-            true);
+          d.equals(
+            sanitizedWords,
+            ['test', 'sentence', 'no', 'stop', 'words'],
+          ),
+          true,
+        );
       });
       test('Sanitizer handles sentence with percents', () {
         final sanitizer = Sanitizer();
         final sanitizedWords =
             sanitizer.sanitizedWords('Test sentence no  stop 2%');
-        const d = ListEquality();
+        const d = ListEquality<String>();
         expect(
-            d.equals(sanitizedWords, ['test', 'sentence', 'no', 'stop', '2%']),
-            true);
+          d.equals(sanitizedWords, ['test', 'sentence', 'no', 'stop', '2%']),
+          true,
+        );
       });
       test('Sanitizer handles sentence with 1 word', () {
         final sanitizer = Sanitizer();
         final sanitizedWords = sanitizer.sanitizedWords('2%');
-        const d = ListEquality();
+        const d = ListEquality<String>();
         expect(d.equals(sanitizedWords, ['2%']), true);
       });
     });

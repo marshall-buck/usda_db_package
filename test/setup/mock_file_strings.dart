@@ -1,6 +1,8 @@
 // cSpell: disable
 
-import 'dart:convert';
+// ignore_for_file: prefer_single_quotes
+
+import "dart:convert";
 
 final String mockDBString = jsonEncode(stringKeyedMap);
 final String mockHashString = jsonEncode(mockHashTable);
@@ -16,8 +18,8 @@ const mockFoodsData = {
       {"id": 1004, "amount": 13.2},
       {"id": 1005, "amount": 41.2},
       {"id": 1008, "amount": 307},
-      {"id": 2000, "amount": 5.88}
-    ]
+      {"id": 2000, "amount": 5.88},
+    ],
   },
   167513: {
     "description": "Pillsbury, Cinnamon Rolls with Icing, refrigerated dough",
@@ -28,8 +30,8 @@ const mockFoodsData = {
       {"id": 1004, "amount": 11.3},
       {"id": 1005, "amount": 53.4},
       {"id": 1008, "amount": 330},
-      {"id": 2000, "amount": 21.3}
-    ]
+      {"id": 2000, "amount": 21.3},
+    ],
   },
   167514: {
     "description":
@@ -38,8 +40,8 @@ const mockFoodsData = {
       {"id": 1004, "amount": 3.7},
       {"id": 1005, "amount": 79.8},
       {"id": 1008, "amount": 377},
-      {"id": 1003, "amount": 6.1}
-    ]
+      {"id": 1003, "amount": 6.1},
+    ],
   },
   167515: {
     "description": "George Weston Bakeries, Thomas English Muffins",
@@ -48,8 +50,8 @@ const mockFoodsData = {
       {"id": 1003, "amount": 8.0},
       {"id": 1004, "amount": 1.8},
       {"id": 1005, "amount": 46.0},
-      {"id": 1008, "amount": 232}
-    ]
+      {"id": 1008, "amount": 232},
+    ],
   },
   167516: {
     "description": "Waffles, buttermilk, frozen, ready-to-heat",
@@ -60,8 +62,8 @@ const mockFoodsData = {
       {"id": 1008, "amount": 273},
       {"id": 2000, "amount": 4.3},
       {"id": 1004, "amount": 9.22},
-      {"id": 1005, "amount": 41.0}
-    ]
+      {"id": 1005, "amount": 41.0},
+    ],
   },
   167517: {
     "description": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
@@ -72,13 +74,13 @@ const mockFoodsData = {
       {"id": 1008, "amount": 309},
       {"id": 2000, "amount": 4.41},
       {"id": 1003, "amount": 7.42},
-      {"id": 1079, "amount": 2.6}
-    ]
+      {"id": 1079, "amount": 2.6},
+    ],
   },
 };
 
 final Map<String, dynamic> stringKeyedMap =
-    mockFoodsData.map((k, v) => MapEntry(k.toString(), v as dynamic));
+    mockFoodsData.map((k, v) => MapEntry(k.toString(), v));
 
 const mockHashTable = {
   "substringHash": {
@@ -121,7 +123,7 @@ const mockHashTable = {
       171721,
       174212,
       174213,
-      174528
+      174528,
     ],
     "3": [168454, 168455, 170528],
     "4": [174212, 174213],
@@ -129,6 +131,6 @@ const mockHashTable = {
     "6": [171721],
     "7": [169400],
     "8": [167512, 167513],
-    "9": [167514, 167515]
-  }
+    "9": [167514, 167515],
+  },
 };

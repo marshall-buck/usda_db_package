@@ -17,7 +17,7 @@ import 'models/models.dart';
 /// The [foodsList] property is a map that stores food IDs as keys and
 /// [SrLegacyFoodModel] objects as values.
 ///
-/// The [getFood] method takes a food ID as a parameter and returns the
+/// The [queryFood] method takes a food ID as a parameter and returns the
 /// corresponding [SrLegacyFoodModel] object from the [foodsList] map. If the food ID
 /// is not found in the map, the method returns null.
 ///
@@ -34,12 +34,16 @@ class FoodsData implements DataInitializer {
   @override
   Future<void> init({required String jsonString}) async {
     try {
-      final Map<String, dynamic> jsonMap = await jsonDecode(jsonString);
+      final jsonMap = await jsonDecode(jsonString);
 
-      _convertJsonMapTypes(jsonMap);
+      await _convertJsonMapTypes(jsonMap as Map<String, dynamic>);
     } catch (e, st) {
-      dev.log('Error decoding JSON',
-          name: 'Foods', error: e.toString(), stackTrace: st);
+      dev.log(
+        'Error decoding JSON',
+        name: 'Foods',
+        error: e.toString(),
+        stackTrace: st,
+      );
       throw const FormatException('Error decoding JSON in FoodsData class');
     }
   }
@@ -47,15 +51,50 @@ class FoodsData implements DataInitializer {
   /// Empty the foodsList object.
   void clear() => _foodsList.clear();
 
-  /// Returns a [SrLegacyFoodModel] from the [_foodsList] or [null] if not found.
-  SrLegacyFoodModel? getFood(int index) => _foodsList[index];
+  /// Returns a [SrLegacyFoodModel] from the [_foodsList] or null if not found.
+  SrLegacyFoodModel? queryFood(int foodId) => _foodsList[foodId];
 
-  // Converts a Map<String, dynamic> to Map<int, FoodModel>>.
-  void _convertJsonMapTypes(Map<String, dynamic> jsonMap) {
+  // Converts a Map<String, dynamic> to Map<int, SrLegacyFoodModel>>.
+  Future<void> _convertJsonMapTypes(Map<String, dynamic> jsonMap) async {
     for (final entry in jsonMap.entries) {
-      final Map<String, dynamic> arg = Map.from({entry.key: entry.value});
-      final food = SrLegacyFoodModel.fromJson(jsonMap: arg);
-      _foodsList[food.id] = food;
+      final foodId = int.parse(entry.key);
+      final foodData = entry.value as Map<String, dynamic>;
+
+      // Explicitly cast the nutrients list
+      final nutrientList = (foodData['nutrients'] as List)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+
+      final nutrients = nutrientList
+          .map((e) => SrLegacyNutrientModel.fromJson(jsonString: e))
+          .toList();
+
+      final food = SrLegacyFoodModel(
+        id: foodId,
+        description: foodData['description'] as String,
+        nutrients: nutrients,
+      );
+
+      _foodsList[foodId] = food;
     }
   }
 }
+
+// Future<void> _convertJsonMapTypes(Map<String, dynamic> jsonMap) async {
+//     for (final entry in jsonMap.entries) {
+//       final foodId = int.parse(entry.key);
+//       final foodData = entry.value as Map<String, dynamic>;
+//       // Explicitly cast the nutrients list
+//       final List<Map<String, dynamic>> nutrientList =
+//           (foodData['nutrients'] as List)
+//               .map((e) => e as Map<String, dynamic>)
+//               .toList();
+//       final nutrients = nutrientList
+//           .map((e) => SrLegacyNutrientModel.fromJson(jsonString: e))
+//           .toList();
+
+//       final food = SrLegacyFoodModel.fromJson(jsonValue: foodData, id: foodId);
+//       // print('food: $food');
+//       _foodsList[foodId] = food;
+//     }
+//   }

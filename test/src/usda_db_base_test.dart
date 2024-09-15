@@ -13,18 +13,22 @@ import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
 void main() {
-  setUpAll(() => set_up_all());
-  tearDown(() => tear_down());
+  setUpAll(setUpStartup);
+  tearDown(tearDownStartup);
 
   group('DB class tests', () {
     group('init() - ', () {
       test('loads properties', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
 
@@ -32,28 +36,38 @@ void main() {
         await db.dispose();
       });
       test('throws DBException on failure', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenThrow(Exception('loadData error'));
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenThrow(Exception('loadData error'));
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
 
         final db = UsdaDB();
 
-        expect(() async => await db.init(fileLoader: mockFileLoaderService),
-            throwsA(isA<DBException>()));
+        expect(
+          () async => db.init(fileLoader: mockFileLoaderService),
+          throwsA(isA<DBException>()),
+        );
         await db.dispose();
       });
     });
     group('isDataLoaded(),and dispose() - ', () {
       test('returns false if properties are empty', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         await db.dispose();
@@ -63,12 +77,16 @@ void main() {
 
     group('queryFood() - ', () {
       test('returns a FoodModel', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 167512);
@@ -77,12 +95,16 @@ void main() {
         await db.dispose();
       });
       test('returns null if no food', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 1675121);
@@ -93,12 +115,16 @@ void main() {
 
     group('queryFoods() - ', () {
       test('returns a list of FoodModels, with one word term', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab');
@@ -108,28 +134,38 @@ void main() {
         await db.dispose();
       });
 
-      test('''expect list to be empty with no results with 2 word input,
+      test('''
+expect list to be empty with no results with 2 word input,
                   each input does not have a match''', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aa rrr');
         expect(list, isEmpty);
         await db.dispose();
       });
-      test('''expect list to be empty with no results with 2 word input,
+      test('''
+expect list to be empty with no results with 2 word input,
                   one input does not have a match and one does''', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab rrr');
@@ -138,12 +174,16 @@ void main() {
       });
       // TODO:Here is where i ned to check if all or any words are a match.
       test('expect list to return only descriptions with ALL words', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab, dough');
@@ -151,12 +191,16 @@ void main() {
         await db.dispose();
       });
       test('expect list to return only descriptions with ANY words', () async {
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameFoods))
-            .thenAnswer((_) async => mockDBString);
-        when(() => mockFileLoaderService.loadData(
-                fileName: FileService.fileNameAutocompleteData))
-            .thenAnswer((_) async => mockHashString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final list =
