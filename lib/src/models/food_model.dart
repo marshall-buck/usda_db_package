@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs
 import 'package:equatable/equatable.dart';
 
 import 'models.dart';
@@ -14,7 +14,7 @@ class SrLegacyFoodModel extends Equatable {
 
   final String description;
 
-  final List<SrLegacyNutrientModel> nutrients;
+  final Map<int, SrLegacyNutrientModel> nutrients;
 
   @override
   List<Object> get props => [id, description, nutrients];

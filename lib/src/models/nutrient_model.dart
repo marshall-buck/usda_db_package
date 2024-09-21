@@ -19,6 +19,22 @@ class SrLegacyNutrientModel extends Equatable {
       unit: originalNutrientTableEdit[jsonString['id']]?['unit'] ?? '',
     );
   }
+  factory SrLegacyNutrientModel.fromMapEntry({
+    required MapEntry<String, num> entry,
+  }) {
+    final id = int.parse(entry.key);
+    final amount = entry.value;
+    final nutrient = originalNutrientTableEdit[id]!;
+    final name = nutrient['name']!;
+    final unit = nutrient['unit']!;
+
+    return SrLegacyNutrientModel(
+      id: id,
+      name: name,
+      amount: amount,
+      unit: unit,
+    );
+  }
 
   final int id;
   final String name;
@@ -125,7 +141,7 @@ class SrLegacyNutrientModel extends Equatable {
   ];
 /*CSpell:disable*/
   /// Some names have been changed to be more user friendly.
-  static const originalNutrientTableEdit = {
+  static const Map<int, Map<String, String>> originalNutrientTableEdit = {
     1003: {'name': 'Protein', 'unit': 'g'},
     1004: {'name': 'Total Fat', 'unit': 'g'},
     1005: {'name': 'Total Carbohydrates', 'unit': 'g'},

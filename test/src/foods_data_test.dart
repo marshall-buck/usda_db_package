@@ -25,7 +25,7 @@ void main() {
       );
       expect(
         foods.foodsList[167512]?.nutrients,
-        isA<List<SrLegacyNutrientModel>>(),
+        isA<Map<int, SrLegacyNutrientModel>>(),
       );
       expect(foods.foodsList[167512]?.nutrients.length, 7);
     });

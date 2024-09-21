@@ -19,6 +19,19 @@ void main() {
         expect(nutrient.unit, 'g');
       });
     });
+    group('fromMapEntry', () {
+      test('converts MapEntry to Nutrient', () {
+        const entry = MapEntry('1003', 10);
+
+        final nutrient = SrLegacyNutrientModel.fromMapEntry(entry: entry);
+
+        expect(nutrient, isA<SrLegacyNutrientModel>());
+        expect(nutrient.id, 1003);
+        expect(nutrient.name, 'Protein');
+        expect(nutrient.amount, 10.0);
+        expect(nutrient.unit, 'g');
+      });
+    });
     group('fromJson', () {
       test('converts json to Nutrient', () {
         final json = <String, dynamic>{
@@ -26,8 +39,7 @@ void main() {
           'amount': 10.0,
         };
 
-        final nutrient =
-            SrLegacyNutrientModel.fromJson(jsonString: json);
+        final nutrient = SrLegacyNutrientModel.fromJson(jsonString: json);
 
         expect(nutrient, isA<SrLegacyNutrientModel>());
         expect(nutrient.id, 1003);

@@ -4,83 +4,93 @@
 
 import "dart:convert";
 
-final String mockDBString = jsonEncode(stringKeyedMap);
+final String mockDBString = jsonEncode(mockKJsonString);
 final String mockHashString = jsonEncode(mockHashTable);
 
 const mockFoodsData = {
   167512: {
     "description":
         "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",
-    "nutrients": [
-      {"id": 1003, "amount": 5.88},
-      {"id": 1079, "amount": 1.2},
-      {"id": 1258, "amount": 2.94},
-      {"id": 1004, "amount": 13.2},
-      {"id": 1005, "amount": 41.2},
-      {"id": 1008, "amount": 307},
-      {"id": 2000, "amount": 5.88},
-    ],
+    "nutrients": {
+      1003: 5.88,
+      1079: 1.2,
+      1258: 2.94,
+      1004: 13.2,
+      1005: 41.2,
+      1008: 307,
+      2000: 5.88,
+    },
   },
   167513: {
     "description": "Pillsbury, Cinnamon Rolls with Icing, refrigerated dough",
-    "nutrients": [
-      {"id": 1003, "amount": 4.34},
-      {"id": 1079, "amount": 1.4},
-      {"id": 1258, "amount": 3.25},
-      {"id": 1004, "amount": 11.3},
-      {"id": 1005, "amount": 53.4},
-      {"id": 1008, "amount": 330},
-      {"id": 2000, "amount": 21.3},
-    ],
+    "nutrients": {
+      1003: 4.34,
+      1079: 1.4,
+      1258: 3.25,
+      1004: 11.3,
+      1005: 53.4,
+      1008: 330,
+      2000: 21.3,
+    },
   },
   167514: {
     "description":
         "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
-    "nutrients": [
-      {"id": 1004, "amount": 3.7},
-      {"id": 1005, "amount": 79.8},
-      {"id": 1008, "amount": 377},
-      {"id": 1003, "amount": 6.1},
-    ],
+    "nutrients": {
+      1004: 3.7,
+      1005: 79.8,
+      1008: 377,
+      1003: 6.1,
+    },
   },
   167515: {
     "description": "George Weston Bakeries, Thomas English Muffins",
-    "nutrients": [
-      {"id": 1258, "amount": 0.308},
-      {"id": 1003, "amount": 8.0},
-      {"id": 1004, "amount": 1.8},
-      {"id": 1005, "amount": 46.0},
-      {"id": 1008, "amount": 232},
-    ],
+    "nutrients": {
+      1258: 0.308,
+      1003: 8.0,
+      1004: 1.8,
+      1005: 46.0,
+      1008: 232,
+    },
   },
   167516: {
     "description": "Waffles, buttermilk, frozen, ready-to-heat",
-    "nutrients": [
-      {"id": 1258, "amount": 1.9},
-      {"id": 1003, "amount": 6.58},
-      {"id": 1079, "amount": 2.2},
-      {"id": 1008, "amount": 273},
-      {"id": 2000, "amount": 4.3},
-      {"id": 1004, "amount": 9.22},
-      {"id": 1005, "amount": 41.0},
-    ],
+    "nutrients": {
+      1258: 1.9,
+      1003: 6.58,
+      1079: 2.2,
+      1008: 273,
+      2000: 4.3,
+      1004: 9.22,
+      1005: 41.0,
+    },
   },
   167517: {
     "description": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
-    "nutrients": [
-      {"id": 1258, "amount": 2.28},
-      {"id": 1004, "amount": 9.49},
-      {"id": 1005, "amount": 48.4},
-      {"id": 1008, "amount": 309},
-      {"id": 2000, "amount": 4.41},
-      {"id": 1003, "amount": 7.42},
-      {"id": 1079, "amount": 2.6},
-    ],
+    "nutrients": {
+      1258: 2.28,
+      1004: 9.49,
+      1005: 48.4,
+      1008: 309,
+      2000: 4.41,
+      1003: 7.42,
+      1079: 2.6,
+    },
   },
 };
 
-final Map<String, dynamic> stringKeyedMap =
-    mockFoodsData.map((k, v) => MapEntry(k.toString(), v));
+// final Map<String, dynamic> stringKeyedMap =
+//     mockFoodsData.map((k, v) => MapEntry(k.toString(), v));
+
+final Map<String, dynamic> mockKJsonString = mockFoodsData.map((k, v) {
+  final nutrients = (v['nutrients']! as Map<int, dynamic>).map(
+    (key, value) => MapEntry(key.toString(), value),
+  );
+  return MapEntry(
+    k.toString(),
+    {'description': v['description'], 'nutrients': nutrients},
+  );
+});
 
 const mockHashTable = {
   "substringHash": {

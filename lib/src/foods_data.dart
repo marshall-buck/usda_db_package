@@ -35,6 +35,7 @@ class FoodsData implements DataInitializer {
   Future<void> init({required String jsonString}) async {
     try {
       final jsonMap = await jsonDecode(jsonString);
+      // ignore: avoid_dynamic_calls
 
       await _convertJsonMapTypes(jsonMap as Map<String, dynamic>);
     } catch (e, st) {
@@ -54,20 +55,26 @@ class FoodsData implements DataInitializer {
   /// Returns a [SrLegacyFoodModel] from the [_foodsList] or null if not found.
   SrLegacyFoodModel? queryFood(int foodId) => _foodsList[foodId];
 
-  // Converts a Map<String, dynamic> to Map<int, SrLegacyFoodModel>>.
+  /// Converts a Map<String, dynamic> to Map<int, SrLegacyFoodModel>>.
   Future<void> _convertJsonMapTypes(Map<String, dynamic> jsonMap) async {
     for (final entry in jsonMap.entries) {
       final foodId = int.parse(entry.key);
       final foodData = entry.value as Map<String, dynamic>;
 
       // Explicitly cast the nutrients list
-      final nutrientList = (foodData['nutrients'] as List)
-          .map((e) => e as Map<String, dynamic>)
-          .toList();
+      final nutrientList = foodData['nutrients'] as Map<String, dynamic>;
 
-      final nutrients = nutrientList
-          .map((e) => SrLegacyNutrientModel.fromJson(jsonString: e))
-          .toList();
+      final nutrients = <int, SrLegacyNutrientModel>{};
+
+      for (final entry in nutrientList.entries) {
+        final value = entry.value as num;
+
+        final nutrient = SrLegacyNutrientModel.fromMapEntry(
+          entry: MapEntry(entry.key, value),
+        );
+
+        nutrients[nutrient.id] = nutrient;
+      }
 
       final food = SrLegacyFoodModel(
         id: foodId,
@@ -79,22 +86,3 @@ class FoodsData implements DataInitializer {
     }
   }
 }
-
-// Future<void> _convertJsonMapTypes(Map<String, dynamic> jsonMap) async {
-//     for (final entry in jsonMap.entries) {
-//       final foodId = int.parse(entry.key);
-//       final foodData = entry.value as Map<String, dynamic>;
-//       // Explicitly cast the nutrients list
-//       final List<Map<String, dynamic>> nutrientList =
-//           (foodData['nutrients'] as List)
-//               .map((e) => e as Map<String, dynamic>)
-//               .toList();
-//       final nutrients = nutrientList
-//           .map((e) => SrLegacyNutrientModel.fromJson(jsonString: e))
-//           .toList();
-
-//       final food = SrLegacyFoodModel.fromJson(jsonValue: foodData, id: foodId);
-//       // print('food: $food');
-//       _foodsList[foodId] = food;
-//     }
-//   }
