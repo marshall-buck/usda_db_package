@@ -64,17 +64,7 @@ class FoodsData implements DataInitializer {
       // Explicitly cast the nutrients list
       final nutrientList = foodData['nutrients'] as Map<String, dynamic>;
 
-      final nutrients = <int, SrLegacyNutrientModel>{};
-
-      for (final entry in nutrientList.entries) {
-        final value = entry.value as num;
-
-        final nutrient = SrLegacyNutrientModel.fromMapEntry(
-          entry: MapEntry(entry.key, value),
-        );
-
-        nutrients[nutrient.id] = nutrient;
-      }
+      final nutrients = _createNutrients(nutrientList);
 
       final food = SrLegacyFoodModel(
         id: foodId,
@@ -84,5 +74,16 @@ class FoodsData implements DataInitializer {
 
       _foodsList[foodId] = food;
     }
+  }
+
+  /// Creates a map of nutrient IDs to nutrient values.
+  Map<int, num> _createNutrients(Map<String, dynamic> nutrientList) {
+    final nutrients = <int, num>{};
+    for (final entry in nutrientList.entries) {
+      final value = entry.value as num;
+      final key = int.parse(entry.key);
+      nutrients[key] = value;
+    }
+    return nutrients;
   }
 }

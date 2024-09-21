@@ -5,23 +5,16 @@ void main() {
   group('FoodModel class tests', () {
     group('Constructor tests', () {
       test('initiates properly', () {
-        const entry = MapEntry('1003', 10);
-        final nutrient = SrLegacyNutrientModel.fromMapEntry(entry: entry);
-
-        final foodModel = SrLegacyFoodModel(
+        const foodModel = SrLegacyFoodModel(
           id: 1,
           description: 'Test Food',
-          nutrients: {1003: nutrient},
+          nutrients: {1003: 10, 1004: .5234},
         );
 
         expect(foodModel, isA<SrLegacyFoodModel>());
         expect(foodModel.id, 1);
         expect(foodModel.description, 'Test Food');
-        expect(foodModel.nutrients[1003], isA<SrLegacyNutrientModel>());
-        expect(foodModel.nutrients[1003]?.id, 1003);
-        expect(foodModel.nutrients[1003]?.name, 'Protein');
-        expect(foodModel.nutrients[1003]?.amount, 10.0);
-        expect(foodModel.nutrients[1003]?.unit, 'g');
+        expect(foodModel.nutrients, isA<Map<int, num>>());
       });
     });
     // group('fromJson', () {

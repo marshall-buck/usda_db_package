@@ -134,9 +134,9 @@ void main() {
         await db.dispose();
       });
 
-      test('''
-                expect list to be empty with no results with 2 word input,
-                  each input does not have a match''', () async {
+      test(
+          'expect list to be empty with no results with 2 word input, each input does not have a match',
+          () async {
         when(
           () => mockFileLoaderService.loadData(
             fileName: FileService.fileNameFoods,
@@ -153,9 +153,9 @@ void main() {
         expect(list, isEmpty);
         await db.dispose();
       });
-      test('''
-                  expect list to be empty with no results with 2 word input,
-                  one input does not have a match and one does''', () async {
+      test(
+          'expect list to be empty with no results with 2 word input, one input does not have a match and one does',
+          () async {
         when(
           () => mockFileLoaderService.loadData(
             fileName: FileService.fileNameFoods,
@@ -172,7 +172,7 @@ void main() {
         expect(list, isEmpty);
         await db.dispose();
       });
-      // TODO:Here is where i ned to check if all or any words are a match.
+
       test('expect list to return only descriptions with ALL words', () async {
         when(
           () => mockFileLoaderService.loadData(

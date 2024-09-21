@@ -79,9 +79,6 @@ const mockFoodsData = {
   },
 };
 
-// final Map<String, dynamic> stringKeyedMap =
-//     mockFoodsData.map((k, v) => MapEntry(k.toString(), v));
-
 final Map<String, dynamic> mockKJsonString = mockFoodsData.map((k, v) {
   final nutrients = (v['nutrients']! as Map<int, dynamic>).map(
     (key, value) => MapEntry(key.toString(), value),
