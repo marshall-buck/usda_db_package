@@ -9,15 +9,16 @@ class Sanitizer {
   /// Returns a list of sanitized strings from the given [sentence].
   List<String> createSearchList(String sentence) {
     final sanitized = _sanitizeSentence(sentence);
-    final withoutStopWords = _removeStopWords(sanitized);
-    return withoutStopWords;
+    //No need
+    // final withoutStopWords = _removeStopWords(sanitized);
+    return sanitized;
   }
 
   List<String> _sanitizeSentence(String sentence) =>
       sentence.sanitizeSentence().toList();
 
-  List<String> _removeStopWords(List<String> sentence) =>
-      sentence.where((element) => !stopWords.contains(element)).toList();
+  // List<String> _removeStopWords(List<String> sentence) =>
+  //     sentence.where((element) => !stopWords.contains(element)).toList();
 
   /// A list of stop words to be removed from the input sentence.
   static const List<String> stopWords = [
