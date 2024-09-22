@@ -114,6 +114,26 @@ void main() {
     });
 
     group('queryFoods() - ', () {
+      test('returns a list of FoodModels, with one word term 2 chars length',
+          () async {
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
+        final db = UsdaDB();
+        await db.init(fileLoader: mockFileLoaderService);
+        final list = await db.queryFoods(searchString: 'ab');
+        expect(list, isNotEmpty);
+        expect(list.length, 3);
+        expect(list[0], isA<SrLegacyFoodModel>());
+        await db.dispose();
+      });
       test('returns a list of FoodModels, with one word term', () async {
         when(
           () => mockFileLoaderService.loadData(
@@ -127,7 +147,7 @@ void main() {
         ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoods(searchString: 'aab');
+        final list = await db.queryFoods(searchString: 'aba');
         expect(list, isNotEmpty);
         expect(list.length, 3);
         expect(list[0], isA<SrLegacyFoodModel>());
@@ -186,7 +206,7 @@ void main() {
         ).thenAnswer((_) async => mockHashString);
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoods(searchString: 'aab, dough');
+        final list = await db.queryFoods(searchString: 'aba, dough');
         expect(list.length, 1);
         await db.dispose();
       });
@@ -204,7 +224,25 @@ void main() {
         final db = UsdaDB();
         await db.init(fileLoader: mockFileLoaderService);
         final list =
-            await db.queryFoods(searchString: 'aab, dough', all: false);
+            await db.queryFoods(searchString: 'aba, dough', all: false);
+        expect(list.length, 4);
+        await db.dispose();
+      });
+      test('expect list to return with 2 letter words', () async {
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
+        final db = UsdaDB();
+        await db.init(fileLoader: mockFileLoaderService);
+        final list =
+            await db.queryFoods(searchString: 'aba, dough', all: false);
         expect(list.length, 4);
         await db.dispose();
       });

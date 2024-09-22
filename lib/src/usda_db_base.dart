@@ -136,11 +136,12 @@ class UsdaDB {
       throw DBException('The DB has not been initialized! properly');
     }
     final sanitizedWords = _sanitizer.createSearchList(searchString);
-
+    // print(sanitizedWords);
     if (sanitizedWords.isEmpty) return [];
 
     final ids =
         all == true ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
+    // print(ids);
 
     if (ids.isEmpty) return [];
 
@@ -152,7 +153,7 @@ class UsdaDB {
     return foods;
   }
 
-  /// Retrieves a set of foodIds whose descriptions contain ALL the words in the
+  /// Retrieves a set of foodIds whose descriptions must contain ALL the words in the
   /// list of [sanitizedWords]
   Set<int?> _getIdsAll(List<String> sanitizedWords) {
     if (sanitizedWords.isEmpty) {
@@ -181,7 +182,7 @@ class UsdaDB {
   }
 
   /// Retrieves a set of foodIds whose descriptions contain ANY of the words
-  ///  in the list of [sanitizedWords]
+  ///  in the list of [sanitizedWords], this list will be larger then the ALL.
   Set<int?> _getIdsAny(List<String> sanitizedWords) {
     final ids = <int?>{};
     for (final term in sanitizedWords) {

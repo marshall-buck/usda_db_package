@@ -69,7 +69,7 @@ void main() {
         final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
-        final indexes = hashData.getFoodIndexes(substring: 'aab');
+        final indexes = hashData.getFoodIndexes(substring: 'aba');
         const d = DeepCollectionEquality();
         expect(d.equals(indexes, [167512, 167513, 167515]), true);
       });
