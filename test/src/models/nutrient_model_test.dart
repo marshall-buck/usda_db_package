@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_int_literals
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/models/models.dart';
 
@@ -16,12 +18,13 @@ void main() {
         expect(nutrient.id, 1);
         expect(nutrient.name, 'Test Nutrient');
         expect(nutrient.amount, 10.0);
+        expect(nutrient.amount, isA<double>());
         expect(nutrient.unit, 'g');
       });
     });
     group('fromMapEntry', () {
       test('converts MapEntry to Nutrient', () {
-        const entry = MapEntry('1003', 10);
+        const entry = MapEntry('1003', 10.0);
 
         final nutrient = SrLegacyNutrientModel.fromMapEntry(entry: entry);
 
@@ -29,6 +32,7 @@ void main() {
         expect(nutrient.id, 1003);
         expect(nutrient.name, 'Protein');
         expect(nutrient.amount, 10.0);
+        expect(nutrient.amount, isA<double>());
         expect(nutrient.unit, 'g');
       });
     });
@@ -45,6 +49,7 @@ void main() {
         expect(nutrient.id, 1003);
         expect(nutrient.name, 'Protein');
         expect(nutrient.amount, 10.0);
+        expect(nutrient.amount, isA<double>());
         expect(nutrient.unit, 'g');
       });
     });

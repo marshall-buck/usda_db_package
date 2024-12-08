@@ -77,12 +77,12 @@ class FoodsData implements DataInitializer {
   }
 
   /// Creates a map of nutrient IDs to nutrient values.
-  Map<int, num> _createNutrients(Map<String, dynamic> nutrientList) {
-    final nutrients = <int, num>{};
+  Map<int, double> _createNutrients(Map<String, dynamic> nutrientList) {
+    final nutrients = <int, double>{};
     for (final entry in nutrientList.entries) {
       final value = entry.value as num;
       final key = int.parse(entry.key);
-      nutrients[key] = value;
+      nutrients[key] = value.toDouble();
     }
     return nutrients;
   }

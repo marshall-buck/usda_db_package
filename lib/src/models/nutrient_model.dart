@@ -15,12 +15,12 @@ class SrLegacyNutrientModel extends Equatable {
     return SrLegacyNutrientModel(
       id: jsonString['id'] as int,
       name: originalNutrientTableEdit[jsonString['id']]?['name'] ?? '',
-      amount: jsonString['amount'] as num,
+      amount: jsonString['amount'] as double,
       unit: originalNutrientTableEdit[jsonString['id']]?['unit'] ?? '',
     );
   }
   factory SrLegacyNutrientModel.fromMapEntry({
-    required MapEntry<String, num> entry,
+    required MapEntry<String, double> entry,
   }) {
     final id = int.parse(entry.key);
     final amount = entry.value;
@@ -38,7 +38,7 @@ class SrLegacyNutrientModel extends Equatable {
 
   final int id;
   final String name;
-  final num amount;
+  final double amount;
   final String unit;
 
   @override

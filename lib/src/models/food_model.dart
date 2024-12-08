@@ -8,11 +8,14 @@ class SrLegacyFoodModel extends Equatable {
     required this.nutrients,
   });
 
+  /// Food id.
   final int id;
 
+  /// Food Description.
   final String description;
 
-  final Map<int, num> nutrients;
+  /// The id of the nutrient and the amount {id: amount}.
+  final Map<int, double> nutrients;
 
   @override
   List<Object> get props => [id, description, nutrients];
