@@ -18,7 +18,7 @@ void main() {
 
       expect(foods.foodsList.length, 6);
 
-      expect(foods.foodsList, isA<Map<int, SrLegacyFoodModel>>());
+      expect(foods.foodsList, isA<Map<int, FoodDTO>>());
       expect(
         foods.foodsList[167512]?.description,
         'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough',

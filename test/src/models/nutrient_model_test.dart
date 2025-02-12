@@ -7,14 +7,14 @@ void main() {
   group('Nutrient class tests', () {
     group('Constructor tests', () {
       test('initiates properly', () {
-        const nutrient = SrLegacyNutrientModel(
+        const nutrient = NutrientDTO(
           id: 1,
           name: 'Test Nutrient',
           amount: 10.0,
           unit: 'g',
         );
 
-        expect(nutrient, isA<SrLegacyNutrientModel>());
+        expect(nutrient, isA<NutrientDTO>());
         expect(nutrient.id, 1);
         expect(nutrient.name, 'Test Nutrient');
         expect(nutrient.amount, 10.0);
@@ -26,9 +26,9 @@ void main() {
       test('converts MapEntry to Nutrient', () {
         const entry = MapEntry('1003', 10.0);
 
-        final nutrient = SrLegacyNutrientModel.fromMapEntry(entry: entry);
+        final nutrient = NutrientDTO.fromMapEntry(entry: entry);
 
-        expect(nutrient, isA<SrLegacyNutrientModel>());
+        expect(nutrient, isA<NutrientDTO>());
         expect(nutrient.id, 1003);
         expect(nutrient.name, 'Protein');
         expect(nutrient.amount, 10.0);
@@ -43,9 +43,9 @@ void main() {
           'amount': 10.0,
         };
 
-        final nutrient = SrLegacyNutrientModel.fromJson(jsonString: json);
+        final nutrient = NutrientDTO.fromJson(jsonString: json);
 
-        expect(nutrient, isA<SrLegacyNutrientModel>());
+        expect(nutrient, isA<NutrientDTO>());
         expect(nutrient.id, 1003);
         expect(nutrient.name, 'Protein');
         expect(nutrient.amount, 10.0);

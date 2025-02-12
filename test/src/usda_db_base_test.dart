@@ -91,7 +91,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
-        expect(foodItem, isA<SrLegacyFoodModel>());
+        expect(foodItem, isA<FoodDTO>());
         await db.dispose();
       });
       test('returns null if no food', () async {
@@ -131,7 +131,7 @@ void main() {
         final list = await db.queryFoods(searchString: 'ab');
         expect(list, isNotEmpty);
         expect(list.length, 3);
-        expect(list[0], isA<SrLegacyFoodModel>());
+        expect(list[0], isA<FoodDTO>());
         await db.dispose();
       });
       test('returns a list of FoodModels, with one word term', () async {
@@ -150,7 +150,7 @@ void main() {
         final list = await db.queryFoods(searchString: 'aba');
         expect(list, isNotEmpty);
         expect(list.length, 3);
-        expect(list[0], isA<SrLegacyFoodModel>());
+        expect(list[0], isA<FoodDTO>());
         await db.dispose();
       });
 

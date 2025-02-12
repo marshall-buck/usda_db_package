@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-class SrLegacyNutrientModel extends Equatable {
-  const SrLegacyNutrientModel({
+class NutrientDTO extends Equatable {
+  const NutrientDTO({
     required this.id,
     required this.name,
     required this.amount,
@@ -9,17 +9,17 @@ class SrLegacyNutrientModel extends Equatable {
   });
 
   /// Maps JSON to Nutrient object.
-  factory SrLegacyNutrientModel.fromJson({
+  factory NutrientDTO.fromJson({
     required Map<String, dynamic> jsonString,
   }) {
-    return SrLegacyNutrientModel(
+    return NutrientDTO(
       id: jsonString['id'] as int,
       name: originalNutrientTableEdit[jsonString['id']]?['name'] ?? '',
       amount: jsonString['amount'] as double,
       unit: originalNutrientTableEdit[jsonString['id']]?['unit'] ?? '',
     );
   }
-  factory SrLegacyNutrientModel.fromMapEntry({
+  factory NutrientDTO.fromMapEntry({
     required MapEntry<String, double> entry,
   }) {
     final id = int.parse(entry.key);
@@ -28,7 +28,7 @@ class SrLegacyNutrientModel extends Equatable {
     final name = nutrient['name']!;
     final unit = nutrient['unit']!;
 
-    return SrLegacyNutrientModel(
+    return NutrientDTO(
       id: id,
       name: name,
       amount: amount,

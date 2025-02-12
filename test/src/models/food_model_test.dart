@@ -5,13 +5,13 @@ void main() {
   group('FoodModel class tests', () {
     group('Constructor tests', () {
       test('initiates properly', () {
-        const foodModel = SrLegacyFoodModel(
+        const foodModel = FoodDTO(
           id: 1,
           description: 'Test Food',
           nutrients: {1003: 10, 1004: 10.0},
         );
 
-        expect(foodModel, isA<SrLegacyFoodModel>());
+        expect(foodModel, isA<FoodDTO>());
         expect(foodModel.id, 1);
         expect(foodModel.description, 'Test Food');
         expect(foodModel.nutrients, isA<Map<int, double>>());
