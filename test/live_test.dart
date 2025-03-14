@@ -35,7 +35,7 @@ void main() {
         await db.init();
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
-        expect(foodItem, isA<FoodDTO>());
+        expect(foodItem, isA<UsdaFoodModel>());
         await db.dispose();
       });
       test('returns null if no food', () async {
@@ -56,7 +56,7 @@ void main() {
 
         expect(list, isNotEmpty);
         expect(list.length, 1455);
-        expect(list[0], isA<FoodDTO>());
+        expect(list[0], isA<UsdaFoodModel>());
         await db.dispose();
       });
       test('returns a list of FoodModels, with one word term', () async {
@@ -66,7 +66,7 @@ void main() {
 
         expect(list, isNotEmpty);
         expect(list.length, 14);
-        expect(list[0], isA<FoodDTO>());
+        expect(list[0], isA<UsdaFoodModel>());
         await db.dispose();
       });
 

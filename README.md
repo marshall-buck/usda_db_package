@@ -41,9 +41,9 @@ final Future<UsdaDB> db = await UsdaDB.init();
 > Once init is run, the following methods can be called.
 - Run dispose in your app when disposing your instance.
 ```dart
-final Future<FoodModel?> food = await db.queryFood(id: 123);
+final Future<UsdaFoodModel?> food = await db.queryFood(id: 123);
 
-final Future<List<FoodModel?>> foods = await db.queryFoods(searchString: 'apple');
+final Future<List<UsdaFoodModel?>> foods = await db.queryFoods(searchString: 'apple');
 
 await db.dispose();
 ```

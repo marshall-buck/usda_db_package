@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs
 import 'package:equatable/equatable.dart';
 
-class FoodDTO extends Equatable {
-  const FoodDTO({
+class UsdaFoodModel extends Equatable {
+  const UsdaFoodModel({
     required this.id,
     required this.description,
     required this.nutrients,

@@ -15,17 +15,17 @@ import 'models/models.dart';
 /// resulting map is used to populate the [foodsList] property.
 ///
 /// The [foodsList] property is a map that stores food IDs as keys and
-/// [FoodDTO] objects as values.
+/// [UsdaFoodModel] objects as values.
 ///
 /// The [queryFood] method takes a food ID as a parameter and returns the
-/// corresponding [FoodDTO] object from the [foodsList] map. If the food ID
+/// corresponding [UsdaFoodModel] object from the [foodsList] map. If the food ID
 /// is not found in the map, the method returns null.
 ///
 /// The  [clear] method reverts the data to an empty state by clearing the [foodsList] map.
 /// Implements the [DataInitializer] interface.
 class FoodsData implements DataInitializer {
-  final Map<int, FoodDTO> _foodsList = {};
-  Map<int, FoodDTO> get foodsList => _foodsList;
+  final Map<int, UsdaFoodModel> _foodsList = {};
+  Map<int, UsdaFoodModel> get foodsList => _foodsList;
 
   /// Initializes by decoding a JSON string, and populating [_foodsList]
   /// with the decoded data.
@@ -52,8 +52,8 @@ class FoodsData implements DataInitializer {
   /// Empty the foodsList object.
   void clear() => _foodsList.clear();
 
-  /// Returns a [FoodDTO] from the [_foodsList] or null if not found.
-  FoodDTO? queryFood(int foodId) => _foodsList[foodId];
+  /// Returns a [UsdaFoodModel] from the [_foodsList] or null if not found.
+  UsdaFoodModel? queryFood(int foodId) => _foodsList[foodId];
 
   /// Converts a Map<String, dynamic> to Map<int, SrLegacyFoodModel>>.
   Future<void> _convertJsonMapTypes(Map<String, dynamic> jsonMap) async {
@@ -66,7 +66,7 @@ class FoodsData implements DataInitializer {
 
       final nutrients = _createNutrients(nutrientList);
 
-      final food = FoodDTO(
+      final food = UsdaFoodModel(
         id: foodId,
         description: foodData['description'] as String,
         nutrients: nutrients,
