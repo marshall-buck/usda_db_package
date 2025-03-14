@@ -29,7 +29,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
 
         expect(db.isDataLoaded, true);
@@ -47,7 +47,7 @@ void main() {
           ),
         ).thenAnswer((_) async => mockHashString);
 
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
 
         expect(
           () async => db.init(fileLoader: mockFileLoaderService),
@@ -68,7 +68,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         await db.dispose();
         expect(db.isDataLoaded, equals(false));
@@ -87,7 +87,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
@@ -105,7 +105,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 1675121);
         expect(foodItem, isNull);
@@ -126,7 +126,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'ab');
         expect(list, isNotEmpty);
@@ -145,7 +145,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aba');
         expect(list, isNotEmpty);
@@ -167,7 +167,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aa rrr');
         expect(list, isEmpty);
@@ -186,7 +186,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab rrr');
         expect(list, isEmpty);
@@ -204,7 +204,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aba, dough');
         expect(list.length, 1);
@@ -221,7 +221,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list =
             await db.queryFoods(searchString: 'aba, dough', all: false);
@@ -239,7 +239,7 @@ void main() {
             fileName: FileService.fileNameAutocompleteData,
           ),
         ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
         final list =
             await db.queryFoods(searchString: 'aba, dough', all: false);

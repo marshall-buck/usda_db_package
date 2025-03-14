@@ -13,7 +13,7 @@ void main() {
   group('Live tests', () {
     group('init() - ', () {
       test('loads properties', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
 
         expect(db.isDataLoaded, true);
@@ -22,7 +22,7 @@ void main() {
     });
     group('isDataLoaded(),and dispose() - ', () {
       test('returns false if properties are empty', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         await db.dispose();
         expect(db.isDataLoaded, equals(false));
@@ -31,7 +31,7 @@ void main() {
 
     group('queryFood() - ', () {
       test('returns a FoodModel', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
@@ -39,7 +39,7 @@ void main() {
         await db.dispose();
       });
       test('returns null if no food', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final foodItem = await db.queryFood(id: 1675121);
         expect(foodItem, isNull);
@@ -50,7 +50,7 @@ void main() {
     group('queryFoods() - ', () {
       test('returns a list of FoodModels, with one word term 2 chars length',
           () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final list = await db.queryFoods(searchString: 'tr');
 
@@ -60,7 +60,7 @@ void main() {
         await db.dispose();
       });
       test('returns a list of FoodModels, with one word term', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final list = await db.queryFoods(searchString: 'aba');
 
@@ -73,7 +73,7 @@ void main() {
       test(
           'expect list to be empty  with 2 word input, each input does not have a match',
           () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final list = await db.queryFoods(searchString: 'aa rrr');
 
@@ -83,7 +83,7 @@ void main() {
       test(
           'expect list will all parameter set to false, one input does not have a match and one does',
           () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final list = await db.queryFoods(searchString: 'gua rrr', all: false);
 
@@ -92,7 +92,7 @@ void main() {
       });
 
       test('expect list to return only descriptions with ALL words', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final list = await db.queryFoods(searchString: 'ste, gua');
 
@@ -100,7 +100,7 @@ void main() {
         await db.dispose();
       });
       test('expect list to return only descriptions with ANY words', () async {
-        final db = UsdaDB();
+        final db = UsdaDbDAO();
         await db.init();
         final list = await db.queryFoods(searchString: 'ste, gua', all: false);
 

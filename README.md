@@ -35,7 +35,7 @@ import 'package:usda_db_package/usda_db_package.dart';
 > Initialize the class by calling the static `init` method which will return the instance.
 
 ```dart
-final Future<UsdaDB> db = await UsdaDB.init();
+final Future<UsdaDB> db = await UsdaDbDAO.init();
 ```
 
 > Once init is run, the following methods can be called.

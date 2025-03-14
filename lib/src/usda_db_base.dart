@@ -43,8 +43,8 @@ import 'sanitizer.dart';
 /// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
 
-class UsdaDB {
-  UsdaDB();
+class UsdaDbDAO {
+  UsdaDbDAO();
   late final FileService _fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
@@ -57,10 +57,10 @@ class UsdaDB {
   /// Returns true while [init] is running.
   bool get isInitializing => _isInitializing;
 
-  /// Initializes the [UsdaDB].
+  /// Initializes the [UsdaDbDAO].
   ///
   /// This static method is used to initialize the class by loading the data
-  /// and returning an instance of [UsdaDB].
+  /// and returning an instance of [UsdaDbDAO].
   ///
   /// If an error occurs during the initialization process, a [DBException] is
   /// thrown with the error message and stack trace.
