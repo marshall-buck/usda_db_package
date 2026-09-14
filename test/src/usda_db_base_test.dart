@@ -55,6 +55,36 @@ void main() {
         );
         await db.dispose();
       });
+      test('can be retried after a failure', () async {
+        var shouldFail = true;
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async {
+          if (shouldFail) throw Exception('loadData error');
+          return mockDBString;
+        });
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
+
+        final db = UsdaDbDAO();
+
+        await expectLater(
+          db.init(fileLoader: mockFileLoaderService),
+          throwsA(isA<DBException>()),
+        );
+        expect(db.isDataLoaded, false);
+
+        shouldFail = false;
+        await db.init(fileLoader: mockFileLoaderService);
+
+        expect(db.isDataLoaded, true);
+        await db.dispose();
+      });
     });
     group('isDataLoaded(),and dispose() - ', () {
       test('returns false if properties are empty', () async {

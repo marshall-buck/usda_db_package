@@ -44,7 +44,8 @@ import 'foods_data.dart';
 
 class UsdaDbDAO {
   UsdaDbDAO();
-  late final FileService _fileLoader;
+  /// Assigned on every [init] call so a failed initialization can be retried.
+  FileService _fileLoader = FileService();
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
   static bool _isInitializing = false;

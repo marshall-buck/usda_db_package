@@ -6,8 +6,9 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 
 ## Correctness / real bugs
 
-🔴 **`init()` can only ever be called once per instance — a second call throws `LateInitializationError`.**
+✅ ~~**`init()` can only ever be called once per instance — a second call throws `LateInitializationError`.**~~
 `lib/src/usda_db_base.dart:48,69` — `late final FileService _fileLoader` is assigned on line 69, *outside* the `try`. Retrying `init()` after a failure (the documented recovery path, since `_loadData` disposes everything on error) blows up with an uncaught `LateInitializationError` instead of the advertised `DBException`.
+*Resolution:* `_fileLoader` is now a plain field with a default `FileService()`, reassigned on each `init()`. Regression test `init() - can be retried after a failure` covers the retry path.
 
 🔴 **`_isInitializing` is `static` but exposed as an instance getter.**
 `lib/src/usda_db_base.dart:52,58,68,81` — all `UsdaDbDAO` instances share one flag. Two overlapping `init()` calls: the first to reach `finally` clears the flag while the second is still loading, so `isInitializing` lies. Nothing about this state is class-level; it should be an instance field.
