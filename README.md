@@ -52,3 +52,38 @@ await db.dispose();
 The `isDataLoaded` property can be used to check if the data has been loaded successfully.
 
 The `isInitializing` property can be used to check if the database is currently being initialized.
+
+## Reading nutrients
+
+`UsdaFoodModel.nutrients` is the raw data — a `Map<int, double>` of USDA nutrient id to amount per 100g:
+
+```dart
+food.nutrients[1008]; // 307.0
+```
+
+To get those amounts with their names and units, use `nutrientList` or `nutrient()`, which return `UsdaNutrientModel`s:
+
+```dart
+final food = await db.queryFood(id: 167512);
+
+for (final nutrient in food!.nutrientList) {
+  print('${nutrient.name}: ${nutrient.amount}${nutrient.unit}');
+}
+// Protein: 5.88g
+// Ash: 3.5g
+// Fiber, total dietary: 1.2g
+// ...
+
+final calories = food.nutrient(1008); // Calories: 307.0kcal
+```
+
+`nutrient()` returns `null` if the food has no value recorded for that id.
+
+Entries in `nutrientList` keep the order they appear in `nutrients`, and it builds a new list on each access — hoist it into a variable if you read it more than once, for example inside a `build` method.
+
+Names and units are resolved from `UsdaNutrientModel.originalNutrientTableEdit`, keyed by USDA nutrient id. Every nutrient id in the shipped database is present in that table, but if you build a model from an id that is not, `name` and `unit` are empty strings and `isKnown` is `false` — the amount is never discarded. The table is also reachable directly:
+
+```dart
+UsdaNutrientModel.nameFor(1008); // 'Calories'
+UsdaNutrientModel.unitFor(1008); // 'kcal'
+```

@@ -81,6 +81,15 @@ void main() {
           {'puff', 'a', 'pastry', 'frozen', 'ready', 'to', 'bake'},
         );
       });
+
+      test('handles an empty sentence', () {
+        expect(''.sanitizeSentence(), isEmpty);
+        expect('   '.sanitizeSentence(), isEmpty);
+      });
+
+      test('handles a single word', () {
+        expect('2%'.sanitizeSentence(), {'2%'});
+      });
     });
   });
 }

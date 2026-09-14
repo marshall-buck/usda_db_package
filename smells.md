@@ -18,8 +18,9 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 🔴 **The `(\d+%)` regex branch is a no-op, and the doc comment says the opposite of what the code does.**
 `lib/src/extensions/string_ext.dart:2-21` — `%` is already inside the allowed set `[^\w()%\-\/]`, so digits-plus-percent are never candidates for removal; the alternation matches `"2%"` and replaces it with `match.group(1)` — itself. Meanwhile the doc claims it "removes … numbers followed by a %". Dead branch plus a lying comment.
 
-🔴 **`UsdaNutrientModel.fromMapEntry` force-unwraps an unvalidated lookup.**
-`lib/src/models/nutrient_model.dart:27` — `originalNutrientTableEdit[id]!` throws on any nutrient id not in the hardcoded table. The sibling `fromJson` factory (line 17-19) handles the same miss gracefully with `?? ''`. Two factories, two different failure policies.
+✅ ~~**`UsdaNutrientModel.fromMapEntry` force-unwraps an unchecked lookup.**~~ *Fixed.*
+`lib/src/models/nutrient_model.dart:27` — `originalNutrientTableEdit[id]!` threw on any nutrient id not in the hardcoded table, while the sibling `fromJson` factory handled the same miss gracefully with `?? ''`. Two factories, two different failure policies.
+*Resolution:* both now delegate to the new `fromId`, which resolves misses to empty `name`/`unit` and never discards the amount. `fromMapEntry` still throws `FormatException` on a non-integer key, which is now documented and tested.
 
 🔴 **`queryFoods` silently returns `null` entries.**
 `lib/src/usda_db_base.dart:131-154` — the return type is `List<UsdaFoodModel?>`. A `null` there means the autocomplete index references a food id absent from `foods_db.json` — a data-integrity failure that is handed to the caller as a null to trip over rather than logged or filtered.
@@ -50,11 +51,14 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 
 ## Dead code / duplication
 
-🔴 **`Sanitizer` is a 128-line class whose only real content is dead.**
-`lib/src/sanitizer.dart` — the 100-entry `stopWords` list is referenced only by `_removeStopWords`, which is commented out (lines 20-21), which is called from a commented-out line in `createSearchList` (lines 12-13). What survives is `createSearchList` → `_sanitizeSentence` → `sentence.sanitizeSentence()`: two layers of indirection over a one-line extension call, wrapped in a stateless class that's instantiated as a field (`usda_db_base.dart:51`).
+✅ ~~**`Sanitizer` is a 128-line class whose only real content is dead.**~~ *Fixed.*
+`lib/src/sanitizer.dart` — the 100-entry `stopWords` list was referenced only by `_removeStopWords`, which was commented out, which was called from a commented-out line in `createSearchList`. What survived was `createSearchList` → `_sanitizeSentence` → `sentence.sanitizeSentence()`: two layers of indirection over a one-line extension call, wrapped in a stateless class instantiated as a field.
+*Resolution:* deleted `lib/src/sanitizer.dart` and its duplicate test; `queryFoods` now calls `searchString.sanitizeSentence().toList()` directly. The two cases only `sanitizer_test.dart` covered (empty sentence, single word) moved to `test/src/extensions/string_ext_test.dart`.
 
-🔴 **`UsdaNutrientModel` is fully unused by the package it ships in.**
-`lib/src/models/nutrient_model.dart` — 293 lines (two factories, a 96-entry `keepTheseNutrients` list, a ~170-entry nutrient table) exported publicly and exercised only by its own test. `keepTheseNutrients` has zero references anywhere. `FoodsData` stores raw `Map<int, double>` and never constructs this model.
+✅ ~~**`UsdaNutrientModel` is fully unused by the package it ships in.**~~ *Mostly fixed.*
+`lib/src/models/nutrient_model.dart` — exported publicly and exercised only by its own test. Worse than unused: it was structurally *unreachable*. `UsdaFoodModel.nutrients` is `Map<int, double>`, but the only bridging factory, `fromMapEntry`, took `MapEntry<String, double>` and called `int.parse(entry.key)` — so `food.nutrients.entries.map(UsdaNutrientModel.fromMapEntry)` would not compile.
+*Resolution:* added `UsdaNutrientModel.fromId({id, amount})` matching the map's actual types, plus `nameFor`/`unitFor` statics and an `isKnown` flag; `fromJson` and `fromMapEntry` now delegate to it, which also removes the `!` crash on unknown ids (see the fixed entry below). `UsdaFoodModel` gained a computed `nutrientList` getter and a `nutrient(id)` lookup, documented in the README. Verified against the shipped data: all 7,006 foods resolve, zero unknown nutrient ids.
+The dead `keepTheseNutrients` list (96 entries, zero references — it belongs to the `usda_db_creation` package that generates the JSON, not to this one) has been deleted.
 
 🔴 **`lib/main.dart` is the unmodified Flutter counter demo, inside a library package.**
 125 lines of `MyHomePage`/`_incrementCounter` boilerplate with the stock tutorial comments still in place. It isn't exported by `lib/usda_db_package.dart`, but it sits in `lib/` and drags `flutter/material` in. `test/widget_test.dart` is its companion: a `testWidgets` block with every assertion commented out — a test that asserts nothing and always passes.

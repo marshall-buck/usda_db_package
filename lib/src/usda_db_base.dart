@@ -5,11 +5,10 @@ import '../src/models/models.dart';
 
 import 'autocomplete_data.dart';
 import 'exceptions.dart';
+import 'extensions/string_ext.dart';
 import 'file_service.dart';
 
 import 'foods_data.dart';
-
-import 'sanitizer.dart';
 
 /// A class representing the USDA database.
 ///
@@ -48,7 +47,6 @@ class UsdaDbDAO {
   late final FileService _fileLoader;
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
-  final Sanitizer _sanitizer = Sanitizer();
   static bool _isInitializing = false;
 
   /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
@@ -135,8 +133,7 @@ class UsdaDbDAO {
     if (!isDataLoaded) {
       throw DBException('The DB has not been initialized! properly');
     }
-    final sanitizedWords = _sanitizer.createSearchList(searchString);
-    // print(sanitizedWords);
+    final sanitizedWords = searchString.sanitizeSentence().toList();
     if (sanitizedWords.isEmpty) return [];
 
     final ids =

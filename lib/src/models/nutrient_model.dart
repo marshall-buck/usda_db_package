@@ -1,5 +1,22 @@
 import 'package:equatable/equatable.dart';
 
+/// A single nutrient measurement for a food: the USDA nutrient [id], its
+/// display [name] and [unit], and the [amount] present per 100g of the food.
+///
+/// `UsdaFoodModel` stores nutrients as a raw `Map<int, double>` of id to
+/// amount. This class pairs those numbers with the name and unit they mean.
+/// You rarely need to build one by hand — read them off a food instead:
+///
+/// ```dart
+/// final food = await db.queryFood(id: 167512);
+/// for (final nutrient in food!.nutrientList) {
+///   print('${nutrient.name}: ${nutrient.amount}${nutrient.unit}');
+/// }
+/// ```
+///
+/// Names and units come from [originalNutrientTableEdit], a fixed table keyed
+/// by USDA nutrient id. An id missing from that table yields an empty [name]
+/// and [unit]; see [isKnown].
 class UsdaNutrientModel extends Equatable {
   const UsdaNutrientModel({
     required this.id,
@@ -8,139 +25,86 @@ class UsdaNutrientModel extends Equatable {
     required this.unit,
   });
 
+  /// Builds a nutrient from a USDA nutrient [id] and an [amount], looking up
+  /// the name and unit in [originalNutrientTableEdit].
+  ///
+  /// If [id] is not in the table, [name] and [unit] are empty strings rather
+  /// than an error — the amount is still preserved. Check [isKnown] if you
+  /// need to tell the two cases apart.
+  factory UsdaNutrientModel.fromId({
+    required int id,
+    required double amount,
+  }) {
+    final entry = originalNutrientTableEdit[id];
+    return UsdaNutrientModel(
+      id: id,
+      name: entry?['name'] ?? '',
+      amount: amount,
+      unit: entry?['unit'] ?? '',
+    );
+  }
+
   /// Maps JSON to Nutrient object.
+  ///
+  /// Expects `{'id': int, 'amount': num}`.
   factory UsdaNutrientModel.fromJson({
     required Map<String, dynamic> jsonString,
   }) {
-    return UsdaNutrientModel(
+    return UsdaNutrientModel.fromId(
       id: jsonString['id'] as int,
-      name: originalNutrientTableEdit[jsonString['id']]?['name'] ?? '',
-      amount: jsonString['amount'] as double,
-      unit: originalNutrientTableEdit[jsonString['id']]?['unit'] ?? '',
+      amount: (jsonString['amount'] as num).toDouble(),
     );
   }
+
+  /// Builds a nutrient from a `MapEntry` whose key is a nutrient id in string
+  /// form, as it appears in the raw JSON.
+  ///
+  /// For the `Map<int, double>` exposed by `UsdaFoodModel.nutrients`, use
+  /// [UsdaNutrientModel.fromId] instead.
+  ///
+  /// Throws a [FormatException] if the key is not an integer.
   factory UsdaNutrientModel.fromMapEntry({
     required MapEntry<String, double> entry,
-  }) {
-    final id = int.parse(entry.key);
-    final amount = entry.value;
-    final nutrient = originalNutrientTableEdit[id]!;
-    final name = nutrient['name']!;
-    final unit = nutrient['unit']!;
+  }) =>
+      UsdaNutrientModel.fromId(
+        id: int.parse(entry.key),
+        amount: entry.value,
+      );
 
-    return UsdaNutrientModel(
-      id: id,
-      name: name,
-      amount: amount,
-      unit: unit,
-    );
-  }
-
+  /// The USDA nutrient id, e.g. `1003` for protein.
   final int id;
+
+  /// Display name, e.g. `'Protein'`. Empty if [id] is not a known nutrient.
   final String name;
+
+  /// Amount per 100g of the food, expressed in [unit].
   final double amount;
+
+  /// Unit of [amount], e.g. `'g'`, `'mg'`, `'kcal'`. Empty if [id] is not a
+  /// known nutrient.
   final String unit;
+
+  /// Whether [id] was found in [originalNutrientTableEdit], and so whether
+  /// [name] and [unit] are meaningful.
+  bool get isKnown => originalNutrientTableEdit.containsKey(id);
+
+  /// The display name for a USDA nutrient [id], or `null` if unknown.
+  static String? nameFor(int id) => originalNutrientTableEdit[id]?['name'];
+
+  /// The unit for a USDA nutrient [id], or `null` if unknown.
+  static String? unitFor(int id) => originalNutrientTableEdit[id]?['unit'];
+
+  @override
+  String toString() => '$name: $amount$unit';
 
   @override
   List<Object?> get props => [id, name, amount, unit];
 
-  static const keepTheseNutrients = [
-    1003,
-    1004,
-    1005,
-    1007,
-    1008,
-    1009,
-    1010,
-    1011,
-    1012,
-    1013,
-    1014,
-    1018,
-    1051,
-    1057,
-    1058,
-    1075,
-    1079,
-    1087,
-    1089,
-    1090,
-    1091,
-    1092,
-    1093,
-    1095,
-    1098,
-    1099,
-    1101,
-    1103,
-    1104,
-    1105,
-    1106,
-    1107,
-    1108,
-    1109,
-    1110,
-    1111,
-    1112,
-    1114,
-    1120,
-    1122,
-    1123,
-    1125,
-    1126,
-    1127,
-    1128,
-    1129,
-    1130,
-    1131,
-    1162,
-    1165,
-    1166,
-    1167,
-    1170,
-    1175,
-    1177,
-    1178,
-    1180,
-    1183,
-    1184,
-    1185,
-    1186,
-    1187,
-    1190,
-    1198,
-    1210,
-    1211,
-    1212,
-    1213,
-    1214,
-    1215,
-    1216,
-    1217,
-    1218,
-    1219,
-    1220,
-    1221,
-    1222,
-    1223,
-    1224,
-    1225,
-    1226,
-    1227,
-    1228,
-    1242,
-    1246,
-    1253,
-    1257,
-    1258,
-    1292,
-    1293,
-    1329,
-    1331,
-    2000,
-  ];
-/*CSpell:disable*/
-  /// Some names have been changed to be more user friendly.
+  /*CSpell:disable*/
+  /// USDA nutrient id to its display name and unit.
+  ///
+  /// Some names have been changed to be more user friendly. See [nameFor] and
+  /// [unitFor] for single lookups.
   static const Map<int, Map<String, String>> originalNutrientTableEdit = {
     1003: {'name': 'Protein', 'unit': 'g'},
     1004: {'name': 'Total Fat', 'unit': 'g'},
