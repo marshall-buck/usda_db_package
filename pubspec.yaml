@@ -1,7 +1,6 @@
 name: usda_db_package
 description: A package to json-ize the usda db.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: ^3.1.0
@@ -12,9 +11,6 @@ dependencies:
   equatable: ^2.0.0
   flutter:
     sdk: flutter
-
-
-
 
 dev_dependencies:
   # build_runner: ^2.4.6
