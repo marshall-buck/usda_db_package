@@ -14,8 +14,10 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 `lib/src/usda_db_base.dart:52,58,68,81` — all `UsdaDbDAO` instances share one flag. Two overlapping `init()` calls: the first to reach `finally` clears the flag while the second is still loading, so `isInitializing` lies. Nothing about this state is class-level; it should be an instance field.
 *Resolution:* `_isInitializing` is now an instance field. Regression test `init() - isInitializing is not shared between instances` covers it.
 
-🔴 **`stripDashedAndParenthesisAndForwardSlashesWord()` only handles the *first* delimiter it finds.**
+✅ ~~**`stripDashedAndParenthesisAndForwardSlashesWord()` only handles the *first* delimiter it finds.**~~
 `lib/src/extensions/string_ext.dart:25-36` — the chain of early `return`s means `"ready-to-heat/toasted"` splits on `-` only, leaving `"heat/toasted"` as one token; `"chicken(raw)/beef"` splits on `/` and leaves `"chicken(raw)"`. USDA descriptions routinely mix these characters, so search terms silently fail to match.
+*Confirmed against the shipped data:* the 22,529 `substringHash` keys contain no `-`, `/`, `(` or `)`, and `getFoodIndexes` is an exact map lookup, so any token still carrying a delimiter matches nothing. Searching the verbatim description `Cabbage, chinese (pak-choi), raw` returned 0 results.
+*Resolution:* one `split(RegExp('[-/()]'))` pass replaces the early-return chain. Regression tests `stripDashedAndParenthesisWord() - splits on every delimiter, not just the first kind` and the live test `queryFoods() - matches a description that mixes dashes and parentheses` cover it.
 
 🔴 **The `(\d+%)` regex branch is a no-op, and the doc comment says the opposite of what the code does.**
 `lib/src/extensions/string_ext.dart:2-21` — `%` is already inside the allowed set `[^\w()%\-\/]`, so digits-plus-percent are never candidates for removal; the alternation matches `"2%"` and replaces it with `match.group(1)` — itself. Meanwhile the doc claims it "removes … numbers followed by a %". Dead branch plus a lying comment.

@@ -107,6 +107,18 @@ void main() {
         expect(list.length, 1101);
         await db.dispose();
       });
+
+      test('matches a description that mixes dashes and parentheses', () async {
+        final db = UsdaDbDAO();
+        await db.init();
+        final list = await db.queryFoods(
+          searchString: 'Cabbage, chinese (pak-choi), raw',
+        );
+
+        expect(list.length, 1);
+        expect(list[0]?.description, 'Cabbage, chinese (pak-choi), raw');
+        await db.dispose();
+      });
     });
   });
 }

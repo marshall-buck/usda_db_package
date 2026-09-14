@@ -21,18 +21,17 @@ extension StringExtensions on String {
   }
 
   /// Separates words with dashes or parentheses and forward slashes.
+  ///
+  /// Every delimiter is split on in a single pass, so descriptions that mix
+  /// them - `(pak-choi)`, `ready-to-heat/toasted` - yield individual words
+  /// instead of leaving a delimiter stuck to a token.
+  ///
   /// Returns a list of a word(s), list may be empty and may contain empty strings.
   List<String> stripDashedAndParenthesisAndForwardSlashesWord() {
-    if (contains('-')) return split('-');
-    if (contains('/')) return split('/');
-    if (startsWith('(') && endsWith(')')) {
-      final trimmed = substring(1, length - 1);
-      return [trimmed];
-    }
-    if (contains('(')) return split('(');
-    if (contains(')')) return split(')');
+    if (isEmpty) return [];
+    final delimiterRegEx = RegExp('[-/()]');
 
-    return isNotEmpty ? [this] : [];
+    return split(delimiterRegEx);
   }
 
   /// Cleans up a sentence, removing all unwanted characters.

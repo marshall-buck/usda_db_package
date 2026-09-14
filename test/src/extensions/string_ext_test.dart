@@ -47,6 +47,26 @@ void main() {
           'syrup/caramel'.stripDashedAndParenthesisAndForwardSlashesWord(),
           ['syrup', 'caramel'],
         );
+        expect(
+          ''.stripDashedAndParenthesisAndForwardSlashesWord(),
+          isEmpty,
+        );
+      });
+
+      test(' splits on every delimiter, not just the first kind', () {
+        expect(
+          '(pak-choi)'.stripDashedAndParenthesisAndForwardSlashesWord(),
+          ['', 'pak', 'choi', ''],
+        );
+        expect(
+          'ready-to-heat/toasted'
+              .stripDashedAndParenthesisAndForwardSlashesWord(),
+          ['ready', 'to', 'heat', 'toasted'],
+        );
+        expect(
+          'chicken(raw)/beef'.stripDashedAndParenthesisAndForwardSlashesWord(),
+          ['chicken', 'raw', '', 'beef'],
+        );
       });
     });
 
