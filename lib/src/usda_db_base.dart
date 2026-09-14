@@ -48,7 +48,7 @@ class UsdaDbDAO {
   FileService _fileLoader = FileService();
   AutoCompleteData? _autoCompleteData;
   FoodsData? _foodsData;
-  static bool _isInitializing = false;
+  bool _isInitializing = false;
 
   /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;

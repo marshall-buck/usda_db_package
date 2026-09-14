@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -84,6 +85,34 @@ void main() {
 
         expect(db.isDataLoaded, true);
         await db.dispose();
+      });
+      test('isInitializing is not shared between instances', () async {
+        final gate = Completer<String>();
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) => gate.future);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
+
+        final slow = UsdaDbDAO();
+        final other = UsdaDbDAO();
+
+        final pending = slow.init(fileLoader: mockFileLoaderService);
+        await pumpEventQueue();
+
+        expect(slow.isInitializing, true);
+        expect(other.isInitializing, false);
+
+        gate.complete(mockDBString);
+        await pending;
+
+        expect(slow.isInitializing, false);
+        await slow.dispose();
       });
     });
     group('isDataLoaded(),and dispose() - ', () {

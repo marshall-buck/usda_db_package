@@ -10,8 +10,9 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 `lib/src/usda_db_base.dart:48,69` — `late final FileService _fileLoader` is assigned on line 69, *outside* the `try`. Retrying `init()` after a failure (the documented recovery path, since `_loadData` disposes everything on error) blows up with an uncaught `LateInitializationError` instead of the advertised `DBException`.
 *Resolution:* `_fileLoader` is now a plain field with a default `FileService()`, reassigned on each `init()`. Regression test `init() - can be retried after a failure` covers the retry path.
 
-🔴 **`_isInitializing` is `static` but exposed as an instance getter.**
+✅ ~~**`_isInitializing` is `static` but exposed as an instance getter.**~~
 `lib/src/usda_db_base.dart:52,58,68,81` — all `UsdaDbDAO` instances share one flag. Two overlapping `init()` calls: the first to reach `finally` clears the flag while the second is still loading, so `isInitializing` lies. Nothing about this state is class-level; it should be an instance field.
+*Resolution:* `_isInitializing` is now an instance field. Regression test `init() - isInitializing is not shared between instances` covers it.
 
 🔴 **`stripDashedAndParenthesisAndForwardSlashesWord()` only handles the *first* delimiter it finds.**
 `lib/src/extensions/string_ext.dart:25-36` — the chain of early `return`s means `"ready-to-heat/toasted"` splits on `-` only, leaving `"heat/toasted"` as one token; `"chicken(raw)/beef"` splits on `/` and leaves `"chicken(raw)"`. USDA descriptions routinely mix these characters, so search terms silently fail to match.
