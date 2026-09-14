@@ -39,14 +39,17 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 `lib/src/autocomplete_data.dart:105` returns `List<int?>`, `_getIdsAll`/`_getIdsAny` return `Set<int?>` (`usda_db_base.dart:158,186`), and it's finally force-unwrapped at `usda_db_base.dart:150` with `id!`. `_indexHash` is typed `Map<int, List<int>>` — these values are *never* null. The whole chain should be non-nullable `int`.
 *Resolution:* fixed alongside the `queryFoods` null-entry smell above — the chain is non-nullable `int` end to end and the `id!` is gone.
 
-🔴 **`await` on values that are not `Future`s.**
+✅ ~~**`await` on values that are not `Future`s.**~~
 `lib/src/autocomplete_data.dart:78` and `lib/src/foods_data.dart:37` — `await jsonDecode(jsonString)`. `jsonDecode` is synchronous; the `await` buys nothing and disguises the real problem (below). Likewise `dispose()` (`usda_db_base.dart:106`) and `FoodsData._convertJsonMapTypes` are `Future<void>` while doing zero async work.
+*Resolution:* the fake awaits are gone. Both `init` methods now `await` a real `Future` — the `compute()` call below — so the `async` is earned. `dispose()` is `void`, and `FoodsData._convertJsonMapTypes` no longer exists; its work moved into the isolate entry point. Call sites in the tests and the README dropped their `await`.
 
-🔴 **~8 MB of JSON is parsed on the UI isolate.**
+✅ ~~**~8 MB of JSON is parsed on the UI isolate.**~~
 `lib/data/002735_foods_db.json` (4.6 MB) and `002735_autocomplete_hash.json` (3.6 MB) are decoded *and* converted key-by-key (`foods_data.dart:59-77`, `autocomplete_data.dart:109-136`) synchronously in `init()`. In a Flutter app this is a multi-hundred-millisecond frame freeze. Nothing here uses `compute()` or an isolate.
+*Resolution:* the decode and the type conversion are now top-level functions (`_parseFoods`, `_parseAutoCompleteData`) handed to `compute()`, so both files are parsed on a background isolate and the UI isolate only receives the finished maps. `compute` was chosen over `Isolate.run` because it degrades to an inline call on web, where isolates do not exist. A side effect worth having: parsing no longer populates the instance incrementally, so a file that fails halfway through no longer leaves a half-built table behind — pinned by `FoodsData - init leaves foodsList empty when an entry fails to convert`.
 
-🔴 **`queryFoods` awaits a synchronous map lookup once per result, re-validating state each time.**
+✅ ~~**`queryFoods` awaits a synchronous map lookup once per result, re-validating state each time.**~~
 `lib/src/usda_db_base.dart:148-152` — the loop `await queryFood(id: id!)` re-runs the `isDataLoaded` check and allocates a `Future` for what is ultimately `_foodsList[id]`. The `ids.toList()` on line 149 is also a pointless copy of a `Set` that is already iterable.
+*Resolution:* the loop hoists `_foodsData!` once and calls the synchronous `FoodsData.queryFood` directly, so there is one `isDataLoaded` check per query instead of one per result and no `Future` per row. The `ids.toList()` copy went with the nullable-id fix above. The public `queryFood`/`queryFoods` keep their `Future` return types — that is the API consumers already build against.
 
 🟡 **Exception type laundering.** *Half fixed.*
 `lib/src/file_service.dart:42,63` converted *any* asset-bundle failure into `FileSystemException(e.toString())` — a `dart:io` type for something that never touched the filesystem, with the original exception flattened to a string.

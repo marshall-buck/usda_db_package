@@ -1,5 +1,10 @@
 import 'dart:developer' as dev;
 
+// One of the two reasons this is a Flutter package rather than a pure Dart one:
+// the data files are declared under `flutter: assets:` in pubspec.yaml, and
+// rootBundle is what reads them out of a consuming app's bundle. A pure Dart
+// package cannot declare assets at all. (The other reason is `compute`, in
+// foods_data.dart and autocomplete_data.dart.)
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'exceptions.dart';

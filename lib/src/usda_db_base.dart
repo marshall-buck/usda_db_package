@@ -37,7 +37,7 @@ import 'foods_data.dart';
 /// final Future<UsdaDB> db = await  UsdaDB.init();
 /// final Future<FoodModel?> food = await db.queryFood(id: 123);
 /// final Future<List<FoodModel>> foods = await db.queryFoods(searchString: 'apple');
-/// await db.dispose();
+/// db.dispose();
 /// ```
 /// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
@@ -95,14 +95,14 @@ class UsdaDbDAO {
       );
       dev.log('init() completed ', name: 'DB');
     } catch (e) {
-      await // All or none of the data should be loaded.  If an error occurs.
-          dispose();
+      // All or none of the data should be loaded.  If an error occurs.
+      dispose();
       rethrow;
     }
   }
 
   /// Disposes the database by clearing all data properties.
-  Future<void> dispose() async {
+  void dispose() {
     _foodsData?.clear();
     _autoCompleteData?.clear();
     _foodsData = null;
@@ -149,9 +149,10 @@ class UsdaDbDAO {
 
     if (ids.isEmpty) return [];
 
+    final foodsData = _foodsData!;
     final foods = <UsdaFoodModel>[];
     for (final id in ids) {
-      final food = await queryFood(id: id);
+      final food = foodsData.queryFood(id);
       if (food == null) {
         dev.log(
           'Autocomplete index references food id $id, '

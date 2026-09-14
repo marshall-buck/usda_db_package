@@ -1,6 +1,14 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 
+// `compute` rather than `Isolate.run` from dart:isolate: this package is used
+// from Flutter apps that may be built for web, where isolates do not exist and
+// `Isolate.run` throws. `compute` runs the callback inline there and on a real
+// background isolate everywhere else. This is one of the two things keeping the
+// package on Flutter instead of pure Dart; the other is `rootBundle` in
+// file_service.dart.
+import 'package:flutter/foundation.dart' show compute;
+
 import 'initializer.dart';
 import 'models/models.dart';
 
@@ -30,14 +38,18 @@ class FoodsData implements DataInitializer {
   /// Initializes by decoding a JSON string, and populating [_foodsList]
   /// with the decoded data.
   ///
+  /// The decode and the type conversion run on a background isolate - the foods
+  /// file is several megabytes and would otherwise block the UI isolate for
+  /// hundreds of milliseconds.
+  ///
   /// Throws a [FormatException] if the JSON string cannot be decoded.
   @override
   Future<void> init({required String jsonString}) async {
     try {
-      final jsonMap = await jsonDecode(jsonString);
-      // ignore: avoid_dynamic_calls
-
-      await _convertJsonMapTypes(jsonMap as Map<String, dynamic>);
+      final foods = await compute(_parseFoods, jsonString);
+      _foodsList
+        ..clear()
+        ..addAll(foods);
     } catch (e, st) {
       dev.log(
         'Error decoding JSON',
@@ -54,36 +66,39 @@ class FoodsData implements DataInitializer {
 
   /// Returns a [UsdaFoodModel] from the [_foodsList] or null if not found.
   UsdaFoodModel? queryFood(int foodId) => _foodsList[foodId];
+}
 
-  /// Converts a Map<String, dynamic> to Map<int, SrLegacyFoodModel>>.
-  Future<void> _convertJsonMapTypes(Map<String, dynamic> jsonMap) async {
-    for (final entry in jsonMap.entries) {
-      final foodId = int.parse(entry.key);
-      final foodData = entry.value as Map<String, dynamic>;
+/// Decodes [jsonString] and converts it into the foods table.
+///
+/// Top level so it can be handed to [compute] and run on a background isolate.
+Map<int, UsdaFoodModel> _parseFoods(String jsonString) {
+  final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+  final foods = <int, UsdaFoodModel>{};
 
-      // Explicitly cast the nutrients list
-      final nutrientList = foodData['nutrients'] as Map<String, dynamic>;
+  for (final entry in jsonMap.entries) {
+    final foodId = int.parse(entry.key);
+    final foodData = entry.value as Map<String, dynamic>;
 
-      final nutrients = _createNutrients(nutrientList);
+    // Explicitly cast the nutrients list
+    final nutrientList = foodData['nutrients'] as Map<String, dynamic>;
 
-      final food = UsdaFoodModel(
-        id: foodId,
-        description: foodData['description'] as String,
-        nutrients: nutrients,
-      );
-
-      _foodsList[foodId] = food;
-    }
+    foods[foodId] = UsdaFoodModel(
+      id: foodId,
+      description: foodData['description'] as String,
+      nutrients: _createNutrients(nutrientList),
+    );
   }
 
-  /// Creates a map of nutrient IDs to nutrient values.
-  Map<int, double> _createNutrients(Map<String, dynamic> nutrientList) {
-    final nutrients = <int, double>{};
-    for (final entry in nutrientList.entries) {
-      final value = entry.value as num;
-      final key = int.parse(entry.key);
-      nutrients[key] = value.toDouble();
-    }
-    return nutrients;
+  return foods;
+}
+
+/// Creates a map of nutrient IDs to nutrient values.
+Map<int, double> _createNutrients(Map<String, dynamic> nutrientList) {
+  final nutrients = <int, double>{};
+  for (final entry in nutrientList.entries) {
+    final value = entry.value as num;
+    final key = int.parse(entry.key);
+    nutrients[key] = value.toDouble();
   }
+  return nutrients;
 }

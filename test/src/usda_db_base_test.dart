@@ -34,7 +34,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
 
         expect(db.isDataLoaded, true);
-        await db.dispose();
+        db.dispose();
       });
       test('throws DBException on failure', () async {
         when(
@@ -54,7 +54,7 @@ void main() {
           () async => db.init(fileLoader: mockFileLoaderService),
           throwsA(isA<DBException>()),
         );
-        await db.dispose();
+        db.dispose();
       });
       test('can be retried after a failure', () async {
         var shouldFail = true;
@@ -84,7 +84,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
 
         expect(db.isDataLoaded, true);
-        await db.dispose();
+        db.dispose();
       });
       test('isInitializing is not shared between instances', () async {
         final gate = Completer<String>();
@@ -112,7 +112,7 @@ void main() {
         await pending;
 
         expect(slow.isInitializing, false);
-        await slow.dispose();
+        slow.dispose();
       });
     });
     group('isDataLoaded(),and dispose() - ', () {
@@ -129,7 +129,7 @@ void main() {
         ).thenAnswer((_) async => mockHashString);
         final db = UsdaDbDAO();
         await db.init(fileLoader: mockFileLoaderService);
-        await db.dispose();
+        db.dispose();
         expect(db.isDataLoaded, equals(false));
       });
     });
@@ -151,7 +151,7 @@ void main() {
         final foodItem = await db.queryFood(id: 167512);
         expect(foodItem, isNotNull);
         expect(foodItem, isA<UsdaFoodModel>());
-        await db.dispose();
+        db.dispose();
       });
       test('returns null if no food', () async {
         when(
@@ -168,7 +168,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
         final foodItem = await db.queryFood(id: 1675121);
         expect(foodItem, isNull);
-        await db.dispose();
+        db.dispose();
       });
     });
 
@@ -191,7 +191,7 @@ void main() {
         expect(list, isNotEmpty);
         expect(list.length, 3);
         expect(list[0], isA<UsdaFoodModel>());
-        await db.dispose();
+        db.dispose();
       });
       test('returns a list of FoodModels, with one word term', () async {
         when(
@@ -210,7 +210,7 @@ void main() {
         expect(list, isNotEmpty);
         expect(list.length, 3);
         expect(list[0], isA<UsdaFoodModel>());
-        await db.dispose();
+        db.dispose();
       });
 
       test(
@@ -230,7 +230,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aa rrr');
         expect(list, isEmpty);
-        await db.dispose();
+        db.dispose();
       });
       test(
           'expect list to be empty with no results with 2 word input, one input does not have a match and one does',
@@ -249,7 +249,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aab rrr');
         expect(list, isEmpty);
-        await db.dispose();
+        db.dispose();
       });
 
       test('expect list to return only descriptions with ALL words', () async {
@@ -267,7 +267,7 @@ void main() {
         await db.init(fileLoader: mockFileLoaderService);
         final list = await db.queryFoods(searchString: 'aba, dough');
         expect(list.length, 1);
-        await db.dispose();
+        db.dispose();
       });
       test('expect list to return only descriptions with ANY words', () async {
         when(
@@ -285,7 +285,7 @@ void main() {
         final list =
             await db.queryFoods(searchString: 'aba, dough', all: false);
         expect(list.length, 4);
-        await db.dispose();
+        db.dispose();
       });
       test('drops ids the foods table does not hold', () async {
         when(
@@ -304,7 +304,7 @@ void main() {
         // the mock foods table.
         final list = await db.queryFoods(searchString: 'abap');
         expect(list, isEmpty);
-        await db.dispose();
+        db.dispose();
       });
       test('expect list to return with 2 letter words', () async {
         when(
@@ -322,7 +322,7 @@ void main() {
         final list =
             await db.queryFoods(searchString: 'aba, dough', all: false);
         expect(list.length, 4);
-        await db.dispose();
+        db.dispose();
       });
     });
   });

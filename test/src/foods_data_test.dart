@@ -38,6 +38,20 @@ void main() {
       }
     });
 
+    test('init leaves foodsList empty when an entry fails to convert', () async {
+      // The first entry is well formed, the second is not - parsing happens off
+      // the instance, so nothing is published unless the whole file converts.
+      const halfBadJson = '{"167512":{"description":"Biscuits",'
+          '"nutrients":{"1003":5.88}},'
+          '"167513":{"description":"Bread","nutrients":{"1003":"nope"}}}';
+
+      await expectLater(
+        foods.init(jsonString: halfBadJson),
+        throwsA(isA<FormatException>()),
+      );
+      expect(foods.foodsList, isEmpty);
+    });
+
     test('clearFoods should clear foodsList', () async {
       await foods.init(jsonString: mockDBString);
       foods.clear();

@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 
+// `compute` rather than `Isolate.run` from dart:isolate - see the note in
+// foods_data.dart: `Isolate.run` throws on web, `compute` degrades to an inline
+// call there.
+import 'package:flutter/foundation.dart' show compute;
 import 'package:usda_db_package/src/initializer.dart';
 
 ///
@@ -31,9 +35,8 @@ import 'package:usda_db_package/src/initializer.dart';
 /// list of food IDs from the [indexHash] map. If the substring is not found in the
 /// [substringHash] map, an empty list is returned.
 ///
-/// The [AutoCompleteData] class also includes private helper methods
-/// [_convertIndexHashToType] and [_convertSubstringHashToType] to convert the
-/// index hash and substring hash from the JSON format to the proper types.
+/// The decoding and the conversion to the proper types happen on a background
+/// isolate, so a multi-megabyte autocomplete file does not stall the UI.
 ///
 /// Example usage:
 /// ```dart
@@ -72,16 +75,18 @@ class AutoCompleteData implements DataInitializer {
 
   /// Initializes the instance by populating the [substringHash] and [indexHash] properties
   /// using the provided [jsonString].
+  ///
+  /// The decode and the type conversion run on a background isolate.
   @override
   Future<void> init({required String jsonString}) async {
     try {
-      final jsonMap = await jsonDecode(jsonString);
-      // ignore: avoid_dynamic_calls
-      final indexHash = jsonMap['indexHash'] as Map<String, dynamic>;
-      // ignore: avoid_dynamic_calls
-      final substringHash = jsonMap['substringHash'] as Map<String, dynamic>;
-      _convertIndexHashToType(indexHash);
-      _convertSubstringHashToType(substringHash);
+      final parsed = await compute(_parseAutoCompleteData, jsonString);
+      _substringHash
+        ..clear()
+        ..addAll(parsed.substringHash);
+      _indexHash
+        ..clear()
+        ..addAll(parsed.indexHash);
     } catch (e, st) {
       dev.log(
         'Error decoding JSON',
@@ -104,34 +109,34 @@ class AutoCompleteData implements DataInitializer {
   /// If the [substring] is not found, an empty list is returned.
   List<int> getFoodIndexes({required String substring}) =>
       _indexHash[_substringHash[substring]] ?? [];
+}
 
-  /// Converts the provided JSON map into the appropriate type for the [_indexHash] property.
-  void _convertIndexHashToType(Map<String, dynamic> mapFromJson) {
-    if (mapFromJson.isEmpty) {
-      dev.log(
-        'IndexHash is empty',
-        name: 'AutoCompleteHashData.fromJson',
-        error: 'IndexHash is empty',
-      );
-      throw const FormatException('IndexHash is empty');
-    }
-    mapFromJson.forEach((key, value) {
-      _indexHash[int.parse(key)] = List<int>.from(value as Iterable);
-    });
+/// Decodes [jsonString] and converts both hashes to their proper types.
+///
+/// Top level so it can be handed to [compute] and run on a background isolate.
+({Map<String, int> substringHash, Map<int, List<int>> indexHash})
+    _parseAutoCompleteData(String jsonString) {
+  final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+  final indexHashFromJson = jsonMap['indexHash'] as Map<String, dynamic>;
+  final substringHashFromJson =
+      jsonMap['substringHash'] as Map<String, dynamic>;
+
+  if (indexHashFromJson.isEmpty) {
+    throw const FormatException('IndexHash is empty');
+  }
+  if (substringHashFromJson.isEmpty) {
+    throw const FormatException('SubstringHash is empty');
   }
 
-  /// Converts the provided JSON map into the appropriate type for the [_substringHash] property.
-  void _convertSubstringHashToType(Map<String, dynamic> mapFromJson) {
-    if (mapFromJson.isEmpty) {
-      dev.log(
-        'SubstringHash is empty',
-        name: 'AutoCompleteHashData.fromJson',
-        error: 'SubstringHash is empty',
-      );
-      throw const FormatException('SubstringHash is empty');
-    }
-    mapFromJson.forEach((key, value) {
-      _substringHash[key] = value as int;
-    });
-  }
+  final indexHash = <int, List<int>>{};
+  indexHashFromJson.forEach((key, value) {
+    indexHash[int.parse(key)] = List<int>.from(value as Iterable);
+  });
+
+  final substringHash = <String, int>{};
+  substringHashFromJson.forEach((key, value) {
+    substringHash[key] = value as int;
+  });
+
+  return (substringHash: substringHash, indexHash: indexHash);
 }

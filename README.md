@@ -14,6 +14,15 @@ The files are as follows:
 3. file_manifest.txt
    - this contains the hash of the files used to create the db.
 
+## Why this is a Flutter package and not a pure Dart one
+
+The package depends on the Flutter SDK, so it can only be used from a Flutter app. Two things require it:
+
+1. **`rootBundle`** (`lib/src/file_service.dart`) — the three data files are shipped as Flutter assets, declared under `flutter: assets:` in this package's `pubspec.yaml`. `rootBundle` is what reads them back out of the consuming app's bundle. A pure Dart package cannot declare assets, so the alternative would be making every consumer vendor and re-declare ~8 MB of JSON themselves.
+2. **`compute`** (`lib/src/foods_data.dart`, `lib/src/autocomplete_data.dart`) — the two data files are decoded and converted on a background isolate, so `init()` does not freeze the UI for the few hundred milliseconds that parse takes. `Isolate.run` from `dart:isolate` would do the same on the VM but throws on web, where isolates do not exist; `compute` runs the callback inline there instead.
+
+Everything else — the models, the search, the string extensions — is plain Dart.
+
 ## To use the package
 
 > Add the package to dependencies:
@@ -46,7 +55,7 @@ final Future<UsdaFoodModel?> food = await db.queryFood(id: 123);
 
 final Future<List<UsdaFoodModel>> foods = await db.queryFoods(searchString: 'apple');
 
-await db.dispose();
+db.dispose();
 ```
 
 The `isDataLoaded` property can be used to check if the data has been loaded successfully.
