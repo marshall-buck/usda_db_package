@@ -19,8 +19,9 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 *Confirmed against the shipped data:* the 22,529 `substringHash` keys contain no `-`, `/`, `(` or `)`, and `getFoodIndexes` is an exact map lookup, so any token still carrying a delimiter matches nothing. Searching the verbatim description `Cabbage, chinese (pak-choi), raw` returned 0 results.
 *Resolution:* one `split(RegExp('[-/()]'))` pass replaces the early-return chain. Regression tests `stripDashedAndParenthesisWord() - splits on every delimiter, not just the first kind` and the live test `queryFoods() - matches a description that mixes dashes and parentheses` cover it.
 
-🔴 **The `(\d+%)` regex branch is a no-op, and the doc comment says the opposite of what the code does.**
+✅ ~~**The `(\d+%)` regex branch is a no-op, and the doc comment says the opposite of what the code does.**~~
 `lib/src/extensions/string_ext.dart:2-21` — `%` is already inside the allowed set `[^\w()%\-\/]`, so digits-plus-percent are never candidates for removal; the alternation matches `"2%"` and replaces it with `match.group(1)` — itself. Meanwhile the doc claims it "removes … numbers followed by a %". Dead branch plus a lying comment.
+*Resolution:* dropped the alternation and the `replaceAllMapped` callback in favour of `replaceAll(RegExp(r'[^\w()%\-/]'), '')`, which is byte-for-byte equivalent, and rewrote the doc comment to describe what the pattern actually keeps. Regression test `removeUnwantedChars() - keeps digits followed by a percent sign` pins the `%` behaviour.
 
 ✅ ~~**`UsdaNutrientModel.fromMapEntry` force-unwraps an unchecked lookup.**~~ *Fixed.*
 `lib/src/models/nutrient_model.dart:27` — `originalNutrientTableEdit[id]!` threw on any nutrient id not in the hardcoded table, while the sibling `fromJson` factory handled the same miss gracefully with `?? ''`. Two factories, two different failure policies.

@@ -19,6 +19,13 @@ void main() {
         expect('2%'.removeUnwantedChars(), '2%');
         expect('syrup/caramel'.removeUnwantedChars(), 'syrup/caramel');
       });
+
+      test(' keeps digits followed by a percent sign', () {
+        expect('(2%)'.removeUnwantedChars(), '(2%)');
+        expect('100% juice!'.removeUnwantedChars(), '100%juice');
+        expect('low fat 1% milk'.removeUnwantedChars(), 'lowfat1%milk');
+        expect('50%-fat'.removeUnwantedChars(), '50%-fat');
+      });
     });
 
     group('stripDashedAndParenthesisWord()', () {

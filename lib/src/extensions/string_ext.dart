@@ -1,23 +1,13 @@
 extension StringExtensions on String {
-  /// Removes all non-alpha except dashes and parentheses,
-  /// and numbers followed by a %.
+  /// Removes every character that is not a word character (letters, digits,
+  /// underscores), a parenthesis, a percent sign, a hyphen or a forward slash.
   ///
-  /// [^\w()%\-] matches any character that is not (letters, numbers, underscores),
-  /// not a parenthesis (( or )) and not a hyphen (-).
-  /// | is the OR operator in regular expressions, which means the pattern will
-  ///  match if either the left side or the right side of the | is true.
-  /// (\d+%) matches one or more digits followed by a percent sign (%).
-  ///
-  /// So, this pattern will match any string that contains a character
-  /// not in the set defined by [^\w()%\-] or a string that contains one or more
-  /// digits followed by a percent sign.
+  /// Percent signs are kept so measures such as `2%` and `100%` survive - the
+  /// autocomplete index stores them verbatim.
   String removeUnwantedChars() {
-    final stringSanitizerRegEx = RegExp(r'[^\w()%\-\/]|(\d+%)');
+    final stringSanitizerRegEx = RegExp(r'[^\w()%\-/]');
 
-    return replaceAllMapped(
-      stringSanitizerRegEx,
-      (match) => match.group(1) ?? '',
-    );
+    return replaceAll(stringSanitizerRegEx, '');
   }
 
   /// Separates words with dashes or parentheses and forward slashes.
