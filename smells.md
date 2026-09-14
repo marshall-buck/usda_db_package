@@ -41,11 +41,15 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 🔴 **`queryFoods` awaits a synchronous map lookup once per result, re-validating state each time.**
 `lib/src/usda_db_base.dart:148-152` — the loop `await queryFood(id: id!)` re-runs the `isDataLoaded` check and allocates a `Future` for what is ultimately `_foodsList[id]`. The `ids.toList()` on line 149 is also a pointless copy of a `Set` that is already iterable.
 
-🔴 **Exception type laundering.**
-`lib/src/file_service.dart:42,63` converts *any* asset-bundle failure into `FileSystemException(e.toString())` — a `dart:io` type for something that never touched the filesystem, with the original exception flattened to a string. `lib/src/foods_data.dart:48` is worse: it throws `const FormatException('Error decoding JSON in FoodsData class')` and drops `e` entirely, while `autocomplete_data.dart:92` keeps it. Same package, two conventions, one of them lossy.
+🟡 **Exception type laundering.** *Half fixed.*
+`lib/src/file_service.dart:42,63` converted *any* asset-bundle failure into `FileSystemException(e.toString())` — a `dart:io` type for something that never touched the filesystem, with the original exception flattened to a string.
+*Resolution:* replaced with a package-owned `DBFileException` that keeps the asset path and the stack trace; both throw sites now share one `_loadAsset` helper. `DBException` and `DBFileException` are also exported from `usda_db_package.dart` — they are thrown by the public API but were previously unreachable by consumers, so there was no way to catch them by type.
+*Still outstanding:* `lib/src/foods_data.dart:48` still throws `const FormatException('Error decoding JSON in FoodsData class')` and drops `e` entirely, while `autocomplete_data.dart:92` keeps it. Two conventions, one of them lossy.
 
-🔴 **`dart:io` import makes the package uncompilable for web.**
-`lib/src/file_service.dart:2` — yet the repo ships a `web/` directory. Either the web target is dead weight or the package is broken on it; both can't be true.
+✅ ~~**`dart:io` import makes the package uncompilable for web.**~~ *Fixed.*
+`lib/src/file_service.dart:2` — imported solely for `FileSystemException`. Removed along with that exception type; `lib/` no longer references `dart:io` anywhere.
+
+> **Package type.** The only remaining Flutter dependency in `lib/` is `rootBundle` in `file_service.dart:3` — everything else (models, parsing, search, extensions) is already plain Dart. That one import is load-bearing: `rootBundle` reads the files declared under `flutter: assets:`, which is how the 8 MB of JSON reaches a consuming app. A pure Dart package cannot declare Flutter assets, so dropping it would force every consumer to vendor and re-declare the data files. Decision: stay a Flutter package, and fix the scaffold damage instead.
 
 ---
 
@@ -60,17 +64,19 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 *Resolution:* added `UsdaNutrientModel.fromId({id, amount})` matching the map's actual types, plus `nameFor`/`unitFor` statics and an `isKnown` flag; `fromJson` and `fromMapEntry` now delegate to it, which also removes the `!` crash on unknown ids (see the fixed entry below). `UsdaFoodModel` gained a computed `nutrientList` getter and a `nutrient(id)` lookup, documented in the README. Verified against the shipped data: all 7,006 foods resolve, zero unknown nutrient ids.
 The dead `keepTheseNutrients` list (96 entries, zero references — it belongs to the `usda_db_creation` package that generates the JSON, not to this one) has been deleted.
 
-🔴 **`lib/main.dart` is the unmodified Flutter counter demo, inside a library package.**
-125 lines of `MyHomePage`/`_incrementCounter` boilerplate with the stock tutorial comments still in place. It isn't exported by `lib/usda_db_package.dart`, but it sits in `lib/` and drags `flutter/material` in. `test/widget_test.dart` is its companion: a `testWidgets` block with every assertion commented out — a test that asserts nothing and always passes.
+✅ ~~**`lib/main.dart` is the unmodified Flutter counter demo, inside a library package.**~~ *Fixed.*
+125 lines of `MyHomePage`/`_incrementCounter` boilerplate with the stock tutorial comments still in place, sitting in `lib/` and dragging `flutter/material` in. `test/widget_test.dart` was its companion: a `testWidgets` block with every assertion commented out — a test that asserted nothing and always passed.
+*Root cause:* `.metadata` declared `project_type: app`. The repo was scaffolded with `flutter create` as an **app**, not `--template=package`, which is where `main.dart`, `web/`, `widget_test.dart` and the IDE run config all came from.
+*Resolution:* deleted `lib/main.dart`, `test/widget_test.dart` and `.idea/runConfigurations/main_dart.xml`; `.metadata` is now `project_type: package` with the app/web migration entries stripped. (`web/` was already gone and was never tracked.)
 
-🔴 **Empty duplicate at the repo root.**
-`usda_db_example.dart` (root) is a 1-byte file containing a newline, shadowing the real `example/usda_db_example.dart`.
+✅ ~~**Empty duplicate at the repo root.**~~ *Fixed.*
+`usda_db_example.dart` (root) was a 1-byte file containing a newline, shadowing the real `example/usda_db_example.dart`. Deleted.
 
-🔴 **`fromJson`'s parameter is named `jsonString` but takes a `Map`.**
-`lib/src/models/nutrient_model.dart:12-13`.
+✅ ~~**`fromJson`'s parameter is named `jsonString` but takes a `Map`.**~~ *Fixed.*
+`lib/src/models/nutrient_model.dart` — renamed to `json`.
 
-🔴 **Duplicated error string with mangled punctuation.**
-`'The DB has not been initialized! properly'` appears verbatim at `usda_db_base.dart:120` and `:136`.
+✅ ~~**Duplicated error string with mangled punctuation.**~~ *Fixed.*
+`'The DB has not been initialized! properly'` appeared verbatim at `usda_db_base.dart:120` and `:136`. Both now call a single `_requireDataLoaded()` guard, and the punctuation is no longer mid-sentence.
 
 ---
 

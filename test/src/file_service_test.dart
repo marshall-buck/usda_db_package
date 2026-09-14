@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/file_service.dart';
 
 import '../setup/startup.dart';
@@ -28,12 +27,18 @@ void main() {
         // print(contents);
       });
 
-      test('loadData throws exception if file does not exist', () async {
+      test('loadData throws DBFileException if file does not exist', () async {
         const fileName = 'non_existent_file.txt';
 
-        expect(
-          () async => fileService.loadData(fileName: fileName),
-          throwsA(isA<FileSystemException>()),
+        await expectLater(
+          fileService.loadData(fileName: fileName),
+          throwsA(
+            isA<DBFileException>().having(
+              (e) => e.errorMessage,
+              'errorMessage',
+              contains(fileName),
+            ),
+          ),
         );
       });
     });

@@ -1,10 +1,36 @@
+/// Thrown when the database cannot be initialized, or when it is queried
+/// before `UsdaDbDAO.init` has completed successfully.
 class DBException implements Exception {
   DBException(this.errorMessage, [this.stackTrace]);
+
+  /// Description of what went wrong.
   final String errorMessage;
+
+  /// Stack trace of the underlying error, where one was available.
   final StackTrace? stackTrace;
 
   @override
   String toString() {
     return 'DBException: $errorMessage\nStack Trace: $stackTrace';
+  }
+}
+
+/// Thrown when one of the packaged data assets cannot be read.
+///
+/// Usually means the asset bundle is missing a data file, most often because
+/// the consuming app has not picked up this package's assets, or because the
+/// hash in `file_manifest.txt` no longer matches the data file names.
+class DBFileException implements Exception {
+  DBFileException(this.errorMessage, [this.stackTrace]);
+
+  /// Description of what went wrong, including the asset path attempted.
+  final String errorMessage;
+
+  /// Stack trace of the underlying error, where one was available.
+  final StackTrace? stackTrace;
+
+  @override
+  String toString() {
+    return 'DBFileException: $errorMessage\nStack Trace: $stackTrace';
   }
 }

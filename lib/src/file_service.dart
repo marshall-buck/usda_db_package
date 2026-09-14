@@ -1,7 +1,8 @@
 import 'dart:developer' as dev;
-import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
+
+import 'exceptions.dart';
 
 /// A class that provides file-related services.
 ///
@@ -12,7 +13,7 @@ import 'package:flutter/services.dart' show rootBundle;
 /// of the data files.
 /// The [fileNameFoods] is the name of the file that contains the
 /// food data.
-/// he [fileNameAutocompleteData] is the name of the file that contains
+/// The [fileNameAutocompleteData] is the name of the file that contains
 /// the autocomplete data.
 ///
 /// The [_getFileHash] method retrieves the hash from the manifest file.
@@ -24,14 +25,24 @@ class FileService {
 
   /// Returns the contents of the file as a [String].
   ///
-  /// Throws a [FileSystemException] if the file cannot be loaded.
+  /// Throws a [DBFileException] if the asset cannot be loaded.
   Future<String> loadData({required String fileName}) async {
     final fileHash = await _getFileHash();
     final assetPath = '$_dataPath/${fileHash}_$fileName';
-    final String fileString;
 
+    return _loadAsset(assetPath);
+  }
+
+  /// Opens the manifest file and returns the hash.
+  ///
+  /// Throws a [DBFileException] if the asset cannot be loaded.
+  Future<String> _getFileHash() => _loadAsset('$_dataPath/$fileNameManifest');
+
+  /// Reads [assetPath] from the bundle, logging and rethrowing any failure as
+  /// a [DBFileException].
+  Future<String> _loadAsset(String assetPath) async {
     try {
-      fileString = await rootBundle.loadString(assetPath);
+      return await rootBundle.loadString(assetPath);
     } catch (e, st) {
       dev.log(
         'Error loading file at $assetPath',
@@ -39,28 +50,7 @@ class FileService {
         error: e.toString(),
         stackTrace: st,
       );
-      throw FileSystemException(e.toString());
-    }
-
-    return fileString;
-  }
-
-  /// Opens the manifest file and returns the hash.
-  ///
-  /// Throws a [FileSystemException] if the file cannot be loaded.
-  Future<String> _getFileHash() async {
-    try {
-      final hash = await rootBundle.loadString('$_dataPath/$fileNameManifest');
-      return hash;
-    } catch (e, st) {
-      // If there's an error loading the asset, print the error and the attempted path
-      dev.log(
-        'Error loading file at $_dataPath/$fileNameManifest',
-        name: 'FileService',
-        error: e.toString(),
-        stackTrace: st,
-      );
-      throw FileSystemException(e.toString());
+      throw DBFileException('Error loading file at $assetPath: $e', st);
     }
   }
 }

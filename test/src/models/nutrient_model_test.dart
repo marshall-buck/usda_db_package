@@ -96,7 +96,7 @@ void main() {
           'amount': 10.0,
         };
 
-        final nutrient = UsdaNutrientModel.fromJson(jsonString: json);
+        final nutrient = UsdaNutrientModel.fromJson(json: json);
 
         expect(nutrient, isA<UsdaNutrientModel>());
         expect(nutrient.id, 1003);

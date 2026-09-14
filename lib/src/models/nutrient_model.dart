@@ -44,15 +44,15 @@ class UsdaNutrientModel extends Equatable {
     );
   }
 
-  /// Maps JSON to Nutrient object.
+  /// Maps a decoded JSON object to a Nutrient.
   ///
   /// Expects `{'id': int, 'amount': num}`.
   factory UsdaNutrientModel.fromJson({
-    required Map<String, dynamic> jsonString,
+    required Map<String, dynamic> json,
   }) {
     return UsdaNutrientModel.fromId(
-      id: jsonString['id'] as int,
-      amount: (jsonString['amount'] as num).toDouble(),
+      id: json['id'] as int,
+      amount: (json['amount'] as num).toDouble(),
     );
   }
 

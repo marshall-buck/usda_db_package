@@ -110,13 +110,18 @@ class UsdaDbDAO {
     dev.log('dispose completed', name: 'DB');
   }
 
+  /// Throws a [DBException] unless [init] has completed successfully.
+  void _requireDataLoaded() {
+    if (!isDataLoaded) {
+      throw DBException('The DB has not been initialized properly!');
+    }
+  }
+
   /// Retrieves a [UsdaFoodModel] from the database based on its [id].
   ///
-  /// Returns a [Future<FoodModel>] if found, otherwise returns `null`.
+  /// Returns a [Future<UsdaFoodModel>] if found, otherwise returns `null`.
   Future<UsdaFoodModel?> queryFood({required int id}) async {
-    if (!isDataLoaded) {
-      throw DBException('The DB has not been initialized! properly');
-    }
+    _requireDataLoaded();
     return _foodsData!.queryFood(id);
   }
 
@@ -130,9 +135,7 @@ class UsdaDbDAO {
     required String searchString,
     bool all = true,
   }) async {
-    if (!isDataLoaded) {
-      throw DBException('The DB has not been initialized! properly');
-    }
+    _requireDataLoaded();
     final sanitizedWords = searchString.sanitizeSentence().toList();
     if (sanitizedWords.isEmpty) return [];
 
