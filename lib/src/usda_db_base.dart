@@ -36,7 +36,7 @@ import 'foods_data.dart';
 /// ```dart
 /// final Future<UsdaDB> db = await  UsdaDB.init();
 /// final Future<FoodModel?> food = await db.queryFood(id: 123);
-/// final Future<List<FoodModel?>> foods = await db.queryFoods(searchString: 'apple');
+/// final Future<List<FoodModel>> foods = await db.queryFoods(searchString: 'apple');
 /// await db.dispose();
 /// ```
 /// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
@@ -131,8 +131,12 @@ class UsdaDbDAO {
   /// [all] determines whether the food description contains any word,
   ///  or must contain all words in the searchTerm.
   ///
+  /// An id the autocomplete index reports but the foods table does not hold is
+  /// a data-integrity failure; it is logged and dropped rather than handed back
+  /// to the caller as a `null` to trip over.
+  ///
   /// [List] will return empty if no matches are found.
-  Future<List<UsdaFoodModel?>> queryFoods({
+  Future<List<UsdaFoodModel>> queryFoods({
     required String searchString,
     bool all = true,
   }) async {
@@ -142,13 +146,21 @@ class UsdaDbDAO {
 
     final ids =
         all == true ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
-    // print(ids);
 
     if (ids.isEmpty) return [];
 
-    final foods = <UsdaFoodModel?>[];
-    for (final id in ids.toList()) {
-      final food = await queryFood(id: id!);
+    final foods = <UsdaFoodModel>[];
+    for (final id in ids) {
+      final food = await queryFood(id: id);
+      if (food == null) {
+        dev.log(
+          'Autocomplete index references food id $id, '
+          'which is missing from the foods table.',
+          name: 'UsdaDB Package: UsdaDbDAO.queryFoods()',
+          error: 'Dangling food id $id',
+        );
+        continue;
+      }
       foods.add(food);
     }
     return foods;
@@ -156,7 +168,7 @@ class UsdaDbDAO {
 
   /// Retrieves a set of foodIds whose descriptions must contain ALL the words in the
   /// list of [sanitizedWords]
-  Set<int?> _getIdsAll(List<String> sanitizedWords) {
+  Set<int> _getIdsAll(List<String> sanitizedWords) {
     if (sanitizedWords.isEmpty) {
       return {};
     }
@@ -184,8 +196,8 @@ class UsdaDbDAO {
 
   /// Retrieves a set of foodIds whose descriptions contain ANY of the words
   ///  in the list of [sanitizedWords], this list will be larger then the ALL.
-  Set<int?> _getIdsAny(List<String> sanitizedWords) {
-    final ids = <int?>{};
+  Set<int> _getIdsAny(List<String> sanitizedWords) {
+    final ids = <int>{};
     for (final term in sanitizedWords) {
       ids.addAll(_autoCompleteData!.getFoodIndexes(substring: term));
     }

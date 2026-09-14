@@ -116,7 +116,7 @@ void main() {
         );
 
         expect(list.length, 1);
-        expect(list[0]?.description, 'Cabbage, chinese (pak-choi), raw');
+        expect(list[0].description, 'Cabbage, chinese (pak-choi), raw');
         await db.dispose();
       });
     });

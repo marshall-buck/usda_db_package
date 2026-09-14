@@ -27,15 +27,17 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 `lib/src/models/nutrient_model.dart:27` — `originalNutrientTableEdit[id]!` threw on any nutrient id not in the hardcoded table, while the sibling `fromJson` factory handled the same miss gracefully with `?? ''`. Two factories, two different failure policies.
 *Resolution:* both now delegate to the new `fromId`, which resolves misses to empty `name`/`unit` and never discards the amount. `fromMapEntry` still throws `FormatException` on a non-integer key, which is now documented and tested.
 
-🔴 **`queryFoods` silently returns `null` entries.**
+✅ ~~**`queryFoods` silently returns `null` entries.**~~
 `lib/src/usda_db_base.dart:131-154` — the return type is `List<UsdaFoodModel?>`. A `null` there means the autocomplete index references a food id absent from `foods_db.json` — a data-integrity failure that is handed to the caller as a null to trip over rather than logged or filtered.
+*Resolution:* `queryFoods` now returns `List<UsdaFoodModel>`; a dangling id is logged via `dev.log` and skipped. The nullability was gratuitous all the way down - `AutoCompleteData._indexHash` is `Map<int, List<int>>`, so `getFoodIndexes` now returns `List<int>` and `_getIdsAll`/`_getIdsAny` return `Set<int>`, which also removes the `id!` force-unwrap. README and the class doc example updated. Regression test `queryFoods() - drops ids the foods table does not hold`.
 
 ---
 
 ## Type / API design
 
-🔴 **Nullable-`int` ids propagate through the whole search path for no reason.**
+✅ ~~**Nullable-`int` ids propagate through the whole search path for no reason.**~~
 `lib/src/autocomplete_data.dart:105` returns `List<int?>`, `_getIdsAll`/`_getIdsAny` return `Set<int?>` (`usda_db_base.dart:158,186`), and it's finally force-unwrapped at `usda_db_base.dart:150` with `id!`. `_indexHash` is typed `Map<int, List<int>>` — these values are *never* null. The whole chain should be non-nullable `int`.
+*Resolution:* fixed alongside the `queryFoods` null-entry smell above — the chain is non-nullable `int` end to end and the `id!` is gone.
 
 🔴 **`await` on values that are not `Future`s.**
 `lib/src/autocomplete_data.dart:78` and `lib/src/foods_data.dart:37` — `await jsonDecode(jsonString)`. `jsonDecode` is synchronous; the `await` buys nothing and disguises the real problem (below). Likewise `dispose()` (`usda_db_base.dart:106`) and `FoodsData._convertJsonMapTypes` are `Future<void>` while doing zero async work.

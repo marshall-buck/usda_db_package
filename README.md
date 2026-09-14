@@ -44,7 +44,7 @@ final Future<UsdaDbDAO> db = await UsdaDbDAO.init();
 ```dart
 final Future<UsdaFoodModel?> food = await db.queryFood(id: 123);
 
-final Future<List<UsdaFoodModel?>> foods = await db.queryFoods(searchString: 'apple');
+final Future<List<UsdaFoodModel>> foods = await db.queryFoods(searchString: 'apple');
 
 await db.dispose();
 ```

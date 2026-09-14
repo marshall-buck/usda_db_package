@@ -287,6 +287,25 @@ void main() {
         expect(list.length, 4);
         await db.dispose();
       });
+      test('drops ids the foods table does not hold', () async {
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameFoods,
+          ),
+        ).thenAnswer((_) async => mockDBString);
+        when(
+          () => mockFileLoaderService.loadData(
+            fileName: FileService.fileNameAutocompleteData,
+          ),
+        ).thenAnswer((_) async => mockHashString);
+        final db = UsdaDbDAO();
+        await db.init(fileLoader: mockFileLoaderService);
+        // 'abap' maps to index 1 -> [171845, 174077], neither of which is in
+        // the mock foods table.
+        final list = await db.queryFoods(searchString: 'abap');
+        expect(list, isEmpty);
+        await db.dispose();
+      });
       test('expect list to return with 2 letter words', () async {
         when(
           () => mockFileLoaderService.loadData(
