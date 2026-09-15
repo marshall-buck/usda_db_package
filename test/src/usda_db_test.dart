@@ -14,11 +14,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockFileService fileLoader;
-  late UsdaDbDAO db;
+  late UsdaDb db;
 
   setUp(() {
     fileLoader = mockFileService();
-    db = UsdaDbDAO();
+    db = UsdaDb();
     addTearDown(db.dispose);
   });
 
@@ -29,13 +29,13 @@ void main() {
 
         expect(db.isDataLoaded, true);
       });
-      test('throws DBException on failure', () async {
+      test('throws UsdaDbException on failure', () async {
         when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
             .thenThrow(Exception('loadData error'));
 
         await expectLater(
           db.init(fileLoader: fileLoader),
-          throwsA(isA<DBException>()),
+          throwsA(isA<UsdaDbException>()),
         );
       });
       test('can be retried after a failure', () async {
@@ -48,7 +48,7 @@ void main() {
 
         await expectLater(
           db.init(fileLoader: fileLoader),
-          throwsA(isA<DBException>()),
+          throwsA(isA<UsdaDbException>()),
         );
         expect(db.isDataLoaded, false);
 
@@ -62,7 +62,7 @@ void main() {
         when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
             .thenAnswer((_) => gate.future);
 
-        final other = UsdaDbDAO();
+        final other = UsdaDb();
 
         final pending = db.init(fileLoader: fileLoader);
         await pumpEventQueue();
@@ -92,7 +92,7 @@ void main() {
 
         await expectLater(
           db.queryFood(id: 167512),
-          throwsA(isA<DBException>()),
+          throwsA(isA<UsdaDbException>()),
         );
       });
     });

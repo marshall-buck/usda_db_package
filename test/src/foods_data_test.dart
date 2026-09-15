@@ -31,11 +31,11 @@ void main() {
       );
       expect(foods.foodsList[167512]?.nutrients.length, 7);
     });
-    test('init should throw DBFormatException on invalid JSON', () async {
+    test('init should throw UsdaDbFormatException on invalid JSON', () async {
       await expectLater(
         foods.init(jsonString: 'invalid json'),
         throwsA(
-          isA<DBFormatException>()
+          isA<UsdaDbFormatException>()
               .having(
                 (e) => e.errorMessage,
                 'errorMessage',
@@ -46,7 +46,8 @@ void main() {
       );
     });
 
-    test('init leaves foodsList empty when an entry fails to convert', () async {
+    test('init leaves foodsList empty when an entry fails to convert',
+        () async {
       // The first entry is well formed, the second is not - parsing happens off
       // the instance, so nothing is published unless the whole file converts.
       const halfBadJson = '{"167512":{"description":"Biscuits",'
@@ -55,7 +56,7 @@ void main() {
 
       await expectLater(
         foods.init(jsonString: halfBadJson),
-        throwsA(isA<DBFormatException>()),
+        throwsA(isA<UsdaDbFormatException>()),
       );
       expect(foods.foodsList, isEmpty);
     });

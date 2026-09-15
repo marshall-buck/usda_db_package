@@ -5,7 +5,7 @@ import 'package:usda_db_package/usda_db_package.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final db = UsdaDbDAO();
+  final db = UsdaDb();
   await db.init();
   runApp(
     AutocompleteExampleApp(
@@ -16,7 +16,7 @@ void main() async {
 
 class AutocompleteExampleApp extends StatelessWidget {
   const AutocompleteExampleApp({required this.db, super.key});
-  final UsdaDbDAO db;
+  final UsdaDb db;
 
   Future<void> _onChanged(String string) async {
     final results = await db.queryFoods(searchString: string);

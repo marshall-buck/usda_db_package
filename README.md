@@ -23,7 +23,7 @@ import 'package:usda_db_package/usda_db_package.dart';
 ## Quick start
 
 ```dart
-final db = UsdaDbDAO();
+final db = UsdaDb();
 await db.init();
 
 final food = await db.queryFood(id: 167512);
@@ -40,18 +40,18 @@ still takes a few hundred milliseconds, so call it once at startup rather than
 per screen. A failed `init()` leaves nothing half loaded and can simply be
 awaited again.
 
-## UsdaDbDAO
+## UsdaDb
 
 | Member | Returns | Notes |
 | --- | --- | --- |
-| `init({FileService? fileLoader})` | `Future<void>` | Loads both data files. Throws `DBException` on failure. |
+| `init({FileService? fileLoader})` | `Future<void>` | Loads both data files. Throws `UsdaDbException` on failure. |
 | `queryFood({required int id})` | `Future<UsdaFoodModel?>` | `null` if no food has that id. |
 | `queryFoods({required String searchString, bool all = true})` | `Future<List<UsdaFoodModel>>` | Empty if nothing matches. |
 | `isDataLoaded` | `bool` | True between a successful `init()` and `dispose()`. |
 | `isInitializing` | `bool` | True while `init()` is running. Per instance. |
 | `dispose()` | `void` | Drops both tables. `init()` can be called again afterwards. |
 
-Querying before `init()` or after `dispose()` throws `DBException`.
+Querying before `init()` or after `dispose()` throws `UsdaDbException`.
 
 ## Searching
 
@@ -118,17 +118,18 @@ from an id that is not, `name` and `unit` are empty strings and `isKnown` is
 
 | Exception | When |
 | --- | --- |
-| `DBException` | `init()` failed, or a query ran before `init()` / after `dispose()`. |
-| `DBFileException` | A data asset could not be read. |
-| `DBFormatException` | A data asset was read but could not be decoded. |
+| `UsdaDbException` | `init()` failed, or a query ran before `init()` / after `dispose()`. |
+| `UsdaDbFileException` | A data asset could not be read. |
+| `UsdaDbFormatException` | A data asset was read but could not be decoded. |
 
-`init()` wraps any failure in `DBException`, with the underlying
-`DBFileException` or `DBFormatException` in its message and the original stack
-trace in `stackTrace`. Catching `DBException` around `init()` is enough.
+`init()` wraps any failure in `UsdaDbException`, with the underlying
+`UsdaDbFileException` or `UsdaDbFormatException` in its message and the
+original stack trace in `stackTrace`. Catching `UsdaDbException` around
+`init()` is enough.
 
-A `DBFileException` from `init()` means the asset bundle does not hold the data
-files — most often because the hash in `file_manifest.txt` no longer matches
-the file names in `lib/data/`.
+A `UsdaDbFileException` from `init()` means the asset bundle does not hold the
+data files — most often because the hash in `file_manifest.txt` no longer
+matches the file names in `lib/data/`.
 
 ## What's in the database
 

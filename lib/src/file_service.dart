@@ -35,7 +35,7 @@ class FileService {
 
   /// Returns the contents of the file as a [String].
   ///
-  /// Throws a [DBFileException] if the asset cannot be loaded.
+  /// Throws a [UsdaDbFileException] if the asset cannot be loaded.
   Future<String> loadData({required String fileName}) async {
     final fileHash = await _getFileHash();
     final assetPath = '$_dataPath/${fileHash}_$fileName';
@@ -52,16 +52,16 @@ class FileService {
   /// Cached, unlike the data files: it is a handful of bytes and every
   /// [loadData] call needs it.
   ///
-  /// Throws a [DBFileException] if the asset cannot be loaded.
+  /// Throws a [UsdaDbFileException] if the asset cannot be loaded.
   Future<String> _getFileHash() => _loadAsset('$_dataPath/$fileNameManifest');
 
   /// Reads [assetPath] from the bundle, rethrowing any failure as a
-  /// [DBFileException].
+  /// [UsdaDbFileException].
   Future<String> _loadAsset(String assetPath, {bool cache = true}) async {
     try {
       return await rootBundle.loadString(assetPath, cache: cache);
     } catch (e, st) {
-      throw DBFileException('Error loading file at $assetPath: $e', st);
+      throw UsdaDbFileException('Error loading file at $assetPath: $e', st);
     }
   }
 }

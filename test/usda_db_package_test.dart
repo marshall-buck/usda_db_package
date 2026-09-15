@@ -18,7 +18,7 @@ void main() {
 
   group('exported surface', () {
     test('a consumer can initialize and query the db', () async {
-      final db = UsdaDbDAO();
+      final db = UsdaDb();
       expect(db.isDataLoaded, false);
       expect(db.isInitializing, false);
 
@@ -44,33 +44,36 @@ void main() {
     test('a consumer can catch the failure types by name', () async {
       // Querying before init is the one failure reachable without reaching
       // into `src/` to stub a broken loader.
-      final db = UsdaDbDAO();
+      final db = UsdaDb();
       await expectLater(
         db.queryFood(id: 167512),
-        throwsA(isA<DBException>()),
+        throwsA(isA<UsdaDbException>()),
       );
 
       when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
-          .thenThrow(DBFileException('missing asset', StackTrace.current));
+          .thenThrow(UsdaDbFileException('missing asset', StackTrace.current));
       await expectLater(
         db.init(fileLoader: fileLoader),
-        throwsA(isA<DBException>()),
+        throwsA(isA<UsdaDbException>()),
       );
 
       when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
           .thenAnswer((_) async => 'not json');
       await expectLater(
         db.init(fileLoader: fileLoader),
-        throwsA(isA<DBException>()),
+        throwsA(isA<UsdaDbException>()),
       );
 
       // Named only to prove they are exported - they are thrown from inside
-      // the package and wrapped in `DBException` by `init`.
-      expect(DBFormatException('x').toString(), contains('DBFormatException'));
+      // the package and wrapped in `UsdaDbException` by `init`.
+      expect(
+        UsdaDbFormatException('x').toString(),
+        contains('UsdaDbFormatException'),
+      );
     });
 
     test('the nutrient models are reachable from a queried food', () async {
-      final db = UsdaDbDAO();
+      final db = UsdaDb();
       await db.init(fileLoader: fileLoader);
       addTearDown(db.dispose);
 

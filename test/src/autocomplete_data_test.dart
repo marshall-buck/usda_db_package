@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-// `AutoCompleteData` is internal, so it comes from `src/`; `DBFormatException`
+// `AutoCompleteData` is internal, so it comes from `src/`; `UsdaDbFormatException`
 // is exported, so it comes in through the public library.
 import 'package:usda_db_package/src/autocomplete_data.dart';
 import 'package:usda_db_package/usda_db_package.dart';
@@ -51,23 +51,24 @@ void main() {
           expect(element.value, isA<List<int>>());
         }
       });
-      test('throws DBFormatException if either properties are empty', () async {
+      test('throws UsdaDbFormatException if either properties are empty',
+          () async {
         // ignore: inference_failure_on_collection_literal
         final emptyJson = jsonEncode({'substringHash': {}, 'indexHash': {}});
 
         await expectLater(
           hashData.init(jsonString: emptyJson),
-          throwsA(isA<DBFormatException>()),
+          throwsA(isA<UsdaDbFormatException>()),
         );
       });
 
-      test('throws DBFormatException if invalid json', () async {
+      test('throws UsdaDbFormatException if invalid json', () async {
         const invalidJson = '{substringHash: {}}';
 
         await expectLater(
           hashData.init(jsonString: invalidJson),
           throwsA(
-            isA<DBFormatException>()
+            isA<UsdaDbFormatException>()
                 .having(
                   (e) => e.errorMessage,
                   'errorMessage',

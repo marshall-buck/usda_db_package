@@ -46,7 +46,7 @@ class AutoCompleteData implements DataInitializer {
   /// The decode and the type conversion run on a background isolate. Neither
   /// map is published unless the whole file converts.
   ///
-  /// Throws a [DBFormatException] if the JSON string cannot be decoded.
+  /// Throws a [UsdaDbFormatException] if the JSON string cannot be decoded.
   @override
   Future<void> init({required String jsonString}) async {
     try {
@@ -58,7 +58,7 @@ class AutoCompleteData implements DataInitializer {
         ..clear()
         ..addAll(parsed.indexHash);
     } catch (e, st) {
-      throw DBFormatException('Error decoding autocomplete JSON: $e', st);
+      throw UsdaDbFormatException('Error decoding autocomplete JSON: $e', st);
     }
   }
 

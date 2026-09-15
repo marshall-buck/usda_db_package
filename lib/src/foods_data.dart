@@ -41,7 +41,7 @@ class FoodsData implements DataInitializer {
   /// hundreds of milliseconds. Nothing is published unless the whole file
   /// converts, so a failure leaves [foodsList] as it was.
   ///
-  /// Throws a [DBFormatException] if the JSON string cannot be decoded.
+  /// Throws a [UsdaDbFormatException] if the JSON string cannot be decoded.
   @override
   Future<void> init({required String jsonString}) async {
     try {
@@ -50,7 +50,7 @@ class FoodsData implements DataInitializer {
         ..clear()
         ..addAll(foods);
     } catch (e, st) {
-      throw DBFormatException('Error decoding foods JSON: $e', st);
+      throw UsdaDbFormatException('Error decoding foods JSON: $e', st);
     }
   }
 

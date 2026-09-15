@@ -14,10 +14,10 @@ void main() {
     // One instance for the read-only query tests: `init` parses ~13 MB, and
     // doing that per test made this file most of the suite's runtime. The
     // dispose test below builds its own, because it mutates state.
-    late UsdaDbDAO db;
+    late UsdaDb db;
 
     setUpAll(() async {
-      db = UsdaDbDAO();
+      db = UsdaDb();
       await db.init();
     });
 
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('dispose empties a live db', () async {
-      final ownDb = UsdaDbDAO();
+      final ownDb = UsdaDb();
       await ownDb.init();
 
       ownDb.dispose();

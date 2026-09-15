@@ -98,7 +98,7 @@ void main() {
         await expectLater(
           fileService.loadData(fileName: FileService.fileNameFoods),
           throwsA(
-            isA<DBFileException>().having(
+            isA<UsdaDbFileException>().having(
               (e) => e.errorMessage,
               'errorMessage',
               contains('000001_${FileService.fileNameFoods}'),
@@ -107,14 +107,14 @@ void main() {
         );
       });
 
-      test('throws DBFileException naming the asset that is missing',
+      test('throws UsdaDbFileException naming the asset that is missing',
           () async {
         const fileName = 'non_existent_file.txt';
 
         await expectLater(
           fileService.loadData(fileName: fileName),
           throwsA(
-            isA<DBFileException>()
+            isA<UsdaDbFileException>()
                 .having(
                   (e) => e.errorMessage,
                   'errorMessage',
@@ -125,14 +125,14 @@ void main() {
         );
       });
 
-      test('throws DBFileException if the manifest itself is missing',
+      test('throws UsdaDbFileException if the manifest itself is missing',
           () async {
         bundledAssets.remove('$dataPath/${FileService.fileNameManifest}');
 
         await expectLater(
           fileService.loadData(fileName: FileService.fileNameFoods),
           throwsA(
-            isA<DBFileException>().having(
+            isA<UsdaDbFileException>().having(
               (e) => e.errorMessage,
               'errorMessage',
               contains(FileService.fileNameManifest),

@@ -12,11 +12,11 @@ import 'package:usda_db_package/src/models/models.dart';
 ///
 /// Construct one, [init] it, then query it. [init] reads and parses both data
 /// assets - a few hundred milliseconds of work, off the UI isolate - and
-/// throws a [DBException] if either fails. Query before that, or after
+/// throws a [UsdaDbException] if either fails. Query before that, or after
 /// [dispose], and it throws the same.
 ///
 /// ```dart
-/// final db = UsdaDbDAO();
+/// final db = UsdaDb();
 /// await db.init();
 ///
 /// final food = await db.queryFood(id: 167512);
@@ -28,9 +28,9 @@ import 'package:usda_db_package/src/models/models.dart';
 /// [init] takes an optional [FileService], which is how a test supplies data
 /// without going through the asset bundle; the default reads the packaged
 /// files.
-class UsdaDbDAO {
+class UsdaDb {
   /// Creates an empty database. Call [init] before querying it.
-  UsdaDbDAO();
+  UsdaDb();
 
   /// Assigned on every [init] call so a failed initialization can be retried.
   FileService _fileLoader = FileService();
@@ -46,7 +46,7 @@ class UsdaDbDAO {
 
   /// Loads and parses both data files. Await this before querying.
   ///
-  /// Any failure arrives as a [DBException] carrying the underlying error and
+  /// Any failure arrives as a [UsdaDbException] carrying the underlying error and
   /// its stack trace. Nothing is left half loaded: a failed call can simply be
   /// awaited again.
   Future<void> init({FileService? fileLoader}) async {
@@ -55,7 +55,7 @@ class UsdaDbDAO {
     try {
       await _loadData();
     } catch (e, st) {
-      throw DBException(e.toString(), st);
+      throw UsdaDbException(e.toString(), st);
     } finally {
       _isInitializing = false;
     }
@@ -90,10 +90,10 @@ class UsdaDbDAO {
     dev.log('dispose completed', name: 'DB');
   }
 
-  /// Throws a [DBException] unless [init] has completed successfully.
+  /// Throws a [UsdaDbException] unless [init] has completed successfully.
   void _requireDataLoaded() {
     if (!isDataLoaded) {
-      throw DBException('The DB has not been initialized properly!');
+      throw UsdaDbException('The DB has not been initialized properly!');
     }
   }
 
@@ -132,7 +132,7 @@ class UsdaDbDAO {
         dev.log(
           'Autocomplete index references food id $id, '
           'which is missing from the foods table.',
-          name: 'UsdaDB Package: UsdaDbDAO.queryFoods()',
+          name: 'UsdaDb Package: UsdaDb.queryFoods()',
           error: 'Dangling food id $id',
         );
         continue;
@@ -195,8 +195,8 @@ class UsdaDbDAO {
   }
 
   @override
-  String toString() => '''
-            FoodsDb: There are ${_foodsData?.foodsList.length} food items
-            ready to search in the USDA SR Legacy Database.
-      ''';
+  String toString() => isDataLoaded
+      ? 'UsdaDb: ${_foodsData!.foodsList.length} foods from the USDA '
+          'SR Legacy database, ready to search.'
+      : 'UsdaDb: not initialized.';
 }
