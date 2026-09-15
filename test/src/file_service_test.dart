@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/usda_db_package.dart';
 
 // The asset bundle is stubbed rather than read: the shipped data files are
-// ~8 MB and reading them here would only re-prove what `test/live_test.dart`
+// ~13 MB and reading them here would only re-prove what `test/live_test.dart`
 // already covers. Stubbing also lets the hash in the manifest differ from the
 // real one, which is the only way to see that `loadData` composes the asset
 // path out of it.
@@ -17,11 +17,13 @@ void main() {
   const hash = '999999';
 
   late Map<String, String> bundledAssets;
+  late Map<String, int> reads;
 
   void stubAssetBundle() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (ByteData? message) async {
       final key = utf8.decode(message!.buffer.asUint8List());
+      reads[key] = (reads[key] ?? 0) + 1;
       final contents = bundledAssets[key];
       // A null reply is how the real bundle reports a missing asset.
       if (contents == null) return null;
@@ -30,6 +32,7 @@ void main() {
   }
 
   setUp(() {
+    reads = {};
     bundledAssets = {
       '$dataPath/${FileService.fileNameManifest}': hash,
       '$dataPath/${hash}_${FileService.fileNameFoods}': '{"foods": true}',
@@ -65,6 +68,26 @@ void main() {
         );
 
         expect(contents, '{"autocomplete": true}');
+      });
+
+      test('keeps the manifest cached and the data files not', () async {
+        await fileService.loadData(fileName: FileService.fileNameFoods);
+        await fileService.loadData(
+          fileName: FileService.fileNameAutocompleteData,
+        );
+        await fileService.loadData(fileName: FileService.fileNameFoods);
+
+        // The manifest is served from rootBundle's cache after the first read.
+        expect(reads['$dataPath/${FileService.fileNameManifest}'], 1);
+
+        // The data files are not cached: megabytes of JSON that the caller
+        // parses and drops would otherwise be retained for the life of the
+        // app. Reading foods twice has to hit the bundle twice.
+        expect(reads['$dataPath/${hash}_${FileService.fileNameFoods}'], 2);
+        expect(
+          reads['$dataPath/${hash}_${FileService.fileNameAutocompleteData}'],
+          1,
+        );
       });
 
       test('composes the asset path from the hash in the manifest', () async {

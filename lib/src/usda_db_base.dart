@@ -8,38 +8,26 @@ import 'package:usda_db_package/src/file_service.dart';
 import 'package:usda_db_package/src/foods_data.dart';
 import 'package:usda_db_package/src/models/models.dart';
 
-/// A class representing the USDA database.
+/// Read-only access to the packaged USDA SR Legacy database.
 ///
-/// This class is responsible for loading and managing the data in the database.
-/// It provides methods for initializing the database, retrieving food items,
-/// and performing autocomplete searches.
+/// Construct one, [init] it, then query it. [init] reads and parses both data
+/// assets - a few hundred milliseconds of work, off the UI isolate - and
+/// throws a [DBException] if either fails. Query before that, or after
+/// [dispose], and it throws the same.
 ///
-/// The database must be initialized by calling the [init] method before any other
-/// operations can be performed. If the initialization fails, a [DBException] will be thrown.
-///
-/// The [isDataLoaded] property can be used to check
-/// if the data has been loaded successfully. The [isInitializing] property can be used
-/// to check if the database is currently being initialized.
-///
-/// Food items can be retrieved from the database using the [queryFood] method, which
-/// takes an [int] as a parameter and returns the corresponding [UsdaFoodModel] object.
-///
-/// Autocomplete searches can be performed using the [queryFoods] method,
-/// which takes a search string as a parameter and returns a list of [UsdaFoodModel] objects
-/// that match the search string.
-///
-/// The [dispose] method can be used to clear all data properties and reset the database.
-///
-/// Example usage:
 /// ```dart
-/// final Future<UsdaDB> db = await  UsdaDB.init();
-/// final Future<FoodModel?> food = await db.queryFood(id: 123);
-/// final Future<List<FoodModel>> foods = await db.queryFoods(searchString: 'apple');
+/// final db = UsdaDbDAO();
+/// await db.init();
+///
+/// final food = await db.queryFood(id: 167512);
+/// final foods = await db.queryFoods(searchString: 'apple');
+///
 /// db.dispose();
 /// ```
-/// Note: The `UsdaDB` class requires the `FileService` class for loading data from files.
-/// If no `FileService` instance is provided during initialization, a default instance will be used.
-
+///
+/// [init] takes an optional [FileService], which is how a test supplies data
+/// without going through the asset bundle; the default reads the packaged
+/// files.
 class UsdaDbDAO {
   /// Creates an empty database. Call [init] before querying it.
   UsdaDbDAO();
@@ -50,19 +38,17 @@ class UsdaDbDAO {
   FoodsData? _foodsData;
   bool _isInitializing = false;
 
-  /// Returns false if either [_autoCompleteData] or [_foodsData] is null.
+  /// Whether both data tables are loaded and the db can be queried.
   bool get isDataLoaded => _autoCompleteData != null && _foodsData != null;
 
   /// Returns true while [init] is running.
   bool get isInitializing => _isInitializing;
 
-  /// Initializes the [UsdaDbDAO].
+  /// Loads and parses both data files. Await this before querying.
   ///
-  /// This static method is used to initialize the class by loading the data
-  /// and returning an instance of [UsdaDbDAO].
-  ///
-  /// If an error occurs during the initialization process, a [DBException] is
-  /// thrown with the error message and stack trace.
+  /// Any failure arrives as a [DBException] carrying the underlying error and
+  /// its stack trace. Nothing is left half loaded: a failed call can simply be
+  /// awaited again.
   Future<void> init({FileService? fileLoader}) async {
     _isInitializing = true;
     _fileLoader = fileLoader ?? FileService();
@@ -75,9 +61,7 @@ class UsdaDbDAO {
     }
   }
 
-  /// Loads the from the files and initializes the [_autoCompleteData] and [_foodsData].
-  ///
-  /// Rethrows to [init] method if an error occurs.
+  /// Loads both files, discarding either if the other fails.
   Future<void> _loadData() async {
     try {
       await Future.wait(
@@ -89,13 +73,14 @@ class UsdaDbDAO {
       );
       dev.log('init() completed ', name: 'DB');
     } catch (e) {
-      // All or none of the data should be loaded.  If an error occurs.
+      // All or none: a half-loaded db would answer some queries and not
+      // others.
       dispose();
       rethrow;
     }
   }
 
-  /// Disposes the database by clearing all data properties.
+  /// Drops both data tables. [init] can be called again afterwards.
   void dispose() {
     _foodsData?.clear();
     _autoCompleteData?.clear();
@@ -112,24 +97,20 @@ class UsdaDbDAO {
     }
   }
 
-  /// Retrieves a [UsdaFoodModel] from the database based on its [id].
-  ///
-  /// Returns a [Future<UsdaFoodModel>] if found, otherwise returns `null`.
+  /// The food with the USDA [id], or `null` if the database has no such food.
   Future<UsdaFoodModel?> queryFood({required int id}) async {
     _requireDataLoaded();
     return _foodsData!.queryFood(id);
   }
 
-  /// Returns a [List] of [UsdaFoodModel] items based on a searchTerm.
+  /// The foods matching [searchString], empty if none do.
   ///
-  /// [all] determines whether the food description contains any word,
-  ///  or must contain all words in the searchTerm.
+  /// [searchString] is split on whitespace and punctuation. With [all] set, a
+  /// food has to match every word; with it clear, any one word is enough.
   ///
   /// An id the autocomplete index reports but the foods table does not hold is
   /// a data-integrity failure; it is logged and dropped rather than handed back
   /// to the caller as a `null` to trip over.
-  ///
-  /// [List] will return empty if no matches are found.
   Future<List<UsdaFoodModel>> queryFoods({
     required String searchString,
     bool all = true,
@@ -161,8 +142,7 @@ class UsdaDbDAO {
     return foods;
   }
 
-  /// Retrieves a set of foodIds whose descriptions must contain ALL the words in the
-  /// list of [sanitizedWords]
+  /// Food ids whose description contains every word in [sanitizedWords].
   Set<int> _getIdsAll(List<String> sanitizedWords) {
     if (sanitizedWords.isEmpty) {
       return {};
@@ -180,7 +160,6 @@ class UsdaDbDAO {
           _autoCompleteData!.getFoodIndexes(substring: term).toSet();
       ids = ids.intersection(setTerm);
 
-      // Early exit if intersection is empty
       if (ids.isEmpty) {
         break;
       }
@@ -189,8 +168,7 @@ class UsdaDbDAO {
     return ids;
   }
 
-  /// Retrieves a set of foodIds whose descriptions contain ANY of the words
-  ///  in the list of [sanitizedWords], this list will be larger then the ALL.
+  /// Food ids whose description contains any word in [sanitizedWords].
   Set<int> _getIdsAny(List<String> sanitizedWords) {
     final ids = <int>{};
     for (final term in sanitizedWords) {
@@ -199,7 +177,6 @@ class UsdaDbDAO {
     return ids;
   }
 
-  /// Initializes the autocomplete data by loading it from a file.
   Future<void> _initAutocompleteData() async {
     final autoCompleteDataString = await _fileLoader.loadData(
       fileName: FileService.fileNameAutocompleteData,
@@ -209,13 +186,12 @@ class UsdaDbDAO {
     await _autoCompleteData?.init(jsonString: autoCompleteDataString);
   }
 
-  /// Initializes the foods data by loading it from a file.
   Future<void> _initFoodsData() async {
-    final substringHashRootString =
+    final foodsString =
         await _fileLoader.loadData(fileName: FileService.fileNameFoods);
     _foodsData = FoodsData();
 
-    await _foodsData?.init(jsonString: substringHashRootString);
+    await _foodsData?.init(jsonString: foodsString);
   }
 
   @override

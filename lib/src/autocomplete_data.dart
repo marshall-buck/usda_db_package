@@ -7,65 +7,29 @@ import 'package:flutter/foundation.dart' show compute;
 import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/initializer.dart';
 
+/// The autocomplete index: which foods a search substring matches.
 ///
-/// Class to represent the [AutoCompleteData]'s structure and methods.
+/// The lookup is two hops. [substringHash] maps a substring to a key, and
+/// [indexHash] maps that key to the food ids whose description contains it -
+/// so every substring matching the same set of foods shares one list instead
+/// of repeating it. [getFoodIndexes] walks both.
 ///
-/// This class implements the [DataInitializer] interface, which provides a method to
-/// initialize the [AutoCompleteData] instance from a JSON string.
-///
-/// The [AutoCompleteData] class represents a substring tree and a lookup table for
-///  substring values. The lookup table is a map of substring values to a list of food IDs.
-///
-/// The [substringHash] property is a map that stores the substring values as keys
-/// and their corresponding hash values as values.
-///
-/// The [indexHash] property is a map that stores the hash values as keys and the
-/// list of food IDs as values.
-///
-/// The [init] method populates the [substringHash] and [indexHash] properties
-/// from the given JSON string. It decodes the JSON string, converts the index hash a
-/// nd substring hash to the proper types, and stores them in the respective properties.
-///
-/// The [clear] method reverts the data to an empty state by clearing the
-/// [substringHash] and [indexHash] maps.
-///
-/// The [getFoodIndexes] method takes a substring as input and returns a
-/// list of food IDs associated with that substring. It retrieves the hash value of
-/// the substring from the [substringHash] map and uses it to retrieve the corresponding
-/// list of food IDs from the [indexHash] map. If the substring is not found in the
-/// [substringHash] map, an empty list is returned.
-///
-/// The decoding and the conversion to the proper types happen on a background
-/// isolate, so a multi-megabyte autocomplete file does not stall the UI.
-///
-/// Example usage:
 /// ```dart
 /// final autoCompleteData = AutoCompleteData();
 /// await autoCompleteData.init(jsonString: jsonString);
 /// final foodIndexes = autoCompleteData.getFoodIndexes(substring: 'aba');
 /// ```
 ///
-/// Note: This class assumes that the JSON string provided for
-///  initialization follows a specific format, as described in the class documentation.
-/// /// The json file format is as follows:
-/// /*Cspell:disable
-/// ```dart
-///  {
-/// substringHash = {
-///   'aba': 0,
-///   'abap': 0,
-///   'abapp': 0,
-///   'abappl': 1,
-///   'abapple': 0, ...
-///    },
-///   indexHash = {
-///     0: [3, 4],
-///     1: [1, 2, 3, 4]
-///    }
-///   }
+/// The shape of the file [init] expects, which the code alone does not give
+/// away:
+/// <!-- Cspell:disable -->
+/// ```json
+/// {
+///   "substringHash": {"aba": 0, "abap": 0, "abappl": 1, "abapple": 0},
+///   "indexHash": {"0": [3, 4], "1": [1, 2, 3, 4]}
+/// }
 /// ```
-///  /*Cspell:enable
-
+/// <!-- Cspell:enable -->
 class AutoCompleteData implements DataInitializer {
   final Map<String, int> _substringHash = {};
   final Map<int, List<int>> _indexHash = {};
@@ -76,10 +40,11 @@ class AutoCompleteData implements DataInitializer {
   /// Maps a [substringHash] value to the food ids that match that substring.
   Map<int, List<int>> get indexHash => _indexHash;
 
-  /// Initializes the instance by populating the [substringHash] and [indexHash] properties
-  /// using the provided [jsonString].
+  /// Builds [substringHash] and [indexHash] from [jsonString], replacing
+  /// whatever was there.
   ///
-  /// The decode and the type conversion run on a background isolate.
+  /// The decode and the type conversion run on a background isolate. Neither
+  /// map is published unless the whole file converts.
   ///
   /// Throws a [DBFormatException] if the JSON string cannot be decoded.
   @override
@@ -97,15 +62,13 @@ class AutoCompleteData implements DataInitializer {
     }
   }
 
-  /// Resets the instance to its initial state by clearing the
-  /// [substringHash] and [indexHash] properties.
+  /// Empties both maps.
   void clear() {
     _substringHash.clear();
     _indexHash.clear();
   }
 
-  /// Returns a list of food IDs associated with the provided [substring].
-  /// If the [substring] is not found, an empty list is returned.
+  /// The food ids matching [substring], empty if it is not in the index.
   List<int> getFoodIndexes({required String substring}) =>
       _indexHash[_substringHash[substring]] ?? [];
 }

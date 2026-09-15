@@ -3,7 +3,6 @@ analyzer:
     flutter_style_todos: ignore
   exclude:
     - build/**
-    - web/**
 include: package:very_good_analysis/analysis_options.yaml
 
 linter:

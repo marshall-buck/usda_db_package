@@ -4,14 +4,14 @@ import 'package:usda_db_package/usda_db_package.dart';
 // The only test file that touches the real asset bundle, and the one file with
 // no counterpart in `lib/` - it exercises the whole package end to end.
 // Everything that can be shown with stubbed data belongs beside its class in
-// `test/src/`, so what is left here is what only the shipped ~8 MB can show:
+// `test/src/`, so what is left here is what only the shipped ~13 MB can show:
 // that the assets are present and decodable, and that the search counts
 // against the full index are what they should be.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Live tests', () {
-    // One instance for the read-only query tests: `init` parses ~8 MB, and
+    // One instance for the read-only query tests: `init` parses ~13 MB, and
     // doing that per test made this file most of the suite's runtime. The
     // dispose test below builds its own, because it mutates state.
     late UsdaDbDAO db;

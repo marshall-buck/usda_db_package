@@ -118,22 +118,23 @@ New `test/public_api_test.dart` imports the public library and nothing from `src
 
 ## Packaging / config
 
-🔴 **`collection` is a runtime dependency used only by tests.**
-`pubspec.yaml:11` — the only imports are `test/src/sanitizer_test.dart:1` and `test/src/autocomplete_data_test.dart:3`. Belongs in `dev_dependencies`.
+✅ ~~**`collection` is a runtime dependency used only by tests.**~~
+`pubspec.yaml:11` — the only imports were `test/src/sanitizer_test.dart:1` and `test/src/autocomplete_data_test.dart:3`. Belonged in `dev_dependencies`.
+*Resolution:* deleted outright rather than moved. Both importers are already gone — `sanitizer_test.dart` with the `Sanitizer` class, and the `DeepCollectionEquality` in `autocomplete_data_test.dart` when that assertion was replaced with a plain list matcher. Nothing in `lib/`, `test/` or `example/` imports `package:collection` now.
 
-🔴 **`pubspec.yaml` description describes a different package.**
+✅ ~~**`pubspec.yaml` description describes a different package.**~~
 `"A package to json-ize the usda db"` — that's the *creation* package (`usda_db_creation`, per the README). This one only reads and queries. `repository:` is commented out, `build_runner` is a commented-out dev dep, and the file carries three blank-line gaps mid-block.
 
-🔴 **README documents an API that doesn't exist.**
+✅ ~~**README documents an API that doesn't exist.**~~
 `README.md:38` — `final Future<UsdaDbDAO> db = await UsdaDbDAO.init();` implies a static factory returning an instance. The real API is `final db = UsdaDbDAO(); await db.init();` (see `example/usda_db_example.dart:11-12`). The class doc comment is worse — `usda_db_base.dart:38-41` still refers to `UsdaDB` and `FoodModel`, names changed two commits ago.
 
-🔴 **Doc comments that restate the implementation line by line.**
+✅ ~~**Doc comments that restate the implementation line by line.**~~
 `lib/src/autocomplete_data.dart:6-64` — ~60 lines narrating each method and private helper before a 70-line class. `lib/src/usda_db_base.dart:14-44` and `lib/src/foods_data.dart:7-25` do the same. They have already drifted (see above), which is exactly the failure mode this style invites.
 
-🔴 **`.gitignore` contradicts the working tree.**
+✅ ~~**`.gitignore` contradicts the working tree.**~~
 `/web`, `pubspec.lock`, and `doc/api/` are all listed as ignored, yet `web/`, `pubspec.lock` and a full generated `doc/api/` tree are present in the repo. `analysis_options.yaml` separately excludes `web/**` from analysis. Three `.DS_Store` files are sitting in the tree (`./`, `lib/`, `lib/data/`) — and `lib/data/.DS_Store` is inside the directory declared wholesale as a Flutter asset (`pubspec.yaml:27-28`), so it gets bundled into every consuming app.
 
-🔴 **The manifest hash is read from disk on every single `loadData` call.**
+✅ ~~**The manifest hash is read from disk on every single `loadData` call.**~~
 `lib/src/file_service.dart:29,51-65` — `_getFileHash()` re-loads `file_manifest.txt` for each of the two data files. It is a 6-byte constant for the lifetime of the app; nothing caches it.
 
 ✅ ~~**Lints switched off rather than satisfied.**~~

@@ -40,19 +40,26 @@ class FileService {
     final fileHash = await _getFileHash();
     final assetPath = '$_dataPath/${fileHash}_$fileName';
 
-    return _loadAsset(assetPath);
+    // Read past the bundle cache: these files are megabytes of JSON, and the
+    // caller parses the string into a table and drops it. Cached, `rootBundle`
+    // would hold all ~13 MB of raw JSON for the life of the app alongside the
+    // parsed data, with no way to evict it from here.
+    return _loadAsset(assetPath, cache: false);
   }
 
   /// Opens the manifest file and returns the hash.
+  ///
+  /// Cached, unlike the data files: it is a handful of bytes and every
+  /// [loadData] call needs it.
   ///
   /// Throws a [DBFileException] if the asset cannot be loaded.
   Future<String> _getFileHash() => _loadAsset('$_dataPath/$fileNameManifest');
 
   /// Reads [assetPath] from the bundle, rethrowing any failure as a
   /// [DBFileException].
-  Future<String> _loadAsset(String assetPath) async {
+  Future<String> _loadAsset(String assetPath, {bool cache = true}) async {
     try {
-      return await rootBundle.loadString(assetPath);
+      return await rootBundle.loadString(assetPath, cache: cache);
     } catch (e, st) {
       throw DBFileException('Error loading file at $assetPath: $e', st);
     }

@@ -1,20 +1,19 @@
 name: usda_db_package
-description: A package to json-ize the usda db.
+description: >-
+  Offline USDA SR Legacy food database for Flutter apps: lookup by id and
+  substring autocomplete search over the bundled foods and nutrients.
 version: 1.0.0
+repository: https://github.com/marshall-buck/usda_db_package
 
 environment:
   sdk: ^3.1.0
 
-# Add regular dependencies here.
 dependencies:
-  collection: ^1.18.0
   equatable: ^2.0.0
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  # build_runner: ^2.4.6
-
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.0

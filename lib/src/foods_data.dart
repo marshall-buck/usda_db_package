@@ -12,37 +12,34 @@ import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/initializer.dart';
 import 'package:usda_db_package/src/models/models.dart';
 
-/// Class to handle the foods database.
-/// A class that represents the data for foods.
+/// The foods table: every food in the packaged database, keyed by USDA id.
 ///
-/// This class is responsible for initializing the foods database and providing
-/// methods to retrieve food items from the database.
+/// [init] builds it from the packaged JSON, [queryFood] reads one entry, and
+/// [clear] drops the lot.
 ///
-/// The [FoodsData] class is initialized by calling the [init] method, which
-/// takes a JSON string as a parameter. The JSON string is decoded and the
-/// resulting map is used to populate the [foodsList] property.
-///
-/// The [foodsList] property is a map that stores food IDs as keys and
-/// [UsdaFoodModel] objects as values.
-///
-/// The [queryFood] method takes a food ID as a parameter and returns the
-/// corresponding [UsdaFoodModel] object from the [foodsList] map. If the food ID
-/// is not found in the map, the method returns null.
-///
-/// The  [clear] method reverts the data to an empty state by clearing the [foodsList] map.
-/// Implements the [DataInitializer] interface.
+/// The shape of the file [init] expects, which the code alone does not give
+/// away - nutrient ids and food ids arrive as strings because JSON keys are
+/// always strings:
+/// ```json
+/// {
+///   "167512": {
+///     "description": "Pillsbury Golden Layer Buttermilk Biscuits",
+///     "nutrients": {"1003": 5.88, "1004": 13.2}
+///   }
+/// }
+/// ```
 class FoodsData implements DataInitializer {
   final Map<int, UsdaFoodModel> _foodsList = {};
 
   /// The foods table, keyed by USDA food id. Empty until [init] has run.
   Map<int, UsdaFoodModel> get foodsList => _foodsList;
 
-  /// Initializes by decoding a JSON string, and populating [_foodsList]
-  /// with the decoded data.
+  /// Builds [foodsList] from [jsonString], replacing whatever was there.
   ///
   /// The decode and the type conversion run on a background isolate - the foods
   /// file is several megabytes and would otherwise block the UI isolate for
-  /// hundreds of milliseconds.
+  /// hundreds of milliseconds. Nothing is published unless the whole file
+  /// converts, so a failure leaves [foodsList] as it was.
   ///
   /// Throws a [DBFormatException] if the JSON string cannot be decoded.
   @override
@@ -57,10 +54,10 @@ class FoodsData implements DataInitializer {
     }
   }
 
-  /// Empty the foodsList object.
+  /// Empties [foodsList].
   void clear() => _foodsList.clear();
 
-  /// Returns a [UsdaFoodModel] from the [_foodsList] or null if not found.
+  /// The food with [foodId], or `null` if the table has no such food.
   UsdaFoodModel? queryFood(int foodId) => _foodsList[foodId];
 }
 
