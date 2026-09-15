@@ -40,10 +40,10 @@ class UsdaFoodModel extends Equatable {
   /// The food's [nutrients] as [UsdaNutrientModel]s, each carrying a display
   /// name and unit alongside the amount.
   ///
-  /// Entries keep the order they appear in [nutrients]. Nutrient ids with no
-  /// entry in [UsdaNutrientModel.originalNutrientTableEdit] are still
-  /// included, with an empty name and unit — filter on
-  /// [UsdaNutrientModel.isKnown] to drop them.
+  /// Entries keep the order they appear in [nutrients]. Every nutrient id in
+  /// the shipped data has an entry in
+  /// [UsdaNutrientModel.originalNutrientTableEdit], so every entry here
+  /// resolves to a name and unit.
   ///
   /// This builds a new list on each access. Hoist it into a variable if you
   /// read it more than once, e.g. inside a `build` method.

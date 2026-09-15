@@ -15,8 +15,10 @@ import 'package:equatable/equatable.dart';
 /// ```
 ///
 /// Names and units come from [originalNutrientTableEdit], a fixed table keyed
-/// by USDA nutrient id. An id missing from that table yields an empty [name]
-/// and [unit]; see [isKnown].
+/// by USDA nutrient id. Every nutrient id in the shipped data is in that
+/// table, so nutrients read off a food always have both. An id you supply
+/// yourself that the table does not hold yields an empty [name] and [unit];
+/// see [isKnown].
 class UsdaNutrientModel extends Equatable {
   /// Creates a nutrient with its display [name] and [unit] already resolved.
   ///
