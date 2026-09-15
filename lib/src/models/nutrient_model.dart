@@ -18,6 +18,9 @@ import 'package:equatable/equatable.dart';
 /// by USDA nutrient id. An id missing from that table yields an empty [name]
 /// and [unit]; see [isKnown].
 class UsdaNutrientModel extends Equatable {
+  /// Creates a nutrient with its display [name] and [unit] already resolved.
+  ///
+  /// Prefer [UsdaNutrientModel.fromId], which looks both up for you.
   const UsdaNutrientModel({
     required this.id,
     required this.name,

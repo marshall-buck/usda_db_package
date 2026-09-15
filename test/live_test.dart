@@ -1,123 +1,87 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
-import 'package:usda_db_package/src/models/models.dart';
-
-import 'package:usda_db_package/src/usda_db_base.dart';
-
-import './setup/startup.dart';
-
+// The only test file that touches the real asset bundle, and the one file with
+// no counterpart in `lib/` - it exercises the whole package end to end.
+// Everything that can be shown with stubbed data belongs beside its class in
+// `test/src/`, so what is left here is what only the shipped ~8 MB can show:
+// that the assets are present and decodable, and that the search counts
+// against the full index are what they should be.
 void main() {
-  setUpAll(setUpStartup);
-  tearDown(tearDownStartup);
+  TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Live tests', () {
-    group('init() - ', () {
-      test('loads properties', () async {
-        final db = UsdaDbDAO();
-        await db.init();
+    // One instance for the read-only query tests: `init` parses ~8 MB, and
+    // doing that per test made this file most of the suite's runtime. The
+    // dispose test below builds its own, because it mutates state.
+    late UsdaDbDAO db;
 
-        expect(db.isDataLoaded, true);
-        db.dispose();
-      });
+    setUpAll(() async {
+      db = UsdaDbDAO();
+      await db.init();
     });
-    group('isDataLoaded(),and dispose() - ', () {
-      test('returns false if properties are empty', () async {
-        final db = UsdaDbDAO();
-        await db.init();
-        db.dispose();
-        expect(db.isDataLoaded, equals(false));
-      });
+
+    tearDownAll(() => db.dispose());
+
+    test('init loads the bundled files', () {
+      expect(db.isDataLoaded, true);
+    });
+
+    test('dispose empties a live db', () async {
+      final ownDb = UsdaDbDAO();
+      await ownDb.init();
+
+      ownDb.dispose();
+
+      expect(ownDb.isDataLoaded, false);
     });
 
     group('queryFood() - ', () {
-      test('returns a FoodModel', () async {
-        final db = UsdaDbDAO();
-        await db.init();
+      test('returns the real food for an id', () async {
         final foodItem = await db.queryFood(id: 167512);
-        expect(foodItem, isNotNull);
-        expect(foodItem, isA<UsdaFoodModel>());
-        db.dispose();
-      });
-      test('returns null if no food', () async {
-        final db = UsdaDbDAO();
-        await db.init();
-        final foodItem = await db.queryFood(id: 1675121);
-        expect(foodItem, isNull);
-        db.dispose();
+
+        expect(
+          foodItem?.description,
+          'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, '
+          'refrigerated dough',
+        );
       });
     });
 
     group('queryFoods() - ', () {
-      test('returns a list of FoodModels, with one word term 2 chars length',
-          () async {
-        final db = UsdaDbDAO();
-        await db.init();
+      test('one word term, 2 chars length', () async {
         final list = await db.queryFoods(searchString: 'tr');
 
-        expect(list, isNotEmpty);
-        expect(list.length, 1455);
-        expect(list[0], isA<UsdaFoodModel>());
-        db.dispose();
+        expect(list, hasLength(1455));
       });
-      test('returns a list of FoodModels, with one word term', () async {
-        final db = UsdaDbDAO();
-        await db.init();
+      test('one word term', () async {
         final list = await db.queryFoods(searchString: 'aba');
 
-        expect(list, isNotEmpty);
-        expect(list.length, 14);
-        expect(list[0], isA<UsdaFoodModel>());
-        db.dispose();
+        expect(list, hasLength(14));
       });
-
-      test(
-          'expect list to be empty  with 2 word input, each input does not have a match',
-          () async {
-        final db = UsdaDbDAO();
-        await db.init();
-        final list = await db.queryFoods(searchString: 'aa rrr');
-
-        expect(list, isEmpty);
-        db.dispose();
-      });
-      test(
-          'expect list will all parameter set to false, one input does not have a match and one does',
-          () async {
-        final db = UsdaDbDAO();
-        await db.init();
+      test('all parameter false, one input matches and one does not', () async {
         final list = await db.queryFoods(searchString: 'gua rrr', all: false);
 
-        expect(list.length, 10);
-        db.dispose();
+        expect(list, hasLength(10));
       });
-
-      test('expect list to return only descriptions with ALL words', () async {
-        final db = UsdaDbDAO();
-        await db.init();
+      test('returns only descriptions with ALL words', () async {
         final list = await db.queryFoods(searchString: 'ste, gua');
 
-        expect(list.length, 1);
-        db.dispose();
+        expect(list, hasLength(1));
       });
-      test('expect list to return only descriptions with ANY words', () async {
-        final db = UsdaDbDAO();
-        await db.init();
+      test('returns only descriptions with ANY words', () async {
         final list = await db.queryFoods(searchString: 'ste, gua', all: false);
 
-        expect(list.length, 1101);
-        db.dispose();
+        expect(list, hasLength(1101));
       });
-
       test('matches a description that mixes dashes and parentheses', () async {
-        final db = UsdaDbDAO();
-        await db.init();
         final list = await db.queryFoods(
           searchString: 'Cabbage, chinese (pak-choi), raw',
         );
 
-        expect(list.length, 1);
-        expect(list[0].description, 'Cabbage, chinese (pak-choi), raw');
-        db.dispose();
+        expect(list.map((food) => food.description), [
+          'Cabbage, chinese (pak-choi), raw',
+        ]);
       });
     });
   });

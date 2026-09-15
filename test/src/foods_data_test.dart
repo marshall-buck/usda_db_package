@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usda_db_package/src/exceptions.dart';
+// `FoodsData` is internal, so it comes from `src/`; everything the package
+// actually exports comes in through the public library.
 import 'package:usda_db_package/src/foods_data.dart';
-import 'package:usda_db_package/src/models/models.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 import '../setup/mock_file_strings.dart';
 

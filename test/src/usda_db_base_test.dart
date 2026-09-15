@@ -1,357 +1,193 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mocktail/mocktail.dart';
-import 'package:usda_db_package/src/exceptions.dart';
-import 'package:usda_db_package/src/file_service.dart';
-import 'package:usda_db_package/src/models/models.dart';
-
-import 'package:usda_db_package/src/usda_db_base.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 import '../setup/mock_file_strings.dart';
 import '../setup/startup.dart';
 
+// Every test here runs against the mock data strings - nothing in this file
+// touches the real asset bundle. The bundled files are covered by
+// `test/live_test.dart`.
 void main() {
-  setUpAll(setUpStartup);
-  tearDown(tearDownStartup);
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  late MockFileService fileLoader;
+  late UsdaDbDAO db;
+
+  setUp(() {
+    fileLoader = mockFileService();
+    db = UsdaDbDAO();
+    addTearDown(db.dispose);
+  });
 
   group('DB class tests', () {
     group('init() - ', () {
       test('loads properties', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
 
         expect(db.isDataLoaded, true);
-        db.dispose();
       });
       test('throws DBException on failure', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenThrow(Exception('loadData error'));
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
+        when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
+            .thenThrow(Exception('loadData error'));
 
-        final db = UsdaDbDAO();
-
-        expect(
-          () async => db.init(fileLoader: mockFileLoaderService),
+        await expectLater(
+          db.init(fileLoader: fileLoader),
           throwsA(isA<DBException>()),
         );
-        db.dispose();
       });
       test('can be retried after a failure', () async {
         var shouldFail = true;
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async {
+        when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
+            .thenAnswer((_) async {
           if (shouldFail) throw Exception('loadData error');
           return mockDBString;
         });
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-
-        final db = UsdaDbDAO();
 
         await expectLater(
-          db.init(fileLoader: mockFileLoaderService),
+          db.init(fileLoader: fileLoader),
           throwsA(isA<DBException>()),
         );
         expect(db.isDataLoaded, false);
 
         shouldFail = false;
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
 
         expect(db.isDataLoaded, true);
-        db.dispose();
       });
       test('isInitializing is not shared between instances', () async {
         final gate = Completer<String>();
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) => gate.future);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
+        when(() => fileLoader.loadData(fileName: FileService.fileNameFoods))
+            .thenAnswer((_) => gate.future);
 
-        final slow = UsdaDbDAO();
         final other = UsdaDbDAO();
 
-        final pending = slow.init(fileLoader: mockFileLoaderService);
+        final pending = db.init(fileLoader: fileLoader);
         await pumpEventQueue();
 
-        expect(slow.isInitializing, true);
+        expect(db.isInitializing, true);
         expect(other.isInitializing, false);
 
         gate.complete(mockDBString);
         await pending;
 
-        expect(slow.isInitializing, false);
-        slow.dispose();
+        expect(db.isInitializing, false);
       });
     });
-    group('isDataLoaded(),and dispose() - ', () {
-      test('returns false if properties are empty', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+
+    group('isDataLoaded(), and dispose() - ', () {
+      test('returns false once disposed', () async {
+        await db.init(fileLoader: fileLoader);
+        expect(db.isDataLoaded, true);
+
         db.dispose();
-        expect(db.isDataLoaded, equals(false));
+
+        expect(db.isDataLoaded, false);
+      });
+      test('queries throw once disposed', () async {
+        await db.init(fileLoader: fileLoader);
+        db.dispose();
+
+        await expectLater(
+          db.queryFood(id: 167512),
+          throwsA(isA<DBException>()),
+        );
       });
     });
 
     group('queryFood() - ', () {
-      test('returns a FoodModel', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+      test('returns the food with that id', () async {
+        await db.init(fileLoader: fileLoader);
+
         final foodItem = await db.queryFood(id: 167512);
-        expect(foodItem, isNotNull);
-        expect(foodItem, isA<UsdaFoodModel>());
-        db.dispose();
+
+        expect(foodItem?.id, 167512);
+        expect(
+          foodItem?.description,
+          'Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, '
+          'refrigerated dough',
+        );
       });
       test('returns null if no food', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
+
         final foodItem = await db.queryFood(id: 1675121);
+
         expect(foodItem, isNull);
-        db.dispose();
       });
     });
 
     group('queryFoods() - ', () {
       test('returns a list of FoodModels, with one word term 2 chars length',
           () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
+
         final list = await db.queryFoods(searchString: 'ab');
-        expect(list, isNotEmpty);
-        expect(list.length, 3);
-        expect(list[0], isA<UsdaFoodModel>());
-        db.dispose();
+
+        // 'ab' hashes to index 0 -> [167512, 167513, 167515].
+        expect(
+          list.map((food) => food.id),
+          unorderedEquals([167512, 167513, 167515]),
+        );
       });
       test('returns a list of FoodModels, with one word term', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
+
         final list = await db.queryFoods(searchString: 'aba');
-        expect(list, isNotEmpty);
-        expect(list.length, 3);
-        expect(list[0], isA<UsdaFoodModel>());
-        db.dispose();
+
+        expect(
+          list.map((food) => food.id),
+          unorderedEquals([167512, 167513, 167515]),
+        );
       });
 
-      test(
-          'expect list to be empty with no results with 2 word input, each input does not have a match',
-          () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+      test('is empty when no word in a 2 word input matches', () async {
+        await db.init(fileLoader: fileLoader);
+
         final list = await db.queryFoods(searchString: 'aa rrr');
+
         expect(list, isEmpty);
-        db.dispose();
       });
-      test(
-          'expect list to be empty with no results with 2 word input, one input does not have a match and one does',
-          () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
-        final list = await db.queryFoods(searchString: 'aab rrr');
+      test('is empty when only one word of a 2 word input matches', () async {
+        await db.init(fileLoader: fileLoader);
+
+        // 'aba' matches three foods, 'rrr' matches none, so the intersection
+        // the `all` path builds is empty.
+        final list = await db.queryFoods(searchString: 'aba rrr');
+
         expect(list, isEmpty);
-        db.dispose();
       });
 
       test('expect list to return only descriptions with ALL words', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
+
+        // 'aba' -> [167512, 167513, 167515], 'dough' -> [167514, 167515].
         final list = await db.queryFoods(searchString: 'aba, dough');
-        expect(list.length, 1);
-        db.dispose();
+
+        expect(list.map((food) => food.id), [167515]);
       });
       test('expect list to return only descriptions with ANY words', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
+
         final list =
             await db.queryFoods(searchString: 'aba, dough', all: false);
-        expect(list.length, 4);
-        db.dispose();
+
+        expect(
+          list.map((food) => food.id),
+          unorderedEquals([167512, 167513, 167514, 167515]),
+        );
       });
       test('drops ids the foods table does not hold', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
+        await db.init(fileLoader: fileLoader);
+
         // 'abap' maps to index 1 -> [171845, 174077], neither of which is in
         // the mock foods table.
         final list = await db.queryFoods(searchString: 'abap');
+
         expect(list, isEmpty);
-        db.dispose();
       });
-      test('expect list to return with 2 letter words', () async {
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameFoods,
-          ),
-        ).thenAnswer((_) async => mockDBString);
-        when(
-          () => mockFileLoaderService.loadData(
-            fileName: FileService.fileNameAutocompleteData,
-          ),
-        ).thenAnswer((_) async => mockHashString);
-        final db = UsdaDbDAO();
-        await db.init(fileLoader: mockFileLoaderService);
-        final list =
-            await db.queryFoods(searchString: 'aba, dough', all: false);
-        expect(list.length, 4);
-        db.dispose();
-      });
-    });
-  });
-
-  group('Test Db files', () {
-    test('Opening foods_db returns a  string', () async {
-      final fileLoader = FileService();
-
-      final jsonString = await fileLoader.loadData(fileName: 'foods_db.json');
-      expect(jsonString, isA<String>());
-      try {
-        final jsonObject = jsonDecode(jsonString);
-        expect(jsonObject, isA<Map<String, dynamic>>());
-      } catch (e) {
-        fail('Failed to decode JSON: $e');
-      }
-    });
-    test('Opening autocomplete_hash returns a  string', () async {
-      final fileLoader = FileService();
-
-      final jsonString =
-          await fileLoader.loadData(fileName: 'autocomplete_hash.json');
-      expect(jsonString, isA<String>());
-      try {
-        final jsonObject = jsonDecode(jsonString);
-        expect(jsonObject, isA<Map<String, dynamic>>());
-      } catch (e) {
-        fail('Failed to decode JSON: $e');
-      }
     });
   });
 }

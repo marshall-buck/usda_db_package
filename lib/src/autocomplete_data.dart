@@ -70,7 +70,10 @@ class AutoCompleteData implements DataInitializer {
   final Map<String, int> _substringHash = {};
   final Map<int, List<int>> _indexHash = {};
 
+  /// Maps a searchable substring to the key of its entry in [indexHash].
   Map<String, int> get substringHash => _substringHash;
+
+  /// Maps a [substringHash] value to the food ids that match that substring.
   Map<int, List<int>> get indexHash => _indexHash;
 
   /// Initializes the instance by populating the [substringHash] and [indexHash] properties

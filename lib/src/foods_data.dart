@@ -8,9 +8,9 @@ import 'dart:convert';
 // file_service.dart.
 import 'package:flutter/foundation.dart' show compute;
 
-import 'exceptions.dart';
-import 'initializer.dart';
-import 'models/models.dart';
+import 'package:usda_db_package/src/exceptions.dart';
+import 'package:usda_db_package/src/initializer.dart';
+import 'package:usda_db_package/src/models/models.dart';
 
 /// Class to handle the foods database.
 /// A class that represents the data for foods.
@@ -33,6 +33,8 @@ import 'models/models.dart';
 /// Implements the [DataInitializer] interface.
 class FoodsData implements DataInitializer {
   final Map<int, UsdaFoodModel> _foodsList = {};
+
+  /// The foods table, keyed by USDA food id. Empty until [init] has run.
   Map<int, UsdaFoodModel> get foodsList => _foodsList;
 
   /// Initializes by decoding a JSON string, and populating [_foodsList]

@@ -5,7 +5,7 @@
 // foods_data.dart and autocomplete_data.dart.)
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'exceptions.dart';
+import 'package:usda_db_package/src/exceptions.dart';
 
 /// A class that provides file-related services.
 ///
@@ -22,8 +22,15 @@ import 'exceptions.dart';
 /// The [_getFileHash] method retrieves the hash from the manifest file.
 class FileService {
   static const String _dataPath = 'packages/usda_db_package/lib/data';
+
+  /// Name of the manifest asset holding the hash the data files are named
+  /// with.
   static const String fileNameManifest = 'file_manifest.txt';
+
+  /// Name of the foods data file, unprefixed by the manifest hash.
   static const String fileNameFoods = 'foods_db.json';
+
+  /// Name of the autocomplete index file, unprefixed by the manifest hash.
   static const String fileNameAutocompleteData = 'autocomplete_hash.json';
 
   /// Returns the contents of the file as a [String].

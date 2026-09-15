@@ -93,22 +93,25 @@ The dead `keepTheseNutrients` list (96 entries, zero references — it belongs t
 
 ## Tests
 
-🔴 **Tests bypass the public API.**
-Every test imports `package:usda_db_package/src/...` directly rather than `package:usda_db_package/usda_db_package.dart`, so nothing verifies that the exported surface is actually usable.
+✅ ~~**Tests bypass the public API.**~~
+Every test imported `package:usda_db_package/src/...` directly rather than `package:usda_db_package/usda_db_package.dart`, so nothing verified that the exported surface is actually usable.
+*Root cause found on the way:* `UsdaDbDAO.init({FileService? fileLoader})` named a type the package did not export. A consumer could not write that call at all, so the one injection seam in the API was reachable only from inside the package — which is exactly why every test had to reach into `src/`.
+*Resolution:* `src/file_service.dart` is now exported, making the signature honest. `live_test.dart`, `usda_db_base_test.dart`, both model tests and `setup/startup.dart` import only the public library. The three unit tests of genuinely internal classes (`FoodsData`, `AutoCompleteData`, `FileService`) still import `src/` for the class under test — that is correct for a unit test — but take their exception types through the public library.
+New `test/public_api_test.dart` imports the public library and nothing from `src/`: it initializes a `UsdaDbDAO` with an injected loader, queries by id, catches `DBException`, and walks `UsdaFoodModel` → `nutrient()` → `UsdaNutrientModel`. A dropped `export` line now fails to compile rather than shipping.
 
-🔴 **~10 lines of identical mock setup copy-pasted into all 9 tests.**
+✅ ~~**~10 lines of identical mock setup copy-pasted into all 9 tests.**~~
 `test/src/usda_db_base_test.dart` — 24 `when(() => mockFileLoaderService.loadData(...))` stubs across 279 lines, every one of them the same pair. This belongs in `setUp`. Two tests (lines 231-248 and 213-230) are byte-identical in body with different names.
 
-🔴 **Unit tests reach for real assets.**
+✅ ~~**Unit tests reach for real assets.**~~
 `test/src/usda_db_base_test.dart:252-278` ("Test Db files") and all of `test/src/file_service_test.dart` load the actual 8 MB bundled files, inside the mocked-unit-test file. `test/live_test.dart` already covers this, and duplicates `usda_db_base_test.dart`'s structure test-for-test against live data.
 
-🔴 **Shared mutable fixture across tests.**
+✅ ~~**Shared mutable fixture across tests.**~~
 `test/src/autocomplete_data_test.dart:11` — one `AutoCompleteData()` created at group scope, `init()` called repeatedly on it with no `clear()`; state accumulates across tests and results become order-dependent.
 
-🔴 **`late final` top-level mock reassigned in `setUpAll`.**
+✅ ~~**`late final` top-level mock reassigned in `setUpAll`.**~~
 `test/setup/startup.dart:7,15` — works only because each test file gets a fresh isolate; `tearDown` calls `reset()` on it, but a second `setUpAll` in the same isolate would throw.
 
-🔴 **Assertions that can't fail.**
+✅ ~~**Assertions that can't fail.**~~
 `test/src/autocomplete_data_test.dart:82` — `expect(indexes, isA<List<void>>())` is true for basically any list. `test/src/usda_db_base_test.dart` and `live_test.dart` assert `isA<UsdaFoodModel>()` on values already statically typed as such.
 
 ---
@@ -133,5 +136,5 @@ Every test imports `package:usda_db_package/src/...` directly rather than `packa
 🔴 **The manifest hash is read from disk on every single `loadData` call.**
 `lib/src/file_service.dart:29,51-65` — `_getFileHash()` re-loads `file_manifest.txt` for each of the two data files. It is a 6-byte constant for the lifetime of the app; nothing caches it.
 
-🔴 **Lints switched off rather than satisfied.**
+✅ ~~**Lints switched off rather than satisfied.**~~
 `analysis_options.yaml:10-14` disables `public_member_api_docs`, `avoid_print` and `always_use_package_imports`. Consistent with `print` calls commented out in `usda_db_base.dart:139,144`, a live `print` in `example/usda_db_example.dart:24`, and mixed import styles (`package:usda_db_package/src/initializer.dart` in `autocomplete_data.dart:4` vs. relative `'initializer.dart'` in `foods_data.dart:4`) — including the odd `import '../src/models/models.dart'` in `usda_db_base.dart:4`, which walks up and back into its own directory.

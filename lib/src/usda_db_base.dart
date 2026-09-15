@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:developer' as dev;
 
-import '../src/models/models.dart';
-
-import 'autocomplete_data.dart';
-import 'exceptions.dart';
-import 'extensions/string_ext.dart';
-import 'file_service.dart';
-
-import 'foods_data.dart';
+import 'package:usda_db_package/src/autocomplete_data.dart';
+import 'package:usda_db_package/src/exceptions.dart';
+import 'package:usda_db_package/src/extensions/string_ext.dart';
+import 'package:usda_db_package/src/file_service.dart';
+import 'package:usda_db_package/src/foods_data.dart';
+import 'package:usda_db_package/src/models/models.dart';
 
 /// A class representing the USDA database.
 ///
@@ -43,7 +41,9 @@ import 'foods_data.dart';
 /// If no `FileService` instance is provided during initialization, a default instance will be used.
 
 class UsdaDbDAO {
+  /// Creates an empty database. Call [init] before querying it.
   UsdaDbDAO();
+
   /// Assigned on every [init] call so a failed initialization can be retried.
   FileService _fileLoader = FileService();
   AutoCompleteData? _autoCompleteData;

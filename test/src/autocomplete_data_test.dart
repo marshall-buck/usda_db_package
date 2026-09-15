@@ -1,15 +1,21 @@
 import 'dart:convert';
 
-import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
+// `AutoCompleteData` is internal, so it comes from `src/`; `DBFormatException`
+// is exported, so it comes in through the public library.
 import 'package:usda_db_package/src/autocomplete_data.dart';
-import 'package:usda_db_package/src/exceptions.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 import '../setup/mock_file_strings.dart';
 
 void main() {
   group('AutoCompleteHashData', () {
-    final hashData = AutoCompleteData();
+    // Per test, not per group: `init` accumulates into the instance's maps, so
+    // one shared instance made the results order-dependent.
+    late AutoCompleteData hashData;
+
+    setUp(() => hashData = AutoCompleteData());
+
     group('init() - ', () {
       test('properties are not empty', () async {
         final json = jsonEncode(mockHashTable);
@@ -79,16 +85,16 @@ void main() {
 
         await hashData.init(jsonString: json);
         final indexes = hashData.getFoodIndexes(substring: 'aba');
-        const d = DeepCollectionEquality();
-        expect(d.equals(indexes, [167512, 167513, 167515]), true);
+
+        expect(indexes, [167512, 167513, 167515]);
       });
       test('returns empty list if substring not found', () async {
         final json = jsonEncode(mockHashTable);
 
         await hashData.init(jsonString: json);
         final indexes = hashData.getFoodIndexes(substring: 'not found');
-        expect(indexes.isEmpty, true);
-        expect(indexes, isA<List<void>>());
+
+        expect(indexes, isEmpty);
       });
     });
   });

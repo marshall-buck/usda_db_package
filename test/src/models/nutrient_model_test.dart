@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_int_literals
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usda_db_package/src/models/models.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 void main() {
   group('Nutrient class tests', () {

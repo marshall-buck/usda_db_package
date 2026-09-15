@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usda_db_package/src/models/models.dart';
+import 'package:usda_db_package/usda_db_package.dart';
 
 void main() {
   group('FoodModel class tests', () {

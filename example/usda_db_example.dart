@@ -20,7 +20,7 @@ class AutocompleteExampleApp extends StatelessWidget {
 
   Future<void> _onChanged(String string) async {
     final results = await db.queryFoods(searchString: string);
-    print(results.length);
+    debugPrint('${results.length} matches for "$string"');
   }
 
   @override

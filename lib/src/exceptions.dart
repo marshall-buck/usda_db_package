@@ -1,6 +1,8 @@
 /// Thrown when the database cannot be initialized, or when it is queried
 /// before `UsdaDbDAO.init` has completed successfully.
 class DBException implements Exception {
+  /// Creates a [DBException] describing [errorMessage], carrying [stackTrace]
+  /// from the underlying error where there was one.
   DBException(this.errorMessage, [this.stackTrace]);
 
   /// Description of what went wrong.
@@ -21,6 +23,8 @@ class DBException implements Exception {
 /// the generator that wrote a shape this package no longer understands. The
 /// message carries the underlying decode error.
 class DBFormatException implements Exception {
+  /// Creates a [DBFormatException] describing [errorMessage], carrying
+  /// [stackTrace] from the underlying decode error where there was one.
   DBFormatException(this.errorMessage, [this.stackTrace]);
 
   /// Description of what went wrong, including the underlying decode error.
@@ -41,6 +45,8 @@ class DBFormatException implements Exception {
 /// the consuming app has not picked up this package's assets, or because the
 /// hash in `file_manifest.txt` no longer matches the data file names.
 class DBFileException implements Exception {
+  /// Creates a [DBFileException] describing [errorMessage], carrying
+  /// [stackTrace] from the underlying bundle error where there was one.
   DBFileException(this.errorMessage, [this.stackTrace]);
 
   /// Description of what went wrong, including the asset path attempted.

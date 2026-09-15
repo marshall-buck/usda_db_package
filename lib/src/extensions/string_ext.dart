@@ -1,3 +1,5 @@
+/// String helpers for turning food descriptions and search input into the
+/// terms the autocomplete index is keyed by.
 extension StringExtensions on String {
   /// Removes every character that is not a word character (letters, digits,
   /// underscores), a parenthesis, a percent sign, a hyphen or a forward slash.

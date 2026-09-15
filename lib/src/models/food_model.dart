@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs
 import 'package:equatable/equatable.dart';
 
-import 'nutrient_model.dart';
+import 'package:usda_db_package/src/models/nutrient_model.dart';
 
 /// A food item from the USDA SR Legacy database.
 ///
@@ -19,6 +18,7 @@ import 'nutrient_model.dart';
 /// final calories = food.nutrient(1008)?.amount;
 /// ```
 class UsdaFoodModel extends Equatable {
+  /// Creates a food item.
   const UsdaFoodModel({
     required this.id,
     required this.description,
