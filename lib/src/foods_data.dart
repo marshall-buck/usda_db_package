@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 
 // `compute` rather than `Isolate.run` from dart:isolate: this package is used
 // from Flutter apps that may be built for web, where isolates do not exist and
@@ -9,6 +8,7 @@ import 'dart:developer' as dev;
 // file_service.dart.
 import 'package:flutter/foundation.dart' show compute;
 
+import 'exceptions.dart';
 import 'initializer.dart';
 import 'models/models.dart';
 
@@ -42,7 +42,7 @@ class FoodsData implements DataInitializer {
   /// file is several megabytes and would otherwise block the UI isolate for
   /// hundreds of milliseconds.
   ///
-  /// Throws a [FormatException] if the JSON string cannot be decoded.
+  /// Throws a [DBFormatException] if the JSON string cannot be decoded.
   @override
   Future<void> init({required String jsonString}) async {
     try {
@@ -51,13 +51,7 @@ class FoodsData implements DataInitializer {
         ..clear()
         ..addAll(foods);
     } catch (e, st) {
-      dev.log(
-        'Error decoding JSON',
-        name: 'Foods',
-        error: e.toString(),
-        stackTrace: st,
-      );
-      throw const FormatException('Error decoding JSON in FoodsData class');
+      throw DBFormatException('Error decoding foods JSON: $e', st);
     }
   }
 

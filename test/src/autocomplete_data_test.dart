@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usda_db_package/src/autocomplete_data.dart';
+import 'package:usda_db_package/src/exceptions.dart';
 
 import '../setup/mock_file_strings.dart';
 
@@ -44,22 +45,30 @@ void main() {
           expect(element.value, isA<List<int>>());
         }
       });
-      test('throws FormatException if either properties are empty', () async {
+      test('throws DBFormatException if either properties are empty', () async {
         // ignore: inference_failure_on_collection_literal
         final emptyJson = jsonEncode({'substringHash': {}, 'indexHash': {}});
 
-        expect(
-          () async => hashData.init(jsonString: emptyJson),
-          throwsA(isA<FormatException>()),
+        await expectLater(
+          hashData.init(jsonString: emptyJson),
+          throwsA(isA<DBFormatException>()),
         );
       });
 
-      test('throws FormatException if invalid json', () async {
+      test('throws DBFormatException if invalid json', () async {
         const invalidJson = '{substringHash: {}}';
 
-        expect(
-          () async => hashData.init(jsonString: invalidJson),
-          throwsA(isA<FormatException>()),
+        await expectLater(
+          hashData.init(jsonString: invalidJson),
+          throwsA(
+            isA<DBFormatException>()
+                .having(
+                  (e) => e.errorMessage,
+                  'errorMessage',
+                  contains('FormatException'),
+                )
+                .having((e) => e.stackTrace, 'stackTrace', isNotNull),
+          ),
         );
       });
     });

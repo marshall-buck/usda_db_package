@@ -51,10 +51,11 @@ A deep pass over `lib/`, `test/`, `example/` and package config. Ordered roughly
 `lib/src/usda_db_base.dart:148-152` — the loop `await queryFood(id: id!)` re-runs the `isDataLoaded` check and allocates a `Future` for what is ultimately `_foodsList[id]`. The `ids.toList()` on line 149 is also a pointless copy of a `Set` that is already iterable.
 *Resolution:* the loop hoists `_foodsData!` once and calls the synchronous `FoodsData.queryFood` directly, so there is one `isDataLoaded` check per query instead of one per result and no `Future` per row. The `ids.toList()` copy went with the nullable-id fix above. The public `queryFood`/`queryFoods` keep their `Future` return types — that is the API consumers already build against.
 
-🟡 **Exception type laundering.** *Half fixed.*
-`lib/src/file_service.dart:42,63` converted *any* asset-bundle failure into `FileSystemException(e.toString())` — a `dart:io` type for something that never touched the filesystem, with the original exception flattened to a string.
+✅ ~~**Exception type laundering.**~~
+`lib/src/file_service.dart:42,63` converted *any* asset-bundle failure into `FileSystemException(e.toString())` — a `dart:io` type for something that never touched the filesystem, with the original exception flattened to a string. `foods_data.dart` threw `const FormatException('Error decoding JSON in FoodsData class')` and dropped `e` entirely, while `autocomplete_data.dart` interpolated it — two conventions, one of them lossy.
 *Resolution:* replaced with a package-owned `DBFileException` that keeps the asset path and the stack trace; both throw sites now share one `_loadAsset` helper. `DBException` and `DBFileException` are also exported from `usda_db_package.dart` — they are thrown by the public API but were previously unreachable by consumers, so there was no way to catch them by type.
-*Still outstanding:* `lib/src/foods_data.dart:48` still throws `const FormatException('Error decoding JSON in FoodsData class')` and drops `e` entirely, while `autocomplete_data.dart:92` keeps it. Two conventions, one of them lossy.
+Both decode failures now throw one type, `DBFormatException`, carrying the underlying error in the message *and* the original stack trace — the same shape as `DBFileException`, and exported alongside it. The distinction it preserves is worth keeping: `DBFileException` means the asset could not be read, `DBFormatException` means it was read but would not decode. The `const FormatException`s inside `_parseAutoCompleteData` stay as they are — they are the genuine format-validation errors, raised on the isolate and wrapped on the way out.
+The four log-and-throw pairs went with it. `foods_data.init`, `autocomplete_data.init`, `FileService._loadAsset` and `UsdaDbDAO.init` each called `dev.log` with the error and stack trace and then threw an exception carrying the same two things, so one decode failure was reported twice — once as a log line the caller cannot suppress, once as the exception. Now they only throw; the caller decides whether to log. The logs that remain are the ones that are not also thrown: `init()`/`dispose` completion, and the dangling-food-id warning in `queryFoods`, which is deliberately logged *instead of* thrown.
 
 ✅ ~~**`dart:io` import makes the package uncompilable for web.**~~ *Fixed.*
 `lib/src/file_service.dart:2` — imported solely for `FileSystemException`. Removed along with that exception type; `lib/` no longer references `dart:io` anywhere.
@@ -91,6 +92,9 @@ The dead `keepTheseNutrients` list (96 entries, zero references — it belongs t
 ---
 
 ## Tests
+
+🔴 **Tests bypass the public API.**
+Every test imports `package:usda_db_package/src/...` directly rather than `package:usda_db_package/usda_db_package.dart`, so nothing verifies that the exported surface is actually usable.
 
 🔴 **~10 lines of identical mock setup copy-pasted into all 9 tests.**
 `test/src/usda_db_base_test.dart` — 24 `when(() => mockFileLoaderService.loadData(...))` stubs across 279 lines, every one of them the same pair. This belongs in `setUp`. Two tests (lines 231-248 and 213-230) are byte-identical in body with different names.
@@ -131,6 +135,3 @@ The dead `keepTheseNutrients` list (96 entries, zero references — it belongs t
 
 🔴 **Lints switched off rather than satisfied.**
 `analysis_options.yaml:10-14` disables `public_member_api_docs`, `avoid_print` and `always_use_package_imports`. Consistent with `print` calls commented out in `usda_db_base.dart:139,144`, a live `print` in `example/usda_db_example.dart:24`, and mixed import styles (`package:usda_db_package/src/initializer.dart` in `autocomplete_data.dart:4` vs. relative `'initializer.dart'` in `foods_data.dart:4`) — including the odd `import '../src/models/models.dart'` in `usda_db_base.dart:4`, which walks up and back into its own directory.
-
-🔴 **Tests bypass the public API.**
-Every test imports `package:usda_db_package/src/...` directly rather than `package:usda_db_package/usda_db_package.dart`, so nothing verifies that the exported surface is actually usable.

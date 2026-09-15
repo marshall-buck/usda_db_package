@@ -69,12 +69,6 @@ class UsdaDbDAO {
     try {
       await _loadData();
     } catch (e, st) {
-      dev.log(
-        'error',
-        name: 'UsdaDB Package: UsdaDB.init()',
-        error: e.toString(),
-        stackTrace: st,
-      );
       throw DBException(e.toString(), st);
     } finally {
       _isInitializing = false;

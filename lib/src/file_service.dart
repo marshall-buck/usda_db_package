@@ -1,5 +1,3 @@
-import 'dart:developer' as dev;
-
 // One of the two reasons this is a Flutter package rather than a pure Dart one:
 // the data files are declared under `flutter: assets:` in pubspec.yaml, and
 // rootBundle is what reads them out of a consuming app's bundle. A pure Dart
@@ -43,18 +41,12 @@ class FileService {
   /// Throws a [DBFileException] if the asset cannot be loaded.
   Future<String> _getFileHash() => _loadAsset('$_dataPath/$fileNameManifest');
 
-  /// Reads [assetPath] from the bundle, logging and rethrowing any failure as
-  /// a [DBFileException].
+  /// Reads [assetPath] from the bundle, rethrowing any failure as a
+  /// [DBFileException].
   Future<String> _loadAsset(String assetPath) async {
     try {
       return await rootBundle.loadString(assetPath);
     } catch (e, st) {
-      dev.log(
-        'Error loading file at $assetPath',
-        name: 'FileService',
-        error: e.toString(),
-        stackTrace: st,
-      );
       throw DBFileException('Error loading file at $assetPath: $e', st);
     }
   }

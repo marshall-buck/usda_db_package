@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 
 // `compute` rather than `Isolate.run` from dart:isolate - see the note in
 // foods_data.dart: `Isolate.run` throws on web, `compute` degrades to an inline
 // call there.
 import 'package:flutter/foundation.dart' show compute;
+import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/initializer.dart';
 
 ///
@@ -77,6 +77,8 @@ class AutoCompleteData implements DataInitializer {
   /// using the provided [jsonString].
   ///
   /// The decode and the type conversion run on a background isolate.
+  ///
+  /// Throws a [DBFormatException] if the JSON string cannot be decoded.
   @override
   Future<void> init({required String jsonString}) async {
     try {
@@ -88,13 +90,7 @@ class AutoCompleteData implements DataInitializer {
         ..clear()
         ..addAll(parsed.indexHash);
     } catch (e, st) {
-      dev.log(
-        'Error decoding JSON',
-        name: 'AutoCompleteHashData',
-        error: e.toString(),
-        stackTrace: st,
-      );
-      throw FormatException('Error decoding JSON: $e');
+      throw DBFormatException('Error decoding autocomplete JSON: $e', st);
     }
   }
 

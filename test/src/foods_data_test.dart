@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:usda_db_package/src/exceptions.dart';
 import 'package:usda_db_package/src/foods_data.dart';
 import 'package:usda_db_package/src/models/models.dart';
 
@@ -29,13 +30,19 @@ void main() {
       );
       expect(foods.foodsList[167512]?.nutrients.length, 7);
     });
-    test('init should throw FormatException on invalid JSON', () async {
-      try {
-        await foods.init(jsonString: 'invalid json');
-        fail('Expected to throw FormatException');
-      } catch (e) {
-        expect(e, isA<FormatException>());
-      }
+    test('init should throw DBFormatException on invalid JSON', () async {
+      await expectLater(
+        foods.init(jsonString: 'invalid json'),
+        throwsA(
+          isA<DBFormatException>()
+              .having(
+                (e) => e.errorMessage,
+                'errorMessage',
+                contains('FormatException'),
+              )
+              .having((e) => e.stackTrace, 'stackTrace', isNotNull),
+        ),
+      );
     });
 
     test('init leaves foodsList empty when an entry fails to convert', () async {
@@ -47,7 +54,7 @@ void main() {
 
       await expectLater(
         foods.init(jsonString: halfBadJson),
-        throwsA(isA<FormatException>()),
+        throwsA(isA<DBFormatException>()),
       );
       expect(foods.foodsList, isEmpty);
     });
