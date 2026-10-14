@@ -1,5 +1,7 @@
 // cSpell: disable
 
+// The data below is JSON pasted in as Dart literals; double quotes keep it
+// close to the files it mirrors.
 // ignore_for_file: prefer_single_quotes
 
 import "dart:convert";
@@ -7,7 +9,7 @@ import "dart:convert";
 final String mockDBString = jsonEncode(mockKJsonString);
 final String mockHashString = jsonEncode(mockHashTable);
 
-const mockFoodsData = {
+const Map<int, Map<String, Object>> mockFoodsData = {
   167512: {
     "description":
         "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",
@@ -89,7 +91,7 @@ final Map<String, dynamic> mockKJsonString = mockFoodsData.map((k, v) {
   );
 });
 
-const mockHashTable = {
+const Map<String, Map<String, Object>> mockHashTable = {
   "substringHash": {
     '2%': 0,
     '21': 1,

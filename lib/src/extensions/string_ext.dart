@@ -40,9 +40,6 @@ extension StringExtensions on String {
         words.add(splitWords);
       }
     }
-    final wordsSet = words.expand((list) => list).toSet();
-    // ignore: cascade_invocations
-    wordsSet.remove('');
-    return wordsSet;
+    return words.expand((list) => list).toSet()..remove('');
   }
 }

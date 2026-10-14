@@ -134,8 +134,7 @@ class UsdaDb {
         List<String>.unmodifiable(searchString.sanitizeSentence());
     if (sanitizedWords.isEmpty) return [];
 
-    final ids =
-        all == true ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
+    final ids = all ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
 
     if (ids.isEmpty) return [];
 

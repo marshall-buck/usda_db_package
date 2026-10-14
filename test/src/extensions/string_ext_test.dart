@@ -10,8 +10,7 @@ void main() {
         expect('  hello)bob '.removeUnwantedChars(), 'hello)bob');
         expect('  hello(bob '.removeUnwantedChars(), 'hello(bob');
         expect('  (hello ) '.removeUnwantedChars(), '(hello)');
-        // ignore: use_raw_strings
-        expect('hello@\$-!@#bob '.removeUnwantedChars(), 'hello-bob');
+        expect(r'hello@$-!@#bob '.removeUnwantedChars(), 'hello-bob');
         expect('  hello '.removeUnwantedChars(), 'hello');
         expect('  hel  lo'.removeUnwantedChars(), 'hello');
         expect(''.removeUnwantedChars(), '');

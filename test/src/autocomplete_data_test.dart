@@ -53,8 +53,9 @@ void main() {
       });
       test('throws UsdaDbFormatException if either properties are empty',
           () async {
-        // ignore: inference_failure_on_collection_literal
-        final emptyJson = jsonEncode({'substringHash': {}, 'indexHash': {}});
+        final emptyJson = jsonEncode(
+          {'substringHash': <String, int>{}, 'indexHash': <String, int>{}},
+        );
 
         await expectLater(
           hashData.init(jsonString: emptyJson),

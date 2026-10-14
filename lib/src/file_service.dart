@@ -44,7 +44,7 @@ class FileService {
     // caller parses the string into a table and drops it. Cached, `rootBundle`
     // would hold all ~13 MB of raw JSON for the life of the app alongside the
     // parsed data, with no way to evict it from here.
-    return _loadAsset(assetPath, cache: false);
+    return await _loadAsset(assetPath, cache: false);
   }
 
   /// Opens the manifest file and returns the hash.

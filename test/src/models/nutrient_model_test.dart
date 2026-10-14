@@ -1,3 +1,5 @@
+// Nutrient amounts are doubles; writing them as `4.0` rather than `4` keeps
+// that visible in the expectations.
 // ignore_for_file: prefer_int_literals
 
 import 'package:flutter_test/flutter_test.dart';

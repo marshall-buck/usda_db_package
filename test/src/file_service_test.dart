@@ -21,7 +21,7 @@ void main() {
 
   void stubAssetBundle() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+        .setMockMessageHandler('flutter/assets', (message) async {
       final key = utf8.decode(message!.buffer.asUint8List());
       reads[key] = (reads[key] ?? 0) + 1;
       final contents = bundledAssets[key];
