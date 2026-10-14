@@ -117,6 +117,29 @@ void main() {
 
         expect(foodItem, isNull);
       });
+      test('has no matched words without matchWordsFor', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final foodItem = await db.queryFood(id: 167512);
+
+        expect(foodItem?.matchedWords, isEmpty);
+      });
+      test('lists matched words for matchWordsFor', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final foodItem =
+            await db.queryFood(id: 167512, matchWordsFor: 'butter, DOUGH');
+
+        expect(foodItem?.matchedWords, ['Buttermilk', 'dough']);
+      });
+      test('returns the food when nothing matches matchWordsFor', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final foodItem = await db.queryFood(id: 167512, matchWordsFor: 'kale');
+
+        expect(foodItem?.id, 167512);
+        expect(foodItem?.matchedWords, isEmpty);
+      });
     });
 
     group('queryFoods() - ', () {
@@ -168,6 +191,16 @@ void main() {
 
         expect(list.map((food) => food.id), [167515]);
       });
+      test('carries the sanitized search words on every food', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final list =
+            await db.queryFoods(searchString: 'Aba, dough', all: false);
+
+        for (final food in list) {
+          expect(food.matchTerms, ['aba', 'dough']);
+        }
+      });
       test('expect list to return only descriptions with ANY words', () async {
         await db.init(fileLoader: fileLoader);
 
@@ -178,6 +211,16 @@ void main() {
           list.map((food) => food.id),
           unorderedEquals([167512, 167513, 167514, 167515]),
         );
+      });
+      test('ANY search carries only the words the index matched', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final list = await db.queryFoods(searchString: 'aba rrr', all: false);
+
+        expect(list, isNotEmpty);
+        for (final food in list) {
+          expect(food.matchTerms, ['aba']);
+        }
       });
       test('drops ids the foods table does not hold', () async {
         await db.init(fileLoader: fileLoader);

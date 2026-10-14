@@ -103,5 +103,72 @@ void main() {
         expect(foodModel.nutrient(999999), isNull);
       });
     });
+
+    group('matchedWords - ', () {
+      test('is empty without match terms', () {
+        const foodModel = UsdaFoodModel(
+          id: 1,
+          description: 'Apples, raw',
+          nutrients: {},
+        );
+
+        expect(foodModel.matchedWords, isEmpty);
+      });
+
+      test('lists words containing a term, in original case', () {
+        const foodModel = UsdaFoodModel(
+          id: 1,
+          description: 'Apples, raw, with pineapple (Apples)',
+          nutrients: {},
+          matchTerms: ['app'],
+        );
+
+        expect(foodModel.matchedWords, ['Apples', 'pineapple']);
+      });
+
+      test('splits on dashes, slashes and parentheses', () {
+        const foodModel = UsdaFoodModel(
+          id: 1,
+          description: 'Waffles, ready-to-heat/toasted (Heat)',
+          nutrients: {},
+          matchTerms: ['heat', 'toast'],
+        );
+
+        expect(foodModel.matchedWords, ['heat', 'toasted', 'Heat']);
+      });
+
+      test('is empty when no word contains a term', () {
+        const foodModel = UsdaFoodModel(
+          id: 1,
+          description: 'Apples, raw',
+          nutrients: {},
+          matchTerms: ['kale'],
+        );
+
+        expect(foodModel.matchedWords, isEmpty);
+      });
+    });
+
+    group('withMatchTerms() - ', () {
+      const foodModel = UsdaFoodModel(
+        id: 1,
+        description: 'Apples, raw',
+        nutrients: {1008: 52.0},
+      );
+
+      test('copies the food with the terms', () {
+        final copy = foodModel.withMatchTerms(['app']);
+
+        expect(copy.id, 1);
+        expect(copy.description, 'Apples, raw');
+        expect(copy.nutrients, {1008: 52.0});
+        expect(copy.matchTerms, ['app']);
+        expect(foodModel.matchTerms, isEmpty);
+      });
+
+      test('match terms are not part of equality', () {
+        expect(foodModel.withMatchTerms(['app']), foodModel);
+      });
+    });
   });
 }

@@ -98,9 +98,20 @@ class UsdaDb {
   }
 
   /// The food with the USDA [id], or `null` if the database has no such food.
-  Future<UsdaFoodModel?> queryFood({required int id}) async {
+  ///
+  /// [id] alone decides which food is returned. [matchWordsFor] only fills the
+  /// food's [UsdaFoodModel.matchedWords] with the description words containing
+  /// any of its words; the food is returned whether or not any match.
+  Future<UsdaFoodModel?> queryFood({
+    required int id,
+    String? matchWordsFor,
+  }) async {
     _requireDataLoaded();
-    return _foodsData!.queryFood(id);
+    final food = _foodsData!.queryFood(id);
+    if (food == null || matchWordsFor == null) return food;
+    return food.withMatchTerms(
+      List.unmodifiable(matchWordsFor.sanitizeSentence()),
+    );
   }
 
   /// The foods matching [searchString], empty if none do.
@@ -111,18 +122,33 @@ class UsdaDb {
   /// An id the autocomplete index reports but the foods table does not hold is
   /// a data-integrity failure; it is logged and dropped rather than handed back
   /// to the caller as a `null` to trip over.
+  ///
+  /// Each food's [UsdaFoodModel.matchedWords] lists the description words that
+  /// matched.
   Future<List<UsdaFoodModel>> queryFoods({
     required String searchString,
     bool all = true,
   }) async {
     _requireDataLoaded();
-    final sanitizedWords = searchString.sanitizeSentence().toList();
+    final sanitizedWords =
+        List<String>.unmodifiable(searchString.sanitizeSentence());
     if (sanitizedWords.isEmpty) return [];
 
     final ids =
         all == true ? _getIdsAll(sanitizedWords) : _getIdsAny(sanitizedWords);
 
     if (ids.isEmpty) return [];
+
+    // With `all` clear a food may be returned for some words and not others;
+    // only words the index knows can have caused a match.
+    final matchedTerms = all
+        ? sanitizedWords
+        : List<String>.unmodifiable(
+            sanitizedWords.where(
+              (term) =>
+                  _autoCompleteData!.getFoodIndexes(substring: term).isNotEmpty,
+            ),
+          );
 
     final foodsData = _foodsData!;
     final foods = <UsdaFoodModel>[];
@@ -137,7 +163,7 @@ class UsdaDb {
         );
         continue;
       }
-      foods.add(food);
+      foods.add(food.withMatchTerms(matchedTerms));
     }
     return foods;
   }

@@ -2,7 +2,7 @@ name: usda_db_package
 description: >-
   Offline USDA SR Legacy food database for Flutter apps: lookup by id and
   substring autocomplete search over the bundled foods and nutrients.
-version: 1.0.0
+version: 1.1.0
 repository: https://github.com/marshall-buck/usda_db_package
 
 environment:

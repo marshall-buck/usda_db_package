@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:usda_db_package/src/extensions/string_ext.dart';
 import 'package:usda_db_package/src/models/nutrient_model.dart';
 
 /// A food item from the USDA SR Legacy database.
@@ -23,6 +24,7 @@ class UsdaFoodModel extends Equatable {
     required this.id,
     required this.description,
     required this.nutrients,
+    this.matchTerms = const [],
   });
 
   /// Food id.
@@ -36,6 +38,51 @@ class UsdaFoodModel extends Equatable {
   /// Amounts are per 100g of the food. See [nutrientList] for the same data
   /// paired with nutrient names and units.
   final Map<int, double> nutrients;
+
+  /// The sanitized terms [matchedWords] matches against: the search words a
+  /// food was returned for, or the words passed to `queryFood`'s
+  /// `matchWordsFor`. Empty when neither applies.
+  ///
+  /// Not part of equality: the same food with different terms is still the
+  /// same food.
+  final List<String> matchTerms;
+
+  /// The words in [description] that contain any of [matchTerms], in the
+  /// order they appear, each once. Empty when [matchTerms] is.
+  ///
+  /// Words keep their original case and are split the same way the search
+  /// index splits them: on whitespace, `-`, `/`, `(` and `)`, with other
+  /// punctuation removed.
+  ///
+  /// ```dart
+  /// final foods = await db.queryFoods(searchString: 'app');
+  /// foods.first.matchedWords; // ['Apples']
+  /// ```
+  ///
+  /// This is worked out on each access. Hoist it into a variable if you read
+  /// it more than once, e.g. inside a `build` method.
+  List<String> get matchedWords {
+    if (matchTerms.isEmpty) return const [];
+    final words = <String>{};
+    for (final token in description.split(' ')) {
+      for (final word in token
+          .removeUnwantedChars()
+          .stripDashedAndParenthesisAndForwardSlashesWord()) {
+        if (word.isEmpty) continue;
+        final lowerWord = word.toLowerCase();
+        if (matchTerms.any(lowerWord.contains)) words.add(word);
+      }
+    }
+    return words.toList();
+  }
+
+  /// A copy of this food carrying [matchTerms].
+  UsdaFoodModel withMatchTerms(List<String> matchTerms) => UsdaFoodModel(
+        id: id,
+        description: description,
+        nutrients: nutrients,
+        matchTerms: matchTerms,
+      );
 
   /// The food's [nutrients] as [UsdaNutrientModel]s, each carrying a display
   /// name and unit alongside the amount.

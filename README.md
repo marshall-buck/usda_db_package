@@ -45,7 +45,7 @@ awaited again.
 | Member | Returns | Notes |
 | --- | --- | --- |
 | `init({FileService? fileLoader})` | `Future<void>` | Loads both data files. Throws `UsdaDbException` on failure. |
-| `queryFood({required int id})` | `Future<UsdaFoodModel?>` | `null` if no food has that id. |
+| `queryFood({required int id, String? matchWordsFor})` | `Future<UsdaFoodModel?>` | `null` if no food has that id. `matchWordsFor` fills `matchedWords`. |
 | `queryFoods({required String searchString, bool all = true})` | `Future<List<UsdaFoodModel>>` | Empty if nothing matches. |
 | `isDataLoaded` | `bool` | True between a successful `init()` and `dispose()`. |
 | `isInitializing` | `bool` | True while `init()` is running. Per instance. |
@@ -73,9 +73,38 @@ Because matching is by substring, `utter` finds the 155 foods with
 `buttermilk`, `butter` and so on in their description. The index holds 22,529
 substrings, 2 to 15 characters long.
 
+### Matched words
+
+Every food `queryFoods` returns knows which words in its description matched,
+for example to highlight them:
+
+```dart
+final foods = await db.queryFoods(searchString: 'utter');
+foods.first.matchedWords; // ['Buttermilk']
+```
+
+A word matches when it contains any search word. Words keep their original
+case, are split on spaces, `-`, `/`, `(` and `)`, and lose other punctuation.
+Each appears once, in description order.
+
+`queryFood` still looks up by id only, but given `matchWordsFor` it fills
+`matchedWords` the same way. The food is returned whether or not anything
+matches; without `matchWordsFor`, `matchedWords` is empty.
+
+```dart
+final food = await db.queryFood(id: 167512, matchWordsFor: 'dough');
+food?.matchedWords; // ['dough']
+```
+
+`matchedWords` is worked out on each access, so a search costs nothing extra
+until it is read. Hoist it into a variable if you read it more than once. The
+terms behind it are in `matchTerms`, which is not part of equality: the same
+food with different terms is still `==`.
+
 ## Foods and nutrients
 
-`UsdaFoodModel` carries `id`, `description`, and `nutrients` — a
+`UsdaFoodModel` carries `id`, `description`, `matchedWords` (see
+[Matched words](#matched-words)), and `nutrients` — a
 `Map<int, double>` of USDA nutrient id to amount **per 100 g of the food**:
 
 ```dart
