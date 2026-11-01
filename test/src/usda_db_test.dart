@@ -231,6 +231,84 @@ void main() {
 
         expect(list, isEmpty);
       });
+      test('with categoryCode returns only foods in that category', () async {
+        await db.init(fileLoader: fileLoader);
+
+        // 'aba' or 'dough' -> [167512, 167513, 167514, 167515]; only 167514
+        // is in category 600.
+        final list = await db.queryFoods(
+          searchString: 'aba, dough',
+          all: false,
+          categoryCode: 600,
+        );
+
+        expect(list.map((food) => food.id), [167514]);
+        expect(list.single.matchTerms, ['aba', 'dough']);
+      });
+      test('is empty when no match is in categoryCode', () async {
+        await db.init(fileLoader: fileLoader);
+
+        // 'aba' -> [167512, 167513, 167515], all in category 1800.
+        final list =
+            await db.queryFoods(searchString: 'aba', categoryCode: 600);
+
+        expect(list, isEmpty);
+      });
+      test('is empty for an unknown categoryCode', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final list =
+            await db.queryFoods(searchString: 'aba', categoryCode: 9999);
+
+        expect(list, isEmpty);
+      });
+    });
+
+    group('queryFoodsByCategory() - ', () {
+      test('returns every food in the category', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final list = await db.queryFoodsByCategory(categoryCode: 1800);
+
+        expect(
+          list.map((food) => food.id),
+          [167512, 167513, 167515, 167516, 167517],
+        );
+        expect(list.first.matchedWords, isEmpty);
+      });
+      test('is empty for an unknown categoryCode', () async {
+        await db.init(fileLoader: fileLoader);
+
+        final list = await db.queryFoodsByCategory(categoryCode: 9999);
+
+        expect(list, isEmpty);
+      });
+      test('throws before init', () async {
+        await expectLater(
+          db.queryFoodsByCategory(categoryCode: 1800),
+          throwsA(isA<UsdaDbException>()),
+        );
+      });
+    });
+
+    group('categories - ', () {
+      test('lists the categories in the data, in code order', () async {
+        await db.init(fileLoader: fileLoader);
+
+        expect(
+          db.categories,
+          const [
+            UsdaFoodCategoryModel(
+              code: 600,
+              name: 'Soups, Sauces, and Gravies',
+            ),
+            UsdaFoodCategoryModel(code: 1800, name: 'Baked Products'),
+          ],
+        );
+      });
+      test('throws before init', () {
+        expect(() => db.categories, throwsA(isA<UsdaDbException>()));
+      });
     });
   });
 }

@@ -11,9 +11,10 @@ final String mockHashString = jsonEncode(mockHashTable);
 
 const Map<int, Map<String, Object>> mockFoodsData = {
   167512: {
-    "description":
+    "d":
         "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",
-    "nutrients": {
+    "c": 1800,
+    "n": {
       1003: 5.88,
       1079: 1.2,
       1258: 2.94,
@@ -24,8 +25,9 @@ const Map<int, Map<String, Object>> mockFoodsData = {
     },
   },
   167513: {
-    "description": "Pillsbury, Cinnamon Rolls with Icing, refrigerated dough",
-    "nutrients": {
+    "d": "Pillsbury, Cinnamon Rolls with Icing, refrigerated dough",
+    "c": 1800,
+    "n": {
       1003: 4.34,
       1079: 1.4,
       1258: 3.25,
@@ -36,9 +38,11 @@ const Map<int, Map<String, Object>> mockFoodsData = {
     },
   },
   167514: {
-    "description":
+    "d":
         "Kraft Foods, Shake N Bake Original Recipe, Coating for Pork, dry",
-    "nutrients": {
+    // A second category, so the category filters have something to exclude.
+    "c": 600,
+    "n": {
       1004: 3.7,
       1005: 79.8,
       1008: 377,
@@ -46,8 +50,9 @@ const Map<int, Map<String, Object>> mockFoodsData = {
     },
   },
   167515: {
-    "description": "George Weston Bakeries, Thomas English Muffins",
-    "nutrients": {
+    "d": "George Weston Bakeries, Thomas English Muffins",
+    "c": 1800,
+    "n": {
       1258: 0.308,
       1003: 8.0,
       1004: 1.8,
@@ -56,8 +61,9 @@ const Map<int, Map<String, Object>> mockFoodsData = {
     },
   },
   167516: {
-    "description": "Waffles, buttermilk, frozen, ready-to-heat",
-    "nutrients": {
+    "d": "Waffles, buttermilk, frozen, ready-to-heat",
+    "c": 1800,
+    "n": {
       1258: 1.9,
       1003: 6.58,
       1079: 2.2,
@@ -68,8 +74,9 @@ const Map<int, Map<String, Object>> mockFoodsData = {
     },
   },
   167517: {
-    "description": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
-    "nutrients": {
+    "d": "Waffle, buttermilk, frozen, ready-to-heat, toasted",
+    "c": 1800,
+    "n": {
       1258: 2.28,
       1004: 9.49,
       1005: 48.4,
@@ -82,12 +89,12 @@ const Map<int, Map<String, Object>> mockFoodsData = {
 };
 
 final Map<String, dynamic> mockKJsonString = mockFoodsData.map((k, v) {
-  final nutrients = (v['nutrients']! as Map<int, dynamic>).map(
+  final nutrients = (v['n']! as Map<int, dynamic>).map(
     (key, value) => MapEntry(key.toString(), value),
   );
   return MapEntry(
     k.toString(),
-    {'description': v['description'], 'nutrients': nutrients},
+    {'d': v['d'], 'c': v['c'], 'n': nutrients},
   );
 });
 

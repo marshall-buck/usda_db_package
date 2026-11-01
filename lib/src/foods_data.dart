@@ -19,12 +19,14 @@ import 'package:usda_db_package/src/models/models.dart';
 ///
 /// The shape of the file [init] expects, which the code alone does not give
 /// away - nutrient ids and food ids arrive as strings because JSON keys are
-/// always strings:
+/// always strings. `d` is the description, `c` the category code and `n` the
+/// nutrients:
 /// ```json
 /// {
 ///   "167512": {
-///     "description": "Pillsbury Golden Layer Buttermilk Biscuits",
-///     "nutrients": {"1003": 5.88, "1004": 13.2}
+///     "d": "Pillsbury Golden Layer Buttermilk Biscuits",
+///     "c": 1800,
+///     "n": {"1003": 5.88, "1004": 13.2}
 ///   }
 /// }
 /// ```
@@ -33,6 +35,12 @@ class FoodsData implements DataInitializer {
 
   /// The foods table, keyed by USDA food id. Empty until [init] has run.
   Map<int, UsdaFoodModel> get foodsList => _foodsList;
+
+  List<int> _categoryCodes = const [];
+
+  /// The distinct category codes held by [foodsList], in ascending order.
+  /// Empty until [init] has run.
+  List<int> get categoryCodes => _categoryCodes;
 
   /// Builds [foodsList] from [jsonString], replacing whatever was there.
   ///
@@ -49,16 +57,29 @@ class FoodsData implements DataInitializer {
       _foodsList
         ..clear()
         ..addAll(foods);
+      _categoryCodes = List.unmodifiable(
+        foods.values.map((food) => food.categoryCode).toSet().toList()..sort(),
+      );
     } catch (e, st) {
       throw UsdaDbFormatException('Error decoding foods JSON: $e', st);
     }
   }
 
-  /// Empties [foodsList].
-  void clear() => _foodsList.clear();
+  /// Empties [foodsList] and [categoryCodes].
+  void clear() {
+    _foodsList.clear();
+    _categoryCodes = const [];
+  }
 
   /// The food with [foodId], or `null` if the table has no such food.
   UsdaFoodModel? queryFood(int foodId) => _foodsList[foodId];
+
+  /// Every food whose category is [categoryCode], in table order. Empty if
+  /// none is.
+  List<UsdaFoodModel> queryFoodsByCategory(int categoryCode) => [
+        for (final food in _foodsList.values)
+          if (food.categoryCode == categoryCode) food,
+      ];
 }
 
 /// Decodes [jsonString] and converts it into the foods table.
@@ -73,11 +94,12 @@ Map<int, UsdaFoodModel> _parseFoods(String jsonString) {
     final foodData = entry.value as Map<String, dynamic>;
 
     // Explicitly cast the nutrients list
-    final nutrientList = foodData['nutrients'] as Map<String, dynamic>;
+    final nutrientList = foodData['n'] as Map<String, dynamic>;
 
     foods[foodId] = UsdaFoodModel(
       id: foodId,
-      description: foodData['description'] as String,
+      description: foodData['d'] as String,
+      categoryCode: foodData['c'] as int,
       nutrients: _createNutrients(nutrientList),
     );
   }

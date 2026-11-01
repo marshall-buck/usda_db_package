@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'package:usda_db_package/src/extensions/string_ext.dart';
+import 'package:usda_db_package/src/models/food_category_model.dart';
 import 'package:usda_db_package/src/models/nutrient_model.dart';
 
 /// A food item from the USDA SR Legacy database.
@@ -18,11 +19,19 @@ import 'package:usda_db_package/src/models/nutrient_model.dart';
 ///
 /// final calories = food.nutrient(1008)?.amount;
 /// ```
+///
+/// [categoryCode] is the raw USDA food category code. For the category with
+/// its display name, use [category]:
+///
+/// ```dart
+/// food.category.name; // Baked Products
+/// ```
 class UsdaFoodModel extends Equatable {
   /// Creates a food item.
   const UsdaFoodModel({
     required this.id,
     required this.description,
+    required this.categoryCode,
     required this.nutrients,
     this.matchTerms = const [],
   });
@@ -32,6 +41,20 @@ class UsdaFoodModel extends Equatable {
 
   /// Food Description.
   final String description;
+
+  /// The USDA food category code, e.g. `1800` for Baked Products.
+  ///
+  /// See [category] for the same code paired with its name.
+  final int categoryCode;
+
+  /// The food's [categoryCode] as a [UsdaFoodCategoryModel], carrying its
+  /// display name.
+  ///
+  /// Every category code in the shipped data has an entry in
+  /// [UsdaFoodCategoryModel.foodCategories], so this always resolves to a
+  /// name.
+  UsdaFoodCategoryModel get category =>
+      UsdaFoodCategoryModel.fromCode(categoryCode);
 
   /// The id of the nutrient and the amount {id: amount}.
   ///
@@ -80,6 +103,7 @@ class UsdaFoodModel extends Equatable {
   UsdaFoodModel withMatchTerms(List<String> matchTerms) => UsdaFoodModel(
         id: id,
         description: description,
+        categoryCode: categoryCode,
         nutrients: nutrients,
         matchTerms: matchTerms,
       );
@@ -112,5 +136,5 @@ class UsdaFoodModel extends Equatable {
   }
 
   @override
-  List<Object> get props => [id, description, nutrients];
+  List<Object> get props => [id, description, categoryCode, nutrients];
 }

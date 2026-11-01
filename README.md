@@ -1,9 +1,10 @@
 # usda_db_package
 
 An offline copy of the USDA SR Legacy food database for Flutter apps: 7,006
-foods with their nutrient amounts, plus a substring index for autocomplete
-search. The data ships inside the package as Flutter assets, so there is no
-network call, no API key and nothing for the consuming app to declare.
+foods with their category and nutrient amounts, plus a substring index for
+autocomplete search. The data ships inside the package as Flutter assets, so
+there is no network call, no API key and nothing for the consuming app to
+declare.
 
 Flutter only — see [Requirements](#requirements).
 
@@ -46,7 +47,9 @@ awaited again.
 | --- | --- | --- |
 | `init({FileService? fileLoader})` | `Future<void>` | Loads both data files. Throws `UsdaDbException` on failure. |
 | `queryFood({required int id, String? matchWordsFor})` | `Future<UsdaFoodModel?>` | `null` if no food has that id. `matchWordsFor` fills `matchedWords`. |
-| `queryFoods({required String searchString, bool all = true})` | `Future<List<UsdaFoodModel>>` | Empty if nothing matches. |
+| `queryFoods({required String searchString, bool all = true, int? categoryCode})` | `Future<List<UsdaFoodModel>>` | Empty if nothing matches. `categoryCode` keeps only foods in that category. |
+| `queryFoodsByCategory({required int categoryCode})` | `Future<List<UsdaFoodModel>>` | Every food in the category. Empty for an unknown code. |
+| `categories` | `List<UsdaFoodCategoryModel>` | The categories in the loaded data, in code order. |
 | `isDataLoaded` | `bool` | True between a successful `init()` and `dispose()`. |
 | `isInitializing` | `bool` | True while `init()` is running. Per instance. |
 | `dispose()` | `void` | Drops both tables. `init()` can be called again afterwards. |
@@ -101,10 +104,10 @@ until it is read. Hoist it into a variable if you read it more than once. The
 terms behind it are in `matchTerms`, which is not part of equality: the same
 food with different terms is still `==`.
 
-## Foods and nutrients
+## Foods, categories and nutrients
 
-`UsdaFoodModel` carries `id`, `description`, `matchedWords` (see
-[Matched words](#matched-words)), and `nutrients` — a
+`UsdaFoodModel` carries `id`, `description`, `categoryCode`, `matchedWords`
+(see [Matched words](#matched-words)), and `nutrients` — a
 `Map<int, double>` of USDA nutrient id to amount **per 100 g of the food**:
 
 ```dart
@@ -141,6 +144,37 @@ UsdaNutrientModel.unitFor(1008); // 'kcal'
 
 Every nutrient id in the shipped data is in that table.
 
+### Categories
+
+`categoryCode` is the food's USDA category code. For the code with its name,
+use `category`, which returns a `UsdaFoodCategoryModel`:
+
+```dart
+food.categoryCode;  // 1800
+food.category.name; // 'Baked Products'
+```
+
+Names come from `UsdaFoodCategoryModel.foodCategories`, keyed by USDA category
+code, also reachable directly:
+
+```dart
+UsdaFoodCategoryModel.nameFor(1800); // 'Baked Products'
+```
+
+The table holds all 28 USDA categories. Every category code in the shipped
+data is in it. An unknown code gives an empty `name` and `isKnown` false.
+
+`UsdaDb.categories` lists only the 22 categories the shipped foods use, in
+code order, ready for a filter menu. Pass a code to `queryFoods` to narrow a
+search, or to `queryFoodsByCategory` to browse a whole category:
+
+```dart
+db.categories.first; // Dairy and Egg Products
+
+await db.queryFoods(searchString: 'cheese', categoryCode: 100);
+await db.queryFoodsByCategory(categoryCode: 1800);
+```
+
 ## Errors
 
 | Exception | When |
@@ -163,6 +197,7 @@ matches the file names in `lib/data/`.
 - 7,006 foods, USDA SR Legacy.
 - 93 distinct nutrients across the set; 1 to 81 per food. Calories (1008) is
   present for every food.
+- 22 of the 28 USDA food categories, one per food.
 - All amounts are per 100 g.
 - Two assets, `<hash>_foods_db.json` and `<hash>_autocomplete_hash.json`, plus
   `file_manifest.txt`, which holds the hash their names are prefixed with.

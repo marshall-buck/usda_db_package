@@ -84,5 +84,14 @@ void main() {
         ]);
       });
     });
+
+    group('categories - ', () {
+      test('every shipped category code resolves to a name', () {
+        final categories = db.categories;
+
+        expect(categories, hasLength(22));
+        expect(categories.every((c) => c.isKnown), true);
+      });
+    });
   });
 }

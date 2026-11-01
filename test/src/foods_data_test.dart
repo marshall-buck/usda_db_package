@@ -30,6 +30,8 @@ void main() {
         isA<Map<int, num>>(),
       );
       expect(foods.foodsList[167512]?.nutrients.length, 7);
+      expect(foods.foodsList[167512]?.categoryCode, 1800);
+      expect(foods.foodsList[167512]?.category.name, 'Baked Products');
     });
     test('init should throw UsdaDbFormatException on invalid JSON', () async {
       await expectLater(
@@ -50,9 +52,9 @@ void main() {
         () async {
       // The first entry is well formed, the second is not - parsing happens off
       // the instance, so nothing is published unless the whole file converts.
-      const halfBadJson = '{"167512":{"description":"Biscuits",'
-          '"nutrients":{"1003":5.88}},'
-          '"167513":{"description":"Bread","nutrients":{"1003":"nope"}}}';
+      const halfBadJson = '{"167512":{"d":"Biscuits","c":1800,'
+          '"n":{"1003":5.88}},'
+          '"167513":{"d":"Bread","c":1800,"n":{"1003":"nope"}}}';
 
       await expectLater(
         foods.init(jsonString: halfBadJson),
@@ -65,6 +67,22 @@ void main() {
       await foods.init(jsonString: mockDBString);
       foods.clear();
       expect(foods.foodsList.isEmpty, true);
+      expect(foods.categoryCodes, isEmpty);
+    });
+
+    test('init lists the distinct category codes in ascending order',
+        () async {
+      await foods.init(jsonString: mockDBString);
+
+      expect(foods.categoryCodes, [600, 1800]);
+    });
+
+    test('queryFoodsByCategory returns only foods in that category', () async {
+      await foods.init(jsonString: mockDBString);
+
+      expect(foods.queryFoodsByCategory(600).map((f) => f.id), [167514]);
+      expect(foods.queryFoodsByCategory(1800).length, 5);
+      expect(foods.queryFoodsByCategory(9999), isEmpty);
     });
 
     test('getFood should return correct food', () async {

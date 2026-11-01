@@ -125,9 +125,13 @@ class UsdaDb {
   ///
   /// Each food's [UsdaFoodModel.matchedWords] lists the description words that
   /// matched.
+  ///
+  /// With [categoryCode] set, only foods in that category are returned. An
+  /// unknown code returns an empty list.
   Future<List<UsdaFoodModel>> queryFoods({
     required String searchString,
     bool all = true,
+    int? categoryCode,
   }) async {
     _requireDataLoaded();
     final sanitizedWords =
@@ -162,9 +166,37 @@ class UsdaDb {
         );
         continue;
       }
+      if (categoryCode != null && food.categoryCode != categoryCode) continue;
       foods.add(food.withMatchTerms(matchedTerms));
     }
     return foods;
+  }
+
+  /// Every food in the category with [categoryCode], empty if none are.
+  ///
+  /// Foods come back in database order, with no [UsdaFoodModel.matchedWords].
+  /// An unknown code returns an empty list.
+  Future<List<UsdaFoodModel>> queryFoodsByCategory({
+    required int categoryCode,
+  }) async {
+    _requireDataLoaded();
+    return _foodsData!.queryFoodsByCategory(categoryCode);
+  }
+
+  /// The categories the loaded foods belong to, in ascending code order.
+  ///
+  /// Only categories with at least one food are listed, so each one is a
+  /// filter for [queryFoods] or [queryFoodsByCategory] that can return
+  /// results. That is fewer than the full
+  /// [UsdaFoodCategoryModel.foodCategories] table.
+  ///
+  /// Throws a [UsdaDbException] unless [init] has completed successfully.
+  List<UsdaFoodCategoryModel> get categories {
+    _requireDataLoaded();
+    return [
+      for (final code in _foodsData!.categoryCodes)
+        UsdaFoodCategoryModel.fromCode(code),
+    ];
   }
 
   /// Food ids whose description contains every word in [sanitizedWords].
